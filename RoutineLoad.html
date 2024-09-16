@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creating Your Perfect Routine</title>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        
+        :root {
+            --bg-light: linear-gradient(135deg, #f3e8ff, #e0f2fe);
+            --bg-dark: linear-gradient(135deg, #1e293b, #0f172a);
+            --card-bg-light: white;
+            --card-bg-dark: #1e293b;
+            --text-primary-light: #1e293b;
+            --text-secondary-light: #64748b;
+            --text-primary-dark: #f1f5f9;
+            --text-secondary-dark: #94a3b8;
+            --accent-color: #3b82f6;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--bg-light);
+            color: var(--text-primary-light);
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        body.dark {
+            background: var(--bg-dark);
+            color: var(--text-primary-dark);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 44rem;
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: var(--card-bg-light);
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .dark .card {
+            background: var(--card-bg-dark);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 1.5rem 0 1rem;
+            color: var(--text-primary-light);
+        }
+
+        .dark h2 {
+            color: var(--text-primary-dark);
+        }
+
+        p {
+            font-size: 1.125rem;
+            color: var(--text-secondary-light);
+            margin: 0;
+        }
+
+        .dark p {
+            color: var(--text-secondary-dark);
+        }
+
+        .loader-container {
+            margin-bottom: 1.5rem;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loader {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        #darkModeToggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+
+        #darkModeToggle:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .dark #darkModeToggle:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <button id="darkModeToggle" aria-label="Toggle dark mode"></button>
+    <div class="container">
+        <div class="card fade-in">
+            <div class="loader-container">
+                <i data-lucide="loader-2" class="loader"></i>
+            </div>
+            <h2>Creating Your Perfect Routine</h2>
+            <p id="loadingText">Generating your personalized routine...</p>
+        </div>
+    </div>
+
+    <script> 
+
+        function updateLoadingText() {
+            loadingTextElement.textContent = loadingTexts[currentIndex] + '...';
+            currentIndex = (currentIndex + 1) % loadingTexts.length;
+        }
+
+        setInterval(updateLoadingText, 3000);
+
+        // Dark mode toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+
+        function toggleDarkMode() {
+            body.classList.toggle('dark');
+            updateIcons();
+        }
+
+        function updateIcons() {
+            const isDark = body.classList.contains('dark');
+            const iconColor = isDark ? '#f1f5f9' : '#1e293b';
+            
+            lucide.createIcons({
+                attrs: {
+                    stroke: iconColor,
+                    'stroke-width': 2,
+                }
+            });
+
+            lucide.createIcons({
+                icons: {
+                    'darkModeToggle': isDark ? 'sun' : 'moon'
+                },
+                attrs: {
+                    stroke: iconColor,
+                    'stroke-width': 2,
+                    width: 24,
+                    height: 24
+                }
+            });
+        }
+
+        darkModeToggle.addEventListener('click', toggleDarkMode);
+
+        // Initialize Lucide icons
+        lucide.createIcons({
+            attrs: {
+                'stroke-width': 2,
+                width: 64,
+                height: 64
+            }
+        });
+
+        updateIcons();
+    </script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+/* Custom styles */
+.dark {
+    @apply bg-gray-900 text-gray-100;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideInFromLeft {
+    from { transform: translateX(-20px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideInFromTop {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* Apply animations */
+header {
+    animation: slideInFromTop 0.5s ease-out;
+}
+
+main > * {
+    animation: fadeIn 0.5s ease-out;
+}
+
+nav a {
+    animation: slideInFromLeft 0.5s ease-out;
+    animation-fill-mode: both;
+}
+
+nav a:nth-child(1) { animation-delay: 0.1s; }
+nav a:nth-child(2) { animation-delay: 0.2s; }
+nav a:nth-child(3) { animation-delay: 0.3s; }
+nav a:nth-child(4) { animation-delay: 0.4s; }
+nav a:nth-child(5) { animation-delay: 0.5s; }
+
+/* Hover effects */
+.hover-grow {
+    transition: transform 0.3s ease;
+}
+
+.hover-grow:hover {
+    transform: scale(1.05);
+}
+
+/* Scroll animations */
+.scroll-fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.scroll-fade-in.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Custom badge styles */
+.badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800;
+}
+
+.dark .badge {
+    @apply bg-blue-900 text-blue-200;
+}
+
+.badge button {
+    @apply ml-1 text-blue-400 hover:text-blue-600 focus:outline-none;
+}
+
+.dark .badge button {
+    @apply text-blue-300 hover:text-blue-100;
+}

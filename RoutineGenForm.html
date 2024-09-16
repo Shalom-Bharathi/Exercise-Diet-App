@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Routine Generator</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+    
+    <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-auth.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-firestore.js"></script>
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyBvONbLQcR-XqSsJ9hi7xAsk8sTwej43aA",
+            authDomain: "ed-project-42419.firebaseapp.com",
+            projectId: "ed-project-42419",
+            storageBucket: "ed-project-42419.appspot.com",
+            messagingSenderId: "909551078814",
+            appId: "1:909551078814:web:456608495b9655eef6da8f"
+        };
+        firebase.initializeApp(firebaseConfig);
+      </script>
+
+    <script src="app.js" defer></script>
+    <style>
+       :root {
+            --bg-light: linear-gradient(135deg, #f3e8ff, #e0f2fe);
+            --bg-dark: linear-gradient(135deg, #1e293b, #0f172a);
+            --card-bg-light: white;
+            --card-bg-dark: #1e293b;
+            --text-primary-light: #1e293b;
+            --text-secondary-light: #64748b;
+            --text-primary-dark: #f1f5f9;
+            --text-secondary-dark: #94a3b8;
+            --accent-color: #3b82f6;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--bg-light);
+            color: var(--text-primary-light);
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        body.dark {
+            background: var(--bg-dark);
+            color: var(--text-primary-dark);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 44rem;
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: var(--card-bg-light);
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .dark .card {
+            background: var(--card-bg-dark);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 1.5rem 0 1rem;
+            color: var(--text-primary-light);
+        }
+
+        .dark h2 {
+            color: var(--text-primary-dark);
+        }
+
+        p {
+            font-size: 1.125rem;
+            color: var(--text-secondary-light);
+            margin: 0;
+        }
+
+        .dark p {
+            color: var(--text-secondary-dark);
+        }
+
+        .loader-container {
+            margin-bottom: 1.5rem;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loader {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="light">
+    
+    <section id="formSection">
+    <div id="mainContainer" class="container mx-auto p-8 max-w-5xl animate-fade-in">
+
+        <div class="bg-gradient shadow-lg rounded-lg p-8 animate-slide-in">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold mb-2">Routine Generator</h1>
+                <p class="text-lg">Fill in your details to create your perfect routine</p>
+            </div>
+            <form id="routineForm" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-4">
+                            <i data-lucide="user" class="w-6 h-6 text-blue-500"></i>
+                            <div class="flex-grow">
+                                <label for="name" class="text-sm font-medium">Name</label>
+                                <input id="name" name="name" required class="mt-1 w-full px-3 py-2 border rounded-md">
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <i data-lucide="user" class="w-6 h-6 text-green-500"></i>
+                            <div class="flex-grow">
+                                <label for="age" class="text-sm font-medium">Age</label>
+                                <input id="age" name="age" type="number" required class="mt-1 w-full px-3 py-2 border rounded-md">
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <i data-lucide="briefcase" class="w-6 h-6 text-yellow-500"></i>
+                            <div class="flex-grow">
+                                <label for="occupation" class="text-sm font-medium">Occupation</label>
+                                <input id="occupation" name="occupation" required class="mt-1 w-full px-3 py-2 border rounded-md">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-4">
+                            <i data-lucide="moon" class="w-6 h-6 text-indigo-500"></i>
+                            <div class="flex-grow">
+                                <label for="sleepTime" class="text-sm font-medium">Usual Sleep Time</label>
+                                <select id="sleepTime" name="sleepTime" class="mt-1 w-full px-3 py-2 border rounded-md">
+                                    <option value="">Select sleep time</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <i data-lucide="sun" class="w-6 h-6 text-orange-500"></i>
+                            <div class="flex-grow">
+                                <label for="wakeTime" class="text-sm font-medium">Usual Wake Time</label>
+                                <select id="wakeTime" name="wakeTime" class="mt-1 w-full px-3 py-2 border rounded-md">
+                                    <option value="">Select wake time</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div class="flex items-start space-x-4">
+                        <i data-lucide="target" class="w-6 h-6 text-red-500 mt-1"></i>
+                        <div class="flex-grow">
+                            <label for="goals" class="text-sm font-medium">Your Goals</label>
+                            <textarea id="goals" name="goals" required class="mt-1 w-full px-3 py-2 border rounded-md"></textarea>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-4">
+                        <i data-lucide="info" class="w-6 h-6 text-purple-500 mt-1"></i>
+                        <div class="flex-grow">
+                            <label for="additionalInfo" class="text-sm font-medium">Additional Information</label>
+                            <textarea id="additionalInfo" name="additionalInfo" class="mt-1 w-full px-3 py-2 border rounded-md"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded shadow-md transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                    <i data-lucide="wand-2" class="w-5 h-5 inline-block mr-2"></i>
+                    Generate Routine
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+    <section id="loadingSection" hidden ="false">
+        <div class="container">
+            <div class="card fade-in">
+                <div class="loader-container">
+                    <i data-lucide="loader-2" class="loader" style="width: 50px; height: 50px;"></i>
+                </div>
+                <h2>Creating Your Perfect Routine</h2>
+                <p id="loadingText">Generating your personalized routine...</p>
+            </div>
+        </div>
+    </div></section>
+
+    <button id="darkModeToggle" class="fixed top-4 right-4 bg-gray-200 dark:bg-gray-800 p-2 rounded-full shadow-md">
+        <i data-lucide="moon" class="w-6 h-6 dark:hidden"></i>
+        <i data-lucide="sun" class="w-6 h-6 hidden dark:inline-block"></i>
+    </button>
+    <a href="index.html" id="homeButton" class="fixed top-16 right-4 bg-gray-200 dark:bg-gray-800 p-2 rounded-full shadow-md" aria-label="Go to Home">
+        <i data-lucide="home" class="w-6 h-6"></i>
+    </a>
+    <script>
+        // Replace this with your actual OpenAI API key
+const OPENAI_API_KEY = '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';
+// Initialize Lucide icons
+lucide.createIcons();
+
+// Populate time selects
+const timeSelects = ['sleepTime', 'wakeTime'];
+timeSelects.forEach(selectId => {
+    const select = document.getElementById(selectId);
+    for (let i = 0; i < 24; i++) {
+        const option = document.createElement('option');
+        option.value = `${i.toString().padStart(2, '0')}:00`;
+        option.textContent = `${i.toString().padStart(2, '0')}:00`;
+        select.appendChild(option);
+    }
+});
+
+// Form submission
+document.getElementById('routineForm').addEventListener('submit', async function(e) {
+    showLoadingScreen();
+    e.preventDefault();
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData.entries());
+    
+    try {
+        const routine = await generateRoutine(data);
+        console.log('Generated Routine:', routine);
+        console.log("SUCCESSFUL")
+        
+        auth.onAuthStateChanged(user => {
+
+        thingsRef = db.collection('routines')
+
+          thingsRef.add({
+            uid: user.uid,
+            routines: routine,
+        });
+}   
+);
+    } catch (error) {
+        console.error('Error generating routine:', error);
+    }
+});
+
+async function generateRoutine(formData) {
+    
+    const apiUrl = 'https://api.openai.com/v1/chat/completions';
+
+    const prompt = `Generate a daily routine for a ${formData.age}-year-old ${formData.occupation} 
+    who sleeps at ${formData.sleepTime} and wakes up at ${formData.wakeTime}. 
+    Their goals are: ${formData.goals}. Additional info: ${formData.additionalInfo}
+    
+    Please format the routine as a JSON object with time ranges as keys and activities as values. 
+    For example:
+    {
+        "06:00 - 07:00": "Wake up and morning routine",
+        "07:00 - 08:00": "Breakfast and plan the day",
+        ...
+    }`;
+
+    const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${OPENAI_API_KEY}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            model: "gpt-3.5-turbo",
+            messages: [{ role: "user", content: prompt }],
+            temperature: 0.7,
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const routineText = data.choices[0].message.content;
+    return parseRoutineText(routineText);
+}
+
+function parseRoutineText(text) {
+    try {
+        // Find the JSON object in the text
+        const jsonMatch = text.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+            return JSON.parse(jsonMatch[0]);
+        } else {
+            throw new Error("No valid JSON found in the response");
+        }
+    } catch (error) {
+        console.error("Error parsing routine:", error);
+        return fallbackParseRoutine(text);
+    }
+}
+
+function fallbackParseRoutine(text) {
+    const routine = {};
+    const lines = text.split('\n');
+    for (const line of lines) {
+        const match = line.match(/^([\d:]+\s*-\s*[\d:]+)\s*[:：]\s*(.+)$/);
+        if (match) {
+            routine[match[1].trim()] = match[2].trim();
+        }
+    }
+    return routine;
+}
+
+// Dark mode toggle
+const darkModeToggle = document.getElementById('darkModeToggle');
+const body = document.body;
+
+darkModeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark');
+    body.classList.toggle('light');
+});
+
+function showLoadingScreen() {
+    document.getElementById('formSection').hidden = true;
+    document.getElementById('loadingSection').hidden = false;
+}
+    </script>
+</body>
+</html>

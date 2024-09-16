@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness AI Tutor Chat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        
+        .message {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.3s ease forwards;
+}
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+    </style>
+    <script src="app.js" defer></script>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 min-h-screen">
+    <div class="container mx-auto p-6 h-screen flex flex-col">
+        <div class="flex-grow flex flex-col bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden">
+            <div class="bg-blue-600 text-white p-4 flex items-center justify-between">
+                <div class="flex items-center">
+                    <i data-lucide="dumbbell" class="w-8 h-8 mr-3"></i>
+                    <h1 class="text-2xl font-bold">Fitness AI Tutor</h1>
+                </div>
+                <div class="flex space-x-2">
+                    <button id="homeButton" class="bg-white text-blue-600 p-2 rounded-full hover:bg-blue-100 transition-colors">
+                        <i data-lucide="eraser" class="w-6 h-6"></i>
+                    </button>
+                    <a href="index.html" class="bg-white text-blue-600 p-2 rounded-full hover:bg-blue-100 transition-colors">
+                        <i data-lucide="home" class="w-6 h-6"></i>
+                    </a>
+                </div>
+            </div>
+            <div id="chatArea" class="flex-grow p-4 overflow-y-auto"></div>
+            <div class="p-4 bg-gray-50 dark:bg-gray-900">
+                <div class="flex items-center">
+                    <input id="userInput" type="text" placeholder="Ask about fitness, nutrition, or your health journey..." class="flex-grow mr-2 bg-white dark:bg-gray-800 p-2 rounded">
+                    <button id="sendButton" class="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded flex items-center">
+                        <i data-lucide="send" class="w-4 h-4 mr-2"></i>
+                        Send
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
+            <p>Powered by AI - Get personalized fitness and nutrition advice 24/7</p>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+lucide.createIcons();
+
+// DOM elements
+const chatArea = document.getElementById('chatArea');
+const userInput = document.getElementById('userInput');
+const sendButton = document.getElementById('sendButton');
+const homeButton = document.getElementById('homeButton');
+
+// Chat state
+let messages = [
+    { id: 1, text: "Hello! I'm your AI fitness and nutrition tutor. How can I help you today?", sender: 'ai' }
+];
+
+// Render a single message
+function renderMessage(message) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'} mb-4 message`;
+    
+    messageDiv.innerHTML = `
+        <div class="flex items-start max-w-[70%] ${message.sender === 'user' ? 'flex-row-reverse' : ''}">
+            <div class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">
+                ${message.sender === 'ai' ? '<i data-lucide="zap"></i>' : '<i data-lucide="user"></i>'}
+            </div>
+            <div class="mx-2 p-3 rounded-lg ${
+                message.sender === 'user' 
+                    ? 'bg-blue-500 text-white' 
+                    : 'bg-gray-100 dark:bg-gray-700 dark:text-white'
+            }">
+                <p class="text-sm">${message.text}</p>
+            </div>
+        </div>
+    `;
+    
+    chatArea.appendChild(messageDiv);
+    lucide.createIcons();
+    scrollToBottom();
+}
+
+// Scroll chat area to bottom
+function scrollToBottom() {
+    chatArea.scrollTop = chatArea.scrollHeight;
+}
+
+// Add a new message to the chat
+function addMessage(text, sender) {
+    const newMessage = { id: messages.length + 1, text, sender };
+    messages.push(newMessage);
+    renderMessage(newMessage);
+}
+
+// Send message to AI and get response
+async function sendMessageToAI(message) {
+    const apiKey = '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'; // Replace with your actual API key
+    const apiUrl = 'https://api.openai.com/v1/chat/completions';
+
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+                model: "gpt-4o-mini",
+                messages: [
+                    { role: "system", content: "You are a knowledgeable fitness and nutrition AI tutor. Provide helpful, accurate, and motivating advice." },
+                    { role: "user", content: message }
+                ],
+                max_tokens: 150
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('API request failed');
+        }
+
+        const data = await response.json();
+        return data.choices[0].message.content;
+    } catch (error) {
+        console.error('Error:', error);
+        return "I'm sorry, I couldn't process your request at the moment. Please try again later.";
+    }
+}
+
+// Handle sending a message
+async function sendMessage() {
+    const userMessage = userInput.value.trim();
+    if (userMessage !== '') {
+        if (userMessage.toLowerCase() === '/clear') {
+            clearChat();
+            userInput.value = '';
+            return;
+        }
+
+        addMessage(userMessage, 'user');
+        userInput.value = '';
+        
+        // Disable input and button while waiting for AI response
+        userInput.disabled = true;
+        sendButton.disabled = true;
+
+        // Show typing indicator
+        addMessage("Typing...", 'ai');
+
+        const aiResponse = await sendMessageToAI(userMessage);
+
+        // Remove typing indicator
+        chatArea.removeChild(chatArea.lastChild);
+
+        // Add AI response
+        addMessage(aiResponse, 'ai');
+
+        // Re-enable input and button
+        userInput.disabled = false;
+        sendButton.disabled = false;
+        userInput.focus();
+    }
+}
+
+// Event listeners
+sendButton.addEventListener('click', sendMessage);
+userInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+    }
+});
+
+// Function to clear chat
+function clearChat() {
+    messages = [{ id: 1, text: "Chat cleared. How can I assist you today?", sender: 'ai' }];
+    chatArea.innerHTML = '';
+    renderMessage(messages[0]);
+}
+
+// Home button functionality
+homeButton.addEventListener('click', () => {
+    clearChat();
+});
+
+// Initial message render
+renderMessage(messages[0]);
+    </script>
+</body>
+</html>

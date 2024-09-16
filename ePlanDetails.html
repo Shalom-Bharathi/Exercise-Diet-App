@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nourish - Workout Plan</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+    <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-auth.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-firestore.js"></script>
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyBvONbLQcR-XqSsJ9hi7xAsk8sTwej43aA",
+            authDomain: "ed-project-42419.firebaseapp.com",
+            projectId: "ed-project-42419",
+            storageBucket: "ed-project-42419.appspot.com",
+            messagingSenderId: "909551078814",
+            appId: "1:909551078814:web:456608495b9655eef6da8f"
+        };
+        firebase.initializeApp(firebaseConfig);
+      </script>
+
+    <script src="app.js"></script>
+    <style>
+        .frosted-bg {
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+}
+.dark .frosted-bg {
+    background-color: rgba(17, 24, 39, 0.8);
+}
+.workout-tasks-container {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+body {
+    background-color:rgb(231, 231, 231)important;
+}
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+    <header class="p-4 flex justify-between items-center sticky top-0 z-50 frosted-bg">
+        <div class="text-2xl font-bold">
+            <a href="index.html" class="text-blue-600">Nourish</a>
+        </div>
+        <nav class="hidden md:flex space-x-4">
+            <a href="#" onclick="ExerciseORPreferences('e')" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Exercises</a>
+            <a href="#" onclick="RoutineFinder()" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Routines</a>
+            <a href="#" onclick="PreferencesCheck('d')" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Diets</a>
+            <a href="AiTutor.html" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Tutor</a>
+            <a onclick="preferencechooser()" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Preferences</a>
+            <a href="Profile.html" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Profile</a>
+        </nav>
+        <div class="flex items-center space-x-4">
+            <button id="darkModeToggle" class="focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden dark:inline-block"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-block dark:hidden"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            </button>
+            <button id="menuToggle" class="md:hidden focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+        </div>
+    </header>
+
+    <div id="mobileMenu" class="md:hidden bg-gray-100 dark:bg-gray-800 hidden">
+        <a href="#" class="block py-2 px-4 text-sm uppercase tracking-wider hover:bg-gray-200 dark:hover:bg-gray-700">Home</a>
+        <a href="#" class="block py-2 px-4 text-sm uppercase tracking-wider hover:bg-gray-200 dark:hover:bg-gray-700">Workout Plans</a>
+        <a href="#" class="block py-2 px-4 text-sm uppercase tracking-wider hover:bg-gray-200 dark:hover:bg-gray-700">Nutrition</a>
+        <a href="#" class="block py-2 px-4 text-sm uppercase tracking-wider hover:bg-gray-200 dark:hover:bg-gray-700">Community</a>
+        <a href="#" class="block py-2 px-4 text-sm uppercase tracking-wider hover:bg-gray-200 dark:hover:bg-gray-700">Profile</a>
+    </div>
+
+    <main class="flex-grow p-4 max-w-4xl mx-auto" role="main">
+        <h1 id="workoutTitle" class="text-3xl md:text-4xl font-bold text-center my-8 animate__animated animate__fadeInDown"></h1>
+
+        <div class="mb-8 animate__animated animate__fadeInUp">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+                <div class="p-6 text-center">
+                    <h2 class="text-2xl font-semibold mb-2">Workout Overview</h2>
+                    <p id="workoutDescription" class="mb-4"></p>
+                    <div id="workoutDetails" class="flex flex-wrap justify-center gap-2 mb-4"></div>
+                    <div id="workoutStats" class="flex justify-center gap-4 mb-4"></div>
+                    <div id="workoutBenefits" class="mt-4"></div>
+                    <br>
+                    <a href="Sessions.html" id="startSession" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition-colors duration-300 mt-4">
+                        Start Session
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-2 inline-block"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4 text-center">Workout Tasks</h2>
+            <div id="workoutTasks" class="workout-tasks-container bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4"></div>
+        </div>
+
+        <div class="mb-8 animate__animated animate__fadeInUp">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+                <div class="p-6 text-center">
+                    <h2 class="text-2xl font-semibold mb-2">Ask AI for Workout Tips</h2>
+                    <br>
+                    <a href="AiTutor.html" id="askAi" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-4 transition-colors duration-300">
+                        Ask The AI Tutor
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-8 animate__animated animate__fadeInUp text-center">
+            <button id="recommendDiet" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition-colors duration-300">
+                Get Diet Recommendations
+            </button>
+            
+        </div>
+    <div class="mb-8 text-center">
+        <button id="quitWorkoutPlan" onclick="quitWorkoutPlanFinal()" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition-colors duration-300">
+            Quit Exercise Plan
+        </button>
+        <button id="finishWorkoutPlan" onclick="finishWorkoutPlan()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition-colors duration-300 mt-4">
+            Finish Workout Plan
+        </button>
+        <p class="mt-2 text-sm text-gray-600">*Disclaimer: This option is available after completing 60 sessions.</p>
+    </div>
+    </main>
+    <footer class="text-center py-4 text-sm">
+        <p>&copy; 2024 Nourish. All rights reserved.</p>
+    </footer>
+
+    <script>
+        let workout;
+        const workoutPlans = [
+    {
+        name: "Beginner's Bodyweight Blast",
+        description: "A gentle introduction to fitness using only your body weight.",
+        ageRating: "All ages",
+        difficulty: "Easy",
+        keywords: ["Strength", "Flexibility", "Balance", "Core Stability"],
+        totalDuration: "30 minutes",
+        caloriesBurnt: 200,
+        benefits: [
+            "Improves overall body strength",
+            "Enhances flexibility and balance",
+            "Strengthens core muscles",
+            "Supports joint stability"
+        ],
+        exercises: [
+            { name: "Bodyweight Squats", duration: "3 sets of 15 reps", caloriesBurnt: 30, description: "Basic squats using only body weight." },
+            { name: "Push-ups", duration: "3 sets of 10-12 reps", caloriesBurnt: 25, description: "Standard push-ups to build upper body strength." },
+            { name: "Plank", duration: "3 sets of 30-60 seconds", caloriesBurnt: 20, description: "Hold a plank position to strengthen the core." },
+            { name: "Lunges", duration: "3 sets of 12 reps per leg", caloriesBurnt: 25, description: "Forward lunges to work on leg strength and balance." },
+            { name: "Glute Bridge", duration: "3 sets of 15 reps", caloriesBurnt: 20, description: "Lying on your back, lift your hips to engage the glutes." }
+        ]
+    },
+    {
+        name: "30-Day Strength Builder",
+        description: "Progressive strength training program for intermediate fitness enthusiasts.",
+        ageRating: "16+",
+        difficulty: "Medium",
+        keywords: ["Strength", "Muscle Gain", "Power", "Endurance"],
+        totalDuration: "45 minutes",
+        caloriesBurnt: 350,
+        benefits: [
+            "Builds muscle strength and size",
+            "Increases overall power",
+            "Improves endurance",
+            "Enhances functional strength for daily activities"
+        ],
+        exercises: [
+            { name: "Barbell Squats", duration: "4 sets of 8-10 reps", caloriesBurnt: 50, description: "Squats with a barbell to build leg strength." },
+            { name: "Deadlifts", duration: "4 sets of 6-8 reps", caloriesBurnt: 60, description: "Lift the barbell from the ground to hip level." },
+            { name: "Bench Press", duration: "4 sets of 8-10 reps", caloriesBurnt: 50, description: "Press the barbell away from the chest while lying on a bench." },
+            { name: "Overhead Press", duration: "4 sets of 8-10 reps", caloriesBurnt: 40, description: "Press the barbell overhead to strengthen shoulders." },
+            { name: "Pull-ups", duration: "3 sets of 6-10 reps", caloriesBurnt: 40, description: "Pull your body up towards a bar to engage the back and arms." }
+        ]
+    },
+    {
+        name: "High-Intensity Interval Madness",
+        description: "Intense cardio workouts to maximize calorie burn and improve endurance.",
+        ageRating: "18+",
+        difficulty: "Hard",
+        keywords: ["Cardio Health", "Weight Loss", "Endurance", "Speed"],
+        totalDuration: "40 minutes",
+        caloriesBurnt: 500,
+        benefits: [
+            "Maximizes calorie burn",
+            "Improves cardiovascular health",
+            "Boosts metabolism",
+            "Enhances endurance and speed"
+        ],
+        exercises: [
+            { name: "Burpees", duration: "4 sets of 15 reps", caloriesBurnt: 80, description: "Full-body exercise combining a squat, push-up, and jump." },
+            { name: "Mountain Climbers", duration: "4 sets of 30 seconds", caloriesBurnt: 60, description: "Alternating knee drives in a plank position." },
+            { name: "Jump Squats", duration: "4 sets of 20 reps", caloriesBurnt: 70, description: "Explosive squats with a jump at the top." },
+            { name: "High Knees", duration: "4 sets of 45 seconds", caloriesBurnt: 65, description: "Running in place while lifting knees high." },
+            { name: "Sprints", duration: "8 sets of 30-second sprints", caloriesBurnt: 100, description: "All-out sprints with 30 seconds rest between sets." }
+        ]
+    },
+    {
+        name: "Yoga Flow for Flexibility",
+        description: "Improve flexibility and mindfulness with this yoga-focused plan.",
+        ageRating: "All ages",
+        difficulty: "Easy",
+        keywords: ["Flexibility", "Mobility", "Balance", "Recovery"],
+        totalDuration: "50 minutes",
+        caloriesBurnt: 180,
+        benefits: [
+            "Increases flexibility and range of motion",
+            "Improves balance and body awareness",
+            "Reduces stress and promotes relaxation",
+            "Enhances recovery and reduces muscle tension"
+        ],
+        exercises: [
+            { name: "Downward Dog", duration: "5 minutes", caloriesBurnt: 20, description: "Inverted V-shape pose to stretch the entire body." },
+            { name: "Child's Pose", duration: "5 minutes", caloriesBurnt: 15, description: "Resting pose to stretch the back and hips." },
+            { name: "Cat-Cow", duration: "5 minutes", caloriesBurnt: 20, description: "Flowing between arching and rounding the spine." },
+            { name: "Warrior II", duration: "5 minutes per side", caloriesBurnt: 30, description: "Standing pose to strengthen legs and open hips." },
+            { name: "Cobra Pose", duration: "5 minutes", caloriesBurnt: 15, description: "Backbend to stretch the chest and strengthen the spine." }
+        ]
+    },
+    {
+        name: "Powerlifting Fundamentals",
+        description: "Master the basics of powerlifting with this structured program.",
+        ageRating: "16+",
+        difficulty: "Medium",
+        keywords: ["Strength", "Power", "Performance"],
+        totalDuration: "60 minutes",
+        caloriesBurnt: 400,
+        benefits: [
+            "Develops maximal strength",
+            "Improves power output",
+            "Enhances overall athletic performance",
+            "Builds muscle mass and bone density"
+        ],
+        exercises: [
+            { name: "Deadlifts", duration: "5 sets of 5 reps", caloriesBurnt: 80, description: "Lift a loaded barbell from the ground to hip level." },
+            { name: "Squats", duration: "5 sets of 5 reps", caloriesBurnt: 75, description: "Lower body exercise with a barbell on the upper back." },
+            { name: "Bench Press", duration: "5 sets of 5 reps", caloriesBurnt: 70, description: "Press a barbell from chest level while lying on a bench." },
+            { name: "Overhead Press", duration: "3 sets of 8 reps", caloriesBurnt: 50, description: "Press a barbell from shoulder level to overhead." },
+            { name: "Barbell Row", duration: "3 sets of 8 reps", caloriesBurnt: 60, description: "Bent-over row with a barbell to target the back muscles." }
+        ]
+    },
+    {
+        name: "Extreme Endurance Challenge",
+        description: "Push your limits with this advanced endurance-focused plan.",
+        ageRating: "18+",
+        difficulty: "Hard",
+        keywords: ["Endurance", "Performance", "Mental Toughness"],
+        totalDuration: "90 minutes",
+        caloriesBurnt: 800,
+        benefits: [
+            "Drastically improves cardiovascular endurance",
+            "Builds mental resilience",
+            "Enhances overall athletic performance",
+            "Increases calorie burn and metabolism"
+        ],
+        exercises: [
+            { name: "Long-Distance Running", duration: "45 minutes", caloriesBurnt: 400, description: "Sustained running at a moderate pace." },
+            { name: "Cycling", duration: "20 minutes", caloriesBurnt: 150, description: "High-intensity interval cycling." },
+            { name: "Rowing", duration: "15 minutes", caloriesBurnt: 120, description: "Full-body workout on a rowing machine." },
+            { name: "Jump Rope", duration: "5 minutes", caloriesBurnt: 70, description: "High-intensity skipping rope intervals." },
+            { name: "Plyometrics", duration: "5 minutes", caloriesBurnt: 60, description: "Explosive jumping exercises for power and endurance." }
+        ]
+    },
+    {
+        name: "Core Strength and Stability",
+        description: "Build a strong and stable core to enhance your performance in all exercises.",
+        ageRating: "All ages",
+        difficulty: "Medium",
+        keywords: ["Core Stability", "Strength", "Balance", "Mobility"],
+        totalDuration: "40 minutes",
+        caloriesBurnt: 250,
+        benefits: [
+            "Improves core strength and stability",
+            "Enhances posture and reduces back pain",
+            "Increases overall athletic performance",
+            "Improves balance and coordination"
+        ],
+        exercises: [
+            { name: "Plank", duration: "3 sets of 60 seconds", caloriesBurnt: 30, description: "Hold a push-up position to engage the entire core." },
+            { name: "Russian Twists", duration: "3 sets of 20 reps", caloriesBurnt: 40, description: "Seated twisting motion to target obliques." },
+            { name: "Leg Raises", duration: "3 sets of 15 reps", caloriesBurnt: 35, description: "Lie on your back and raise legs to target lower abs." },
+            { name: "Bicycle Crunches", duration: "3 sets of 30 seconds", caloriesBurnt: 45, description: "Alternating elbow-to-knee crunches." },
+            { name: "Superman Holds", duration: "3 sets of 30 seconds", caloriesBurnt: 25, description: "Lie face down and lift arms and legs off the ground." }
+        ]
+    },
+    {
+        name: "Agility and Speed Training",
+        description: "Enhance your agility and speed with targeted drills and exercises.",
+        ageRating: "16+",
+        difficulty: "Medium",
+        keywords: ["Speed", "Agility", "Endurance", "Performance"],
+        totalDuration: "50 minutes",
+        caloriesBurnt: 400,
+        benefits: [
+            "Improves reaction time and coordination",
+            "Enhances overall speed and quickness",
+            "Boosts athletic performance",
+            "Increases calorie burn and metabolism"
+        ],
+        exercises: [
+            { name: "Ladder Drills", duration: "10 minutes", caloriesBurnt: 80, description: "Quick footwork drills using an agility ladder." },
+            { name: "Cone Drills", duration: "10 minutes", caloriesBurnt: 85, description: "Various sprinting patterns around cones." },
+            { name: "Sprint Intervals", duration: "15 minutes", caloriesBurnt: 120, description: "Alternating between sprints and recovery jogs." },
+            { name: "Lateral Bounds", duration: "5 minutes", caloriesBurnt: 50, description: "Explosive side-to-side jumping." },
+            { name: "Box Jumps", duration: "10 minutes", caloriesBurnt: 65, description: "Jumping onto and off of a raised platform." }
+        ]
+    },
+    {
+        name: "Posture Perfection",
+        description: "Improve your posture and spinal alignment with this focused plan.",
+        ageRating: "All ages",
+        difficulty: "Easy",
+        keywords: ["Posture", "Flexibility", "Core Stability", "Mobility"],
+        totalDuration: "35 minutes",
+        caloriesBurnt: 150,
+        benefits: [
+            "Improves spinal alignment and posture",
+            "Reduces back and neck pain",
+            "Increases body awareness",
+            "Enhances overall mobility and flexibility"
+        ],
+        exercises: [
+            { name: "Wall Angels", duration: "3 sets of 10 reps", caloriesBurnt: 20, description: "Shoulder mobility exercise against a wall." },
+            { name: "Cat-Cow Stretch", duration: "5 minutes", caloriesBurnt: 15, description: "Gentle spinal flexion and extension on hands and knees." },
+            { name: "Chin Tucks", duration: "3 sets of 10 reps", caloriesBurnt: 10, description: "Neck alignment exercise to strengthen deep neck flexors." },
+            { name: "Thoracic Rotations", duration: "3 sets of 10 reps each side", caloriesBurnt: 25, description: "Seated twisting to improve upper back mobility." },
+            { name: "Seated Rows", duration: "3 sets of 12 reps", caloriesBurnt: 30, description: "Resistance band rows to strengthen upper back muscles." }
+        ]
+    },
+    {
+        name: "Detox and Hydration Boost",
+        description: "A holistic plan focused on detoxing the body and maintaining hydration.",
+        ageRating: "All ages",
+        difficulty: "Easy",
+        keywords: ["Detox", "Hydration", "Immune Support", "Metabolism", "Recovery"],
+        totalDuration: "45 minutes",
+        caloriesBurnt: 180,
+        benefits: [
+            "Promotes natural detoxification processes",
+            "Improves hydration and cellular function",
+            "Boosts immune system and overall health",
+            "Enhances recovery and reduces inflammation"
+        ],
+        exercises: [
+            { name: "Gentle Yoga", duration: "20 minutes", caloriesBurnt: 80, description: "Slow-paced yoga flow to promote circulation and flexibility." },
+            { name: "Breathing Exercises", duration: "5 minutes", caloriesBurnt: 10, description: "Deep breathing techniques to oxygenate the body." },
+            { name: "Meditation", duration: "10 minutes", caloriesBurnt: 15, description: "Guided meditation for stress reduction and mental clarity." },
+            { name: "Light Cardio", duration: "5 minutes", caloriesBurnt: 40, description: "Gentle walking or cycling to boost circulation." },
+            { name: "Foam Rolling", duration: "5 minutes", caloriesBurnt: 15, description: "Self-myofascial release to improve recovery and circulation." }
+        ]
+    },
+    {
+        name: "Post-Workout Recovery Routine",
+        description: "A light workout plan designed to aid recovery and improve flexibility after intense sessions.",
+        ageRating: "All ages",
+        difficulty: "Easy",
+        keywords: ["Recovery", "Flexibility", "Mobility", "Hydration"],
+        totalDuration: "30 minutes",
+        caloriesBurnt: 100,
+        benefits: [
+            "Promotes faster muscle recovery",
+            "Reduces muscle soreness and stiffness",
+            "Improves overall flexibility and mobility",
+            "Enhances relaxation and reduces stress"
+        ],
+        exercises: [
+            { name: "Foam Rolling", duration: "10 minutes", caloriesBurnt: 20, description: "Self-myofascial release for major muscle groups." },
+            { name: "Gentle Stretching", duration: "5 minutes", caloriesBurnt: 15, description: "Light, full-body stretching routine." },
+            { name: "Hip Flexor Stretch", duration: "5 minutes", caloriesBurnt: 10, description: "Targeted stretching for tight hip flexors." },
+            { name: "Child's Pose", duration: "5 minutes", caloriesBurnt: 5, description: "Relaxing yoga pose to stretch back and hips." },
+            { name: "Breathing Exercises", duration: "5 minutes", caloriesBurnt: 5, description: "Deep breathing techniques for relaxation and recovery." }
+        ]
+    },
+    {
+        name: "Speed and Agility Drills",
+        description: "Short, intense workouts focused on boosting speed and agility.",
+        ageRating: "16+",
+        difficulty: "Medium",
+        keywords: ["Speed", "Agility", "Performance", "Endurance"],
+        totalDuration: "40 minutes",
+        caloriesBurnt: 350,
+        benefits: [
+            "Improves overall speed and quickness",
+            "Enhances agility and change of direction skills",
+            "Boosts reaction time and coordination",
+            "Increases athletic performance in various sports"
+        ],
+        exercises: [
+            { name: "Sprint Intervals", duration: "10 minutes", caloriesBurnt: 100, description: "Alternating between all-out sprints and recovery jogs." },
+            { name: "Lateral Shuffles", duration: "5 minutes", caloriesBurnt: 50, description: "Side-to-side shuffling to improve lateral movement." },
+            { name: "Cone Drills", duration: "10 minutes", caloriesBurnt: 80, description: "Various agility patterns around cones." },
+            { name: "Plyometric Jumps", duration: "5 minutes", caloriesBurnt: 60, description: "Explosive jumping exercises to improve power." },
+            { name: "Ladder Drills", duration: "10 minutes", caloriesBurnt: 60, description: "Quick footwork drills using an agility ladder." }
+        ]
+    },
+    {
+        name: "Endurance Max Challenge",
+        description: "A challenging plan that tests and improves your stamina and endurance.",
+        ageRating: "18+",
+        difficulty: "Hard",
+        keywords: ["Endurance", "Performance", "Strength", "Mental Toughness"],
+        totalDuration: "75 minutes",
+        caloriesBurnt: 700,
+        benefits: [
+            "Significantly improves cardiovascular endurance",
+            "Builds mental resilience and grit",
+            "Enhances overall athletic performance",
+            "Boosts metabolism and aids in weight management"
+        ],
+        exercises: [
+            { name: "Long-Distance Running", duration: "30 minutes", caloriesBurnt: 300, description: "Sustained running at a challenging pace." },
+            { name: "Cycling", duration: "20 minutes", caloriesBurnt: 200, description: "High-intensity interval cycling on a stationary bike." },
+            { name: "Rowing", duration: "15 minutes", caloriesBurnt: 150, description: "Intense rowing intervals on a rowing machine." },
+            { name: "Burpees", duration: "5 minutes", caloriesBurnt: 50, description: "Full-body exercise combining a squat, push-up, and jump." },
+            { name: "Jump Rope", duration: "5 minutes", caloriesBurnt: 60, description: "High-intensity skipping rope intervals." }
+        ]
+    },
+    {
+        name: "Power and Explosiveness",
+        description: "Build explosive power and strength with these targeted workouts.",
+        ageRating: "16+",
+        difficulty: "Medium",
+        keywords: ["Power", "Strength", "Core Stability", "Performance"],
+        totalDuration: "50 minutes",
+        caloriesBurnt: 400,
+        benefits: [
+            "Develops explosive power and fast-twitch muscle fibers",
+            "Improves overall strength and athletic performance",
+            "Enhances core stability and balance",
+            "Increases calorie burn and metabolism"
+        ],
+        exercises: [
+            { name: "Box Jumps", duration: "4 sets of 8 reps", caloriesBurnt: 60, description: "Explosive jumps onto a raised platform." },
+            { name: "Medicine Ball Slams", duration: "4 sets of 12 reps", caloriesBurnt: 70, description: "Overhead throws of a medicine ball onto the ground." },
+            { name: "Deadlifts", duration: "4 sets of 6 reps", caloriesBurnt: 80, description: "Heavy deadlifts to build overall strength and power." },
+            { name: "Sprints", duration: "6 sets of 30-second sprints", caloriesBurnt: 100, description: "All-out sprints with full recovery between sets." },
+            { name: "Power Cleans", duration: "4 sets of 5 reps", caloriesBurnt: 90, description: "Olympic lift to develop full-body power and coordination." }
+        ]
+    },
+    {
+        name: "Immunity Boost Plan",
+        description: "A holistic approach to boost your immune system through exercise and recovery.",
+        ageRating: "All ages",
+        difficulty: "Easy",
+        keywords: ["Immune Support", "Detox", "Hydration", "Recovery"],
+        totalDuration: "40 minutes",
+        caloriesBurnt: 150,
+        benefits: [
+            "Strengthens the immune system",
+            "Reduces stress and inflammation",
+            "Improves overall health and well-being",
+            "Enhances recovery and promotes better sleep"
+        ],
+        exercises: [
+            { name: "Yoga Flow", duration: "15 minutes", caloriesBurnt: 60, description: "Gentle yoga sequence to reduce stress and improve circulation." },
+            { name: "Breathing Exercises", duration: "5 minutes", caloriesBurnt: 10, description: "Deep breathing techniques to oxygenate the body and reduce stress." },
+            { name: "Meditation", duration: "10 minutes", caloriesBurnt: 5, description: "Guided meditation for stress reduction and mental clarity." },
+            { name: "Light Cardio", duration: "5 minutes", caloriesBurnt: 40, description: "Gentle walking or cycling to boost circulation and immune function." },
+            { name: "Stretching", duration: "5 minutes", caloriesBurnt: 15, description: "Full-body stretching routine to improve flexibility and reduce tension." }
+        ]
+    },
+    {
+        name: "Core and Stability Mastery",
+        description: "A workout focused on building a strong core and enhancing stability.",
+        ageRating: "All ages",
+        difficulty: "Medium",
+        keywords: ["Core Stability", "Balance", "Strength", "Mobility"],
+        totalDuration: "45 minutes",
+        caloriesBurnt: 300,
+        benefits: [
+            "Strengthens core muscles and improves posture",
+            "Enhances balance and stability",
+            "Reduces risk of lower back pain",
+            "Improves performance in other exercises and daily activities"
+        ],
+        exercises: [
+            { name: "Plank Variations", duration: "10 minutes", caloriesBurnt: 60, description: "Various plank exercises to engage the entire core." },
+            { name: "Russian Twists", duration: "3 sets of 20 reps", caloriesBurnt: 45, description: "Seated twisting motion to target obliques." },
+            { name: "Bird-Dog", duration: "3 sets of 10 reps each side", caloriesBurnt: 30, description: "Quadruped exercise to improve core stability and balance." },
+            { name: "Side Plank", duration: "3 sets of 30 seconds each side", caloriesBurnt: 40, description: "Lateral core exercise to target obliques and hip stabilizers." },
+            { name: "Leg Raises", duration: "3 sets of 15 reps", caloriesBurnt: 35, description: "Lying leg raises to target lower abdominals." }
+        ]
+    },
+    {
+        name: "Metabolism Booster",
+        description: "A high-energy workout designed to speed up your metabolism and increase fat burn.",
+        ageRating: "16+",
+        difficulty: "Medium",
+        keywords: ["Metabolism", "Weight Loss", "Endurance", "Energy"],
+        totalDuration: "45 minutes",
+        caloriesBurnt: 450,
+        benefits: [
+            "Increases metabolic rate and calorie burn",
+            "Improves cardiovascular endurance",
+            "Aids in weight loss and fat reduction",
+            "Boosts energy levels and overall vitality"
+        ],
+        exercises: [
+            { name: "Burpees", duration: "4 sets of 15 reps", caloriesBurnt: 100, description: "Full-body exercise combining a squat, push-up, and jump." },
+            { name: "Jumping Jacks", duration: "3 sets of 1 minute", caloriesBurnt: 60, description: "Classic cardio exercise to elevate heart rate." },
+            { name: "Mountain Climbers", duration: "4 sets of 30 seconds", caloriesBurnt: 70, description: "Dynamic plank variation to engage core and boost heart rate." },
+            { name: "HIIT Circuits", duration: "15 minutes", caloriesBurnt: 150, description: "High-intensity interval training with various exercises." },
+            { name: "Sprints", duration: "5 sets of 30-second sprints", caloriesBurnt: 70, description: "All-out sprints with 30 seconds rest between sets." }
+        ]
+    }
+]
+
+
+let numberOfSessions = 0;
+
+
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            const thingsRef = db.collection('sessions');
+            
+            const unsubscribe = thingsRef
+                .where('uid', '==', user.uid)
+                .onSnapshot(querySnapshot => {
+                    numberOfSessions = querySnapshot.size;
+                    console.log(numberOfSessions)
+                    if (numberOfSessions < 0){
+                        document.getElementById('finishWorkoutPlan').classList.add('cursor-not-allowed');
+                        document.getElementById('finishWorkoutPlan').disabled = true;
+                    }
+
+                    else if (numberOfSessions >= 1){
+                        try{
+                            document.getElementById('finishWorkoutPlan').classList.remove('cursor-not-allowed');
+                            document.getElementById('finishWorkoutPlan').disabled = false;
+                        } catch{}
+                    }
+                });
+        }
+    });
+
+    
+
+
+
+function workoutFetcher(){
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      thingsRef = db.collection('exercises')
+      console.log("LOGGED")
+      unsubscribe = thingsRef
+          .where('uid', '==', user.uid)
+          .onSnapshot(querySnapshot => {
+            console.log("FETCHED")
+            if (querySnapshot.empty) {
+              console.log("EMPTY")
+            } 
+            else {
+                console.log("Not Empty")
+                querySnapshot.docs.forEach(doc => {
+                    console.log(doc.data().Plan)
+                    workout = workoutPlans[doc.data().Plan];
+                    console.log(workout)
+                    renderWorkoutOverview()
+                    renderWorkoutTasks()
+                    
+                })
+                
+            }
+          });
+    }
+  });
+}
+    
+
+function renderWorkoutOverview() {
+    
+    document.getElementById('workoutTitle').textContent = workout.name;
+    document.getElementById('workoutDescription').textContent = workout.description;
+
+    const detailsContainer = document.getElementById('workoutDetails');
+    detailsContainer.innerHTML = `
+        <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">Difficulty: ${workout.difficulty}</span>
+        <span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">Age: ${workout.ageRating}</span>
+    `;
+
+    const statsContainer = document.getElementById('workoutStats');
+    statsContainer.innerHTML = `
+        <span class="bg-purple-100 text-purple-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-purple-900 dark:text-purple-300">Duration: ${workout.totalDuration}</span>
+        <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">Calories Burnt: ${workout.caloriesBurnt} per session</span>
+        <span class="bg-red-100 text-red-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">Sessions Completed: ${numberOfSessions}</span>
+    `;
+
+    const benefitsContainer = document.getElementById('workoutBenefits');
+    benefitsContainer.innerHTML = `
+        <h3 class="text-lg font-semibold mb-2">Benefits:</h3>
+        <ul class="list-disc list-inside">
+            ${workout.benefits.map(benefit => `<li>${benefit}</li>`).join('')}
+        </ul>
+    `;
+}
+
+    
+    function renderWorkoutTasks() {
+        
+        const workoutTasksContainer = document.getElementById('workoutTasks');
+        
+        workoutTasksContainer.innerHTML = workout.exercises.map((task, index) => `
+            <div class="bg-gray-100 dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden animate__animated animate__fadeInUp" style="animation-delay: ${index * 0.1}s">
+                <div class="p-4">
+                    <h3 class="text-lg font-semibold mb-2">${task.name}</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-300 mb-2">
+                        ${task.sets && task.reps ? `${task.sets} sets of ${task.reps} reps` : task.duration}
+                    </p>
+                    <p class="text-sm text-gray-700 dark:text-gray-200">${task.description}</p>
+                </div>
+            </div>
+            <br>
+        `).join('');
+    }
+    
+
+    workoutFetcher()
+    
+    
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    darkModeToggle.addEventListener('click', () => {
+        document.documentElement.classList.toggle('dark');
+    });
+    
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    menuToggle.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+
+
+
+// Add event listener for the "Get Diet Recommendations" button
+document.getElementById('recommendDiet').addEventListener('click', () => {
+    window.location.href = "DietLoad.html";
+});
+    })
+let unsubscribe5;
+let thingsRef5;
+
+
+function quitWorkoutPlan(){
+    console.log("Quit") 
+    auth.onAuthStateChanged(user => {
+    if (user) {
+        thingsRef5 = db.collection('exercises');
+        
+        unsubscribe5 = thingsRef5
+            .where('uid', '==', user.uid)
+            .onSnapshot(querySnapshot => {
+                querySnapshot.forEach(doc => {
+                    thingsRef5.doc(doc.id).delete();
+                    console.log("Deleted")
+                });
+            });
+        }
+    });
+};
+
+function quitWorkoutPlanFinal(){
+    quitWorkoutPlan()
+    setTimeout(() => {
+        window.location.href = "eDiet.html";
+    }, 2000);
+}
+
+function finishWorkoutPlan(){
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      thingsRef = db.collection('achevements')
+
+      const date = new Date();
+
+      let day = date.getDate();
+      let month = date.getMonth() + 1;
+      let year = date.getFullYear();
+
+let currentDate = `${day} / ${month} / ${year}`;
+
+
+      thingsRef.add ({
+        uid: user.uid,
+        achevement: workout.name,
+        date: currentDate,
+      })
+      
+      quitWorkoutPlan()
+
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 3000);
+    }});
+}
+    </script>
+</body>
+</html>

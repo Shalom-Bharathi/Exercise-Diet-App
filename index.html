@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nourish</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/framer-motion/10.12.16/framer-motion.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+
+    <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-auth.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-firestore.js"></script>
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyBvONbLQcR-XqSsJ9hi7xAsk8sTwej43aA",
+            authDomain: "ed-project-42419.firebaseapp.com",
+            projectId: "ed-project-42419",
+            storageBucket: "ed-project-42419.appspot.com",
+            messagingSenderId: "909551078814",
+            appId: "1:909551078814:web:456608495b9655eef6da8f"
+        };
+        firebase.initializeApp(firebaseConfig);
+      </script>
+
+    <script src="app.js" defer></script>
+    
+    <style>
+        /* Custom styles and animations */
+.dark {
+    background-color: #1a202c;
+    color: #f7fafc;
+}
+
+.dark .bg-gray-100 {
+    background-color: #2d3748;
+}
+
+.dark .bg-white {
+    background-color: #4a5568;
+}
+
+.dark .text-gray-900 {
+    color: #f7fafc;
+}
+
+.dark .text-blue-600 {
+    color: #63b3ed;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Slide-in animation */
+@keyframes slideIn {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.slide-in {
+    animation: slideIn 0.5s ease-out;
+}
+
+/* Scale animation */
+@keyframes scaleIn {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.scale-in {
+    animation: scaleIn 0.5s ease-out;
+}
+
+/* Hover effect for buttons */
+.hover-effect:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive menu animation */
+@keyframes slideDown {
+    from { max-height: 0; opacity: 0; }
+    to { max-height: 300px; opacity: 1; }
+}
+
+.slide-down {
+    animation: slideDown 0.3s ease-out;
+}
+
+/* Animated text effect */
+.animated-text {
+    background: linear-gradient(45deg, #3490dc, #6574cd, #9561e2);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientText 5s ease infinite;
+}
+
+@keyframes gradientText {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Scroll reveal animation */
+.scroll-reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s, transform 0.5s;
+}
+
+.scroll-reveal.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Nav link hover effect */
+.nav-link {
+    position: relative;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    bottom: -5px;
+    left: 0;
+    background-color: #3490dc;
+    transform: scaleX(0);
+    transition: transform 0.3s ease-out;
+}
+
+.nav-link:hover::after {
+    transform: scaleX(1);
+}
+
+.landerHeading {
+	background: radial-gradient(circle, #80ffc1 0%, #ff6161 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.frosted-bg {
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+}
+.dark .frosted-bg {
+    background-color: rgba(17, 24, 39, 0.8);
+}
+    </style>
+</head>
+<body class="min-h-screen flex flex-col transition-colors duration-300">
+    <section id="whenSignedIn" hidden="true" >
+    <header class="p-4 flex justify-between items-center sticky top-0 z-50 frosted-bg">
+        <div class="text-2xl font-bold">
+            <a href="index.html" class="text-blue-600">Nourish</a>
+        </div>
+        <nav class="hidden md:flex space-x-4">
+            <a href="#" onclick="ExerciseORPreferences('e')" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Exercises</a>
+            <a href="#" onclick="RoutineFinder()" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Routines</a>
+            <a href="#" onclick="PreferencesCheck('d')" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Diets</a>
+            <a href="AiTutor.html" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Tutor</a>
+            <a onclick="preferencechooser()" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Preferences</a>
+            <a href="Profile.html" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Profile</a>
+        </nav>
+        <div class="flex items-center space-x-4">
+            <button id="darkModeToggle" class="focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden dark:inline-block"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-block dark:hidden"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            </button>
+            <button id="menuToggle" class="md:hidden focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+        </div>
+    </header>
+
+    <div id="mobileMenu" class="hidden md:hidden bg-gray-100 dark:bg-gray-800">
+        <a onclick="ExerciseORPreferences()" class="block py-2 px-4 text-sm uppercase tracking-wider hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Exercises</a>
+        <a onclick="RoutineFinder()" class="block py-2 px-4 text-sm uppercase tracking-wider hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Routines</a>
+        <a onclick="PreferencesCheck('d')" class="block py-2 px-4 text-sm uppercase tracking-wider hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Diets</a>
+        <a href="AiTutor.html" class="block py-2 px-4 text-sm uppercase tracking-wider hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Tutor</a>
+        <a onclick="preferencechooser()" class="block py-2 px-4 text-sm uppercase tracking-wider hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Preferences</a>
+        <a href="Profile.html" class="block py-2 px-4 text-sm uppercase tracking-wider hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Profile</a>
+    </div>
+
+    <main class="flex-grow">
+        <section id="hero" class="max-w-4xl mx-auto text-center py-20 px-4 relative overflow-hidden" style="margin-bottom: -60px; ">
+            <h1 class="text-4xl md:text-5xl font-bold mb-6 animated-text" >Nourish Your Body and Mind</h1>
+            <p class="text-lg mb-8 max-w-2xl mx-auto fade-in-element">
+                Discover a healthier, happier you with personalized exercise routines and nutrition plans.
+            </p>
+            <button class="px-8 py-3 rounded-full text-sm uppercase tracking-wider font-semibold bg-blue-600 text-white hover:bg-blue-700 transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
+                Start Your Journey
+            </button>
+            <br>
+            
+            <hr style="margin-top: 40px;">
+        </section>
+
+        <section class="py-20 px-4 scroll-reveal">
+            <h2 class="text-3xl font-bold text-center mb-12 animated-text">Why Choose Nourish?</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <div class="p-6 rounded-lg bg-gray-100 dark:bg-gray-800 transition-all duration-300 hover:shadow-xl transform hover:-translate-y-2">
+                    <h3 class="text-lg font-semibold mb-2">Personalized Workouts</h3>
+                    <p class="text-sm">Tailored exercise routines based on your fitness level and goals.</p>
+                </div>
+
+                <div class="p-6 rounded-lg bg-gray-100 dark:bg-gray-800 transition-all duration-300 hover:shadow-xl transform hover:-translate-y-2">
+                    <h3 class="text-lg font-semibold mb-2">AI-Powered Guidance</h3>
+                    <p class="text-sm">Advanced AI analyzes your data to provide real-time feedback and optimize your health journey. </p>
+                </div>
+
+                <div class="p-6 rounded-lg bg-gray-100 dark:bg-gray-800 transition-all duration-300 hover:shadow-xl transform hover:-translate-y-2">
+                    <h3 class="text-lg font-semibold mb-2">Comprehensive Wellness</h3>
+                    <p class="text-sm">Achieve a balanced lifestyle with integrated fitness, nutrition, and routine management all in one app. </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-20 px-4 bg-gray-100 dark:bg-gray-800 scroll-reveal">
+            <h2 class="text-3xl font-bold text-center mb-12 animated-text">Success Stories</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <div class="p-6 rounded-lg bg-white dark:bg-gray-700 transition-all duration-300 hover:shadow-xl transform hover:-translate-y-2">
+                    <p class="text-sm mb-4 italic">"Nourish helped me lose 30 pounds and gain confidence!"</p>
+                    <p class="text-sm font-semibold">Sarah L.</p>
+                </div>
+
+                <div class="p-6 rounded-lg bg-white dark:bg-gray-700 transition-all duration-300 hover:shadow-xl transform hover:-translate-y-2">
+                    <p class="text-sm mb-4 italic">"I gained muscle and energy with Nourish’s customized plans!"</p>
+                    <p class="text-sm font-semibold">Emily T.</p>
+                </div>
+
+                <div class="p-6 rounded-lg bg-white dark:bg-gray-700 transition-all duration-300 hover:shadow-xl transform hover:-translate-y-2">
+                    <p class="text-sm mb-4 italic">"Nourish transformed my life by making healthy living easy!"</p>
+                    <p class="text-sm font-semibold">Alex M.</p>
+                </div>
+               
+            </div>
+        </section>
+        <section class="py-20 px-4 bg-white text-black scroll-reveal">
+            <h2 class="text-3xl font-bold text-center mb-12 animated-text">Our Unique Approach</h2>
+            <div class="flex flex-col md:flex-row justify-center items-center max-w-6xl mx-auto">
+                <div class="w-full md:w-1/3 text-center mb-8 md:mb-0">
+                    <div class="rounded-full bg-gray-300 text-black w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="brain" class="w-10 h-10"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">AI-Powered Plans</h3>
+                    <center>
+                    <p class="text-sm" style="width: 90% !important;" >Intelligent algorithms create personalized fitness and nutrition plans.</p>
+                    </center>
+                </div>
+                <div class="w-full md:w-1/3 text-center mb-8 md:mb-0">
+                    <div class="rounded-full bg-gray-300 text-black w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="users" class="w-10 h-10"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Community Support</h3>
+                    <center>
+                    <p class="text-sm" style="width: 90% !important;">Connect with like-minded individuals on your wellness journey.</p>
+                    </center>
+                </div>
+                <div class="w-full md:w-1/3 text-center">
+                    <div class="rounded-full bg-gray-300 text-black w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="trending-up" class="w-10 h-10"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Progress Tracking</h3>
+                    <Center>
+                    <p class="text-sm" style="width: 90% !important;">Visualize your improvements with advanced analytics and insights.</p>
+                </Center>
+                </div>
+            </div>
+        </section>
+        <section class="py-20 px-4 text-center scroll-reveal">
+            <h2 class="text-3xl font-bold mb-6 animated-text">Ready to Transform Your Life?</h2>
+            <p class="text-lg mb-8 max-w-2xl mx-auto fade-in-element">
+                Join Nourish today and start your journey towards a healthier, happier you. 
+                Get personalized plans, expert guidance, and community support.
+            </p>
+            <div class="flex justify-center space-x-4">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <button class="px-4 py-2 rounded-full text-sm uppercase tracking-wider font-semibold bg-blue-600 text-white hover:bg-blue-700 transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
+                        Home <i data-lucide="home" class="inline-block ml-2"></i>
+                    </button>
+                    <button onclick="PreferencesCheck('e')" class="px-4 py-2 rounded-full text-sm uppercase tracking-wider font-semibold bg-blue-600 text-white hover:bg-blue-700 transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
+                        Exercises <i data-lucide="dumbbell" class="inline-block ml-2"></i>
+                    </button>
+                    <button onclick="RoutineFinder()" class="px-4 py-2 rounded-full text-sm uppercase tracking-wider font-semibold bg-blue-600 text-white hover:bg-blue-700 transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
+                        Routines <i data-lucide="repeat" class="inline-block ml-2"></i>
+                    </button>
+                    <button onclick="PreferencesCheck('d')" class="px-4 py-2 rounded-full text-sm uppercase tracking-wider font-semibold bg-blue-600 text-white hover:bg-blue-700 transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
+                        Diets <i data-lucide="apple" class="inline-block ml-2"></i>
+                    </button>
+                    <a href="AiTutor.html" class="px-4 py-2 rounded-full text-sm uppercase tracking-wider font-semibold bg-blue-600 text-white hover:bg-blue-700 transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
+                        Tutor <i data-lucide="user" class="inline-block ml-2"></i>
+                    </a>
+                    <button onclick="preferencechooser()" class="px-4 py-2 rounded-full text-sm uppercase tracking-wider font-semibold bg-blue-600 text-white hover:bg-blue-700 transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
+                        Preferences <i data-lucide="settings" class="inline-block ml-2"></i>
+                    </button>
+                    <a href="Profile.html" class="px-4 py-2 rounded-full text-sm uppercase tracking-wider font-semibold bg-blue-600 text-white hover:bg-blue-700 transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
+                        Profile <i data-lucide="user" class="inline-block ml-2"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+        
+    </main>
+
+    <footer class="py-12 px-4 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300">
+        <center>
+        <button id="SignOutBtn" class="px-4 py-2 rounded-full text-sm uppercase tracking-wider font-semibold bg-red-600 text-white hover:bg-red-700 transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
+            
+            Log Out <i data-lucide="log-out" class="inline-block ml-2"></i>
+           
+        </button>
+        </center>
+        <div class="mt-8 text-center text-sm">
+            <p>&copy; 2024 Nourish. All rights reserved.</p>
+        </div>
+
+    </footer>
+</section>
+<section id="whenSignedOut">
+<section style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; margin-top: 100px;">
+    <div style="max-width: 350px; width: 100%; padding: 2rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); border-radius: 0.5rem; background-color: #ffffff;">
+        <h1 style="text-align: center; font-size: 2rem; margin-bottom: 1rem;">Welcome Back</h1>
+        <p style="text-align: center; color: #6b7280; margin-bottom: 1.5rem;">Sign in to your account using your Gmail</p>
+        <button id="SignInBtn" style="width: 100%; padding: 0.75rem; background-color: #ef4444; color: white; border: none; border-radius: 0.25rem; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+            <i class="lucide-mail" style="margin-right: 0.5rem;"></i>
+            Sign in with Gmail
+        </button>
+    </div>
+</section>
+</section>
+
+    <script>const body = document.body;
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const menuToggle = document.getElementById('menuToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const heroSection = document.getElementById('hero');
+        
+        let isDarkMode = localStorage.getItem('darkMode') === 'true';
+        updateDarkMode();
+        
+        darkModeToggle.addEventListener('click', () => {
+            isDarkMode = !isDarkMode;
+            updateDarkMode();
+        });
+        
+        function updateDarkMode() {
+            body.classList.toggle('dark', isDarkMode);
+            localStorage.setItem('darkMode', isDarkMode);
+            darkModeToggle.innerHTML = isDarkMode ? '<i data-lucide="sun"></i>' : '<i data-lucide="moon"></i>';
+            lucide.createIcons();
+        }
+        
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            mobileMenu.classList.toggle('slide-down');
+            menuToggle.innerHTML = mobileMenu.classList.contains('hidden') ? '<i data-lucide="menu"></i>' : '<i data-lucide="x"></i>';
+            lucide.createIcons();
+        });
+        
+        const animateOnScroll = (entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                    observer.unobserve(entry.target);
+                }
+            });
+        };
+        
+        const scrollObserver = new IntersectionObserver(animateOnScroll, {
+            root: null,
+            threshold: 0.1
+        });
+        
+        document.querySelectorAll('.scroll-reveal').forEach(section => {
+            scrollObserver.observe(section);
+        });
+        
+        window.addEventListener('scroll', () => {
+            const scrollPosition = window.scrollY;
+            heroSection.style.transform = `translateY(${scrollPosition * 0.3}px)`;
+            heroSection.style.opacity = 1 - scrollPosition / 500;
+        });
+        
+        const animatedTexts = document.querySelectorAll('.animated-text');
+        animatedTexts.forEach(text => {
+            text.innerHTML = text.textContent.replace(/\S/g, "<span class='letter'>$&</span>");
+        });
+        
+        anime.timeline({loop: false})
+          .add({
+            targets: '.animated-text .letter',
+            opacity: [0,1],
+            easing: "easeInOutQuad",
+            duration: 2250,
+            delay: (el, i) => 150 * (i+1)
+          });
+        
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('mouseenter', () => {
+                framerMotion.animate(button, { scale: 1.05 }, { duration: 0.2 });
+            });
+            button.addEventListener('mouseleave', () => {
+                framerMotion.animate(button, { scale: 1 }, { duration: 0.2 });
+            });
+            button.addEventListener('click', () => {
+                framerMotion.animate(button, { scale: 0.95 }, { duration: 0.1 }).then(() => {
+                    framerMotion.animate(button, { scale: 1 }, { duration: 0.1 });
+                });
+            });
+        });
+        
+        gsap.registerPlugin(ScrollTrigger);
+        
+        gsap.utils.toArray('.fade-in-element').forEach(element => {
+            gsap.from(element, {
+                opacity: 0,
+                y: 50,
+                duration: 1,
+                scrollTrigger: {
+                    trigger: element,
+                    start: "top 80%",
+                    end: "bottom 20%",
+                    toggleActions: "play none none reverse"
+                }
+            });
+        });
+        
+        gsap.to("header", {
+            scrollTrigger: {
+                trigger: "body",
+                start: "top top",
+                end: "bottom top",
+                scrub: true
+            },
+            backgroundColor: isDarkMode ? "rgba(26, 32, 44, 0.8)" : "rgba(255, 255, 255, 0.8)",
+            height: "60px",
+            boxShadow: "0 5px 15px rgba(0, 0, 0, 0.1)"
+        });
+        
+        document.querySelectorAll('button').forEach(button => {
+            button.classList.add('hover-effect');
+        });
+        
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100
+        });
+
+        function preferencechooser(){
+  auth.onAuthStateChanged(user => {
+    if (user) {
+
+        
+      thingsRef = db.collection('preference')
+      
+      unsubscribe = thingsRef
+          .where('uid', '==', user.uid)
+          .onSnapshot(querySnapshot => {
+            
+              if (querySnapshot.empty) {
+                window.location.href = "PSurvey.html";
+              } 
+              else {
+                window.location.href = "PreferencesLoad.html";
+              }
+          });
+  }
+  
+  else {
+
+      unsubscribe && unsubscribe();
+  }
+  });
+}
+        </script>
+</body>
+</html>
