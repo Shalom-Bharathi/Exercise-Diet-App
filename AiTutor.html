@@ -6,6 +6,23 @@
     <title>Fitness AI Tutor Chat</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-auth.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-firestore.js"></script>
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyBvONbLQcR-XqSsJ9hi7xAsk8sTwej43aA",
+            authDomain: "ed-project-42419.firebaseapp.com",
+            projectId: "ed-project-42419",
+            storageBucket: "ed-project-42419.appspot.com",
+            messagingSenderId: "909551078814",
+            appId: "1:909551078814:web:456608495b9655eef6da8f"
+        };
+        firebase.initializeApp(firebaseConfig);
+      </script>
+
+    
     <style>
         
         .message {
@@ -60,6 +77,21 @@
         // Initialize Lucide icons
 lucide.createIcons();
 
+let apiKey;
+        // Replace this with your actual OpenAI API key
+            let thingsRefx;
+            let unsubscribex;
+            let db = firebase.firestore();
+            thingsRefx = db.collection('API')
+            
+            unsubscribex = thingsRefx
+            .onSnapshot(querySnapshot => {
+              querySnapshot.docs.forEach(doc => {
+                console.log(doc.data().API);
+                apiKey = doc.data().API
+            });
+        })
+
 // DOM elements
 const chatArea = document.getElementById('chatArea');
 const userInput = document.getElementById('userInput');
@@ -110,7 +142,7 @@ function addMessage(text, sender) {
 
 // Send message to AI and get response
 async function sendMessageToAI(message) {
-    const apiKey = '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'; // Replace with your actual API key
+    
     const apiUrl = 'https://api.openai.com/v1/chat/completions';
 
     try {

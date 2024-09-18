@@ -114,7 +114,7 @@
         </div>
 
         <div id="breakScreen" class="screen hidden flex flex-col items-center justify-center h-full">
-            <h2 class="text-3xl font-bold mb-4">Break Time</h2>
+            <h2 class="text-3xl font-bold mb-4">Relax Time</h2>
             <p class="text-xl mb-4">Next set starts in: <span id="breakTimer" class="font-bold"></span> seconds</p>
         </div>
     </main>
@@ -574,6 +574,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("Volume changed to:", volumeSlider.value);
     }
 
+    
     darkModeToggle.addEventListener('click', toggleDarkMode);
     pauseTimerBtn.addEventListener('click', pauseTimer);
     skipSetBtn.addEventListener('click', skipSet);
@@ -592,7 +593,13 @@ document.addEventListener('DOMContentLoaded', () => {
         startSessionBtn.disabled = true;
         startSessionBtn.textContent = "Loading Workout...";
     }
-    
+
+
+    function streachingInit() {
+        startScreen.classList.add('hidden');
+        streachingScreen.classList.remove('hidden');
+    }
+
     init();
 });
 

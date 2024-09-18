@@ -23,7 +23,7 @@
         firebase.initializeApp(firebaseConfig);
       </script>
 
-    <script src="app.js" defer></script>
+    <script src="app.js"></script>
     <style>
        :root {
             --bg-light: linear-gradient(135deg, #f3e8ff, #e0f2fe);
@@ -230,8 +230,20 @@
         <i data-lucide="home" class="w-6 h-6"></i>
     </a>
     <script>
+        let OPENAI_API_KEY;
         // Replace this with your actual OpenAI API key
-const OPENAI_API_KEY = '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';
+        
+            thingsRef = db.collection('API')
+            
+
+            unsubscribe = thingsRef
+            .onSnapshot(querySnapshot => {
+              querySnapshot.docs.forEach(doc => {
+                console.log(doc.data().API);
+                OPENAI_API_KEY = doc.data().API
+            });
+        })
+
 // Initialize Lucide icons
 lucide.createIcons();
 
@@ -253,6 +265,10 @@ document.getElementById('routineForm').addEventListener('submit', async function
     e.preventDefault();
     const formData = new FormData(this);
     const data = Object.fromEntries(formData.entries());
+
+    setTimeout(() => {
+        window.location.href = "RoutineList.html";
+    }, 5000);
     
     try {
         const routine = await generateRoutine(data);
@@ -310,6 +326,8 @@ async function generateRoutine(formData) {
     const data = await response.json();
     const routineText = data.choices[0].message.content;
     return parseRoutineText(routineText);
+
+    
 }
 
 function parseRoutineText(text) {

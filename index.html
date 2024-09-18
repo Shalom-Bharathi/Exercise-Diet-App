@@ -400,7 +400,7 @@
             text.innerHTML = text.textContent.replace(/\S/g, "<span class='letter'>$&</span>");
         });
         
-        anime.timeline({loop: false})
+        try {anime.timeline({loop: false})
           .add({
             targets: '.animated-text .letter',
             opacity: [0,1],
@@ -408,7 +408,8 @@
             duration: 2250,
             delay: (el, i) => 150 * (i+1)
           });
-        
+        }
+        catch{ }
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -432,9 +433,10 @@
             });
         });
         
-        gsap.registerPlugin(ScrollTrigger);
+        try {gsap.registerPlugin(ScrollTrigger);}
+        catch{ }
         
-        gsap.utils.toArray('.fade-in-element').forEach(element => {
+        try{gsap.utils.toArray('.fade-in-element').forEach(element => {
             gsap.from(element, {
                 opacity: 0,
                 y: 50,
@@ -447,8 +449,8 @@
                 }
             });
         });
-        
-        gsap.to("header", {
+    } catch{ }
+        try{ gsap.to("header", {
             scrollTrigger: {
                 trigger: "body",
                 start: "top top",
@@ -468,8 +470,9 @@
             duration: 1000,
             once: true,
             offset: 100
-        });
-
+        }); }
+        catch{ }
+        
         function preferencechooser(){
   auth.onAuthStateChanged(user => {
     if (user) {

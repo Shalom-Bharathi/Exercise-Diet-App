@@ -149,6 +149,22 @@ body.dark-mode .text-gray-600 {
     }
 }
     </style>
+   <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-app.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-auth.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-firestore.js"></script>
+   <script>
+       var firebaseConfig = {
+           apiKey: "AIzaSyBvONbLQcR-XqSsJ9hi7xAsk8sTwej43aA",
+           authDomain: "ed-project-42419.firebaseapp.com",
+           projectId: "ed-project-42419",
+           storageBucket: "ed-project-42419.appspot.com",
+           messagingSenderId: "909551078814",
+           appId: "1:909551078814:web:456608495b9655eef6da8f"
+       };
+       firebase.initializeApp(firebaseConfig);
+     </script>
+
+   <script src="app.js" defer></script>
 </head>
 <body>
     <div id="loading-screen" class="min-h-screen flex items-center justify-center">
@@ -202,9 +218,31 @@ body.dark-mode .text-gray-600 {
             
         }
     });
-    setTimeout(() => {
+    let thingsRef;
+    let unsubscribe;
+    auth.onAuthStateChanged(user => {
+    if (user) {
+      const thingsRef = db.collection('preferences');
+      
+      unsubscribe = thingsRef
+          .where('uid', '==', user.uid)
+          .onSnapshot(querySnapshot => {
+            if (querySnapshot.empty) {
+              console.log("EMPTY");
+              setTimeout(() => {
                 window.location.href = "PSurvey.html";
-            }, 3000);
+              }, 3000); // 2 seconds timeout
+            } else {
+              console.log("NOT EMPTY");
+              setTimeout(() => {
+                window.location.href = "PreferencesGen.html";
+              }, 2000); // 2 seconds timeout
+            }
+          });
+    } else {
+      unsubscribe && unsubscribe();
+    }
+  });
 });
     </script>
 </body>

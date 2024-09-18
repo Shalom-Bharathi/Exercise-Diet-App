@@ -295,11 +295,19 @@ auth.onAuthStateChanged(user => {
 };
 
 
-async function getUserPreferences(userInfo, allPreferences) {
+async function getUserPreferences(userInfo, allPreferences, apiKey) {
   const MAX_PREFERENCES = 4;
-  const API_KEY = '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'; // Replace with your actual API key
   const API_URL = 'https://api.openai.com/v1/chat/completions';
 
+  const user = await new Promise((resolve) => {
+    auth.onAuthStateChanged(resolve);
+  });
+
+  if (!user) {
+    console.error('User is not authenticated.');
+    return [];
+  }
+  
   const prompt = `Given the following user information:
 ${JSON.stringify(userInfo, null, 2)}
 
@@ -312,7 +320,7 @@ Please select ${MAX_PREFERENCES} preferences that would be most suitable for thi
     const response = await fetch(API_URL, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${API_KEY}`,
+        'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -343,8 +351,10 @@ Please select ${MAX_PREFERENCES} preferences that would be most suitable for thi
     console.log('API Response:', data);
     console.log('Selected Preferences:', selectedPreferences);
     PreferencesPush(selectedPreferences);
+    setTimeout(() => {
+      window.location.href = "PreferencesGen.html";
+  }, 1000);
 
-    
   } catch (error) {
     console.error('Error determining user preferences:', error.message);
     return [];
@@ -609,29 +619,31 @@ function LoadPreferencesGen(show,hide,hide2){
 }
 
 
-function preferencechooser(){
-  auth.onAuthStateChanged(user => {
-    if (user) {
-
-        
-      thingsRef = db.collection('preferences')
+function preferencechooser() {
+  console.log("Preference Chooser")
+  window.location.href = "PreferencesLoad.html";
+  // auth.onAuthStateChanged(user => {
+  //   if (user) {
+  //     const thingsRef = db.collection('preferences');
       
-      unsubscribe = thingsRef
-          .where('uid', '==', user.uid)
-          .onSnapshot(querySnapshot => {
-            
-              if (querySnapshot.empty) {
-                window.location.href = "PSurvey.html";
-              } 
-              else {
-                window.location.href = "PreferencesLoad.html";
-              }
-          });
-  }
-  
-  else {
-
-      unsubscribe && unsubscribe();
-  }
-  });
+  //     unsubscribe = thingsRef
+  //         .where('uid', '==', user.uid)
+  //         .onSnapshot(querySnapshot => {
+  //           if (querySnapshot.size == 0) {
+  //             console.log("EMPTY");
+  //             setTimeout(() => {
+  //               window.location.href = "PSurvey.html";
+  //             }, 3000); // 2 seconds timeout
+  //           } else {
+  //             console.log("NOT EMPTY");
+  //             setTimeout(() => {
+  //               window.location.href = "PreferenceGen.html";
+  //             }, 2000); // 2 seconds timeout
+  //           }
+  //         });
+  //   } else {
+  //     unsubscribe && unsubscribe();
+  //   }
+  // });
 }
+
