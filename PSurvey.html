@@ -513,23 +513,43 @@
         }
 
         function submitSurvey() {
-            console.log('Survey Data:', surveyData);
+            console.log("Height:", surveyData.height);
+            console.log("Weight:", surveyData.weight);
             document.getElementById('survey-section').style.display = 'none';
             document.getElementById('loading-section').style.display = 'block';
-            
-            // Fetch the API key from Firebase
-            const db = firebase.firestore();
-            thingsRef = db.collection('API')
-            
 
-            unsubscribe = thingsRef
-            .onSnapshot(querySnapshot => {
-              querySnapshot.docs.forEach(doc => {
-                console.log(doc.data().API);
-                getUserPreferences(surveyData, allPreferences, doc.data().API)
+            const user = firebase.auth().currentUser;
+
+            const userRef = db.collection('userData').doc(user.uid);
+
+            const userData = {
+                uid: user.uid,
+                Weight: Number(surveyData.weight),
+                Height: Number(surveyData.height)
+            };
+
+            userRef.set(userData)
+                .then(() => {
+                    console.log("Height and weight saved successfully");
+                    console.log('Survey Data:', surveyData);
+                    setTimeout(() => {
+                        fetchAPIKey();
+                    }, 5000);
+                })
+                .catch(error => {
+                    console.error("Error saving height and weight:", error);
+                });
+        }
+
+        function fetchAPIKey() {
+            const thingsRef = db.collection('API');
+            unsubscribe = thingsRef.onSnapshot(querySnapshot => {
+                querySnapshot.docs.forEach(doc => {
+                    console.log(doc.data().API);
+                    getUserPreferences(surveyData, allPreferences, doc.data().API);
+                });
             });
-        })
-}
+        }
 
 
 

@@ -351,9 +351,9 @@ Please select ${MAX_PREFERENCES} preferences that would be most suitable for thi
     console.log('API Response:', data);
     console.log('Selected Preferences:', selectedPreferences);
     PreferencesPush(selectedPreferences);
-    setTimeout(() => {
-      window.location.href = "PreferencesGen.html";
-  }, 1000);
+  //   setTimeout(() => {
+  //     window.location.href = "PreferencesGen.html";
+  // }, 1000);
 
   } catch (error) {
     console.error('Error determining user preferences:', error.message);
@@ -647,3 +647,29 @@ function preferencechooser() {
   // });
 }
 
+
+
+function saveWeight(weight){
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      thingsRef = db.collection('weight')
+      thingsRef.add({
+        uid: user.uid,
+        Weight: weight
+      })
+      console.log("Weight Saved")
+    }
+  })
+}
+
+function saveHeight(height){
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      thingsRef = db.collection('height')
+      thingsRef.add({
+        uid: user.uid,
+        Height: height,
+      })
+    }
+  })
+}

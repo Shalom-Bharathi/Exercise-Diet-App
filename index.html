@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nourish</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/framer-motion/10.12.16/framer-motion.min.js"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
@@ -24,6 +23,8 @@
         };
         firebase.initializeApp(firebaseConfig);
       </script>
+
+<script src="https://cdn.jsdelivr.net/npm/framer-motion@11.5.4/dist/framer-motion.min.js"></script>
 
     <script src="app.js" defer></script>
     
@@ -165,7 +166,7 @@
     <section id="whenSignedIn" hidden="true" >
     <header class="p-4 flex justify-between items-center sticky top-0 z-50 frosted-bg">
         <div class="text-2xl font-bold">
-            <a href="index.html" class="text-blue-600">Nourish</a>
+            <a href="#" class="text-blue-600">Nourish</a>
         </div>
         <nav class="hidden md:flex space-x-4">
             <a href="#" onclick="ExerciseORPreferences('e')" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Exercises</a>
@@ -201,9 +202,9 @@
             <p class="text-lg mb-8 max-w-2xl mx-auto fade-in-element">
                 Discover a healthier, happier you with personalized exercise routines and nutrition plans.
             </p>
-            <button class="px-8 py-3 rounded-full text-sm uppercase tracking-wider font-semibold bg-blue-600 text-white hover:bg-blue-700 transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
+            <a href="#StartJourney" class="px-8 py-3 rounded-full text-sm uppercase tracking-wider font-semibold bg-blue-600 text-white hover:bg-blue-700 transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
                 Start Your Journey
-            </button>
+            </a>
             <br>
             
             <hr style="margin-top: 40px;">
@@ -281,7 +282,7 @@
                 </div>
             </div>
         </section>
-        <section class="py-20 px-4 text-center scroll-reveal">
+        <section id="StartJourney" class="py-20 px-4 text-center scroll-reveal">
             <h2 class="text-3xl font-bold mb-6 animated-text">Ready to Transform Your Life?</h2>
             <p class="text-lg mb-8 max-w-2xl mx-auto fade-in-element">
                 Join Nourish today and start your journey towards a healthier, happier you. 
@@ -331,16 +332,66 @@
     </footer>
 </section>
 <section id="whenSignedOut">
-<section style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; margin-top: 100px;">
-    <div style="max-width: 350px; width: 100%; padding: 2rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); border-radius: 0.5rem; background-color: #ffffff;">
-        <h1 style="text-align: center; font-size: 2rem; margin-bottom: 1rem;">Welcome Back</h1>
-        <p style="text-align: center; color: #6b7280; margin-bottom: 1.5rem;">Sign in to your account using your Gmail</p>
-        <button id="SignInBtn" style="width: 100%; padding: 0.75rem; background-color: #ef4444; color: white; border: none; border-radius: 0.25rem; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-            <i class="lucide-mail" style="margin-right: 0.5rem;"></i>
-            Sign in with Gmail
-        </button>
+    <div id="signInContainer" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; margin-top: 100px;">
+        <div style="max-width: 350px; width: 100%; padding: 2rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); border-radius: 0.5rem; background-color: #ffffff;">
+            <h1 style="text-align: center; font-size: 2rem; margin-bottom: 1rem;">Welcome Back</h1>
+            <p style="text-align: center; color: #6b7280; margin-bottom: 1.5rem;">Sign in to your account</p>
+            
+            <div id="loginButtons">
+                
+                <button id="SignInBtn" style="width: 100%; padding: 0.75rem; background-color: #ef4444; color: white; border: none; border-radius: 0.25rem; font-size: 1rem; cursor: pointer; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center;">
+                    <i data-lucide="mail" style="margin-right: 0.5rem;"></i>
+                    Log In with Email
+                </button>
+                <button id="normalLoginBtn" style="width: 100%; padding: 0.75rem; background-color: #3b82f6; color: white; border: none; border-radius: 0.25rem; font-size: 1rem; cursor: pointer; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center;">
+                    <i data-lucide="user" style="margin-right: 0.5rem;"></i>
+                    Log In Via Google
+                </button>
+                <button id="phoneLoginBtn" style="width: 100%; padding: 0.75rem; background-color: #3b82f6; color: white; border: none; border-radius: 0.25rem; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                    <i data-lucide="phone" style="margin-right: 0.5rem;"></i>
+                    Log In with Phone Number
+                </button>
+            </div>
+
+            <div id="emailSignIn" class="signInStep" style="display: none;">
+                <input type="text" id="username" placeholder="Username or Email" style="width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 0.25rem; margin-bottom: 1rem;">
+                <input type="password" id="password" placeholder="Password" style="width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 0.25rem; margin-bottom: 1rem;">
+                <button id="SignInBtnEmail" style="width: 100%; padding: 0.75rem; background-color: #ef4444; color: white; border: none; border-radius: 0.25rem; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="lucide-mail" style="margin-right: 0.5rem;"></i>
+                    Sign in with Email
+                </button>
+            </div>
+
+            <div id="phoneSignIn" class="signInStep" style="display: none;">
+                <input type="text" id="phoneNumber" placeholder="Phone Number" style="width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 0.25rem; margin-bottom: 1rem;">
+                <button id="SignInBtnPhone" style="width: 100%; padding: 0.75rem; background-color: #3b82f6; color: white; border: none; border-radius: 0.25rem; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                    <i class="lucide-phone" style="margin-right: 0.5rem;"></i>
+                    Sign in with Phone Number (OTP)
+                </button>
+            </div>
+        </div>
     </div>
 </section>
+
+<script>
+    const loginButtons = document.getElementById('loginButtons');
+    const emailSignIn = document.getElementById('emailSignIn');
+    const phoneSignIn = document.getElementById('phoneSignIn');
+
+    
+
+    document.getElementById('emailLoginBtn').addEventListener('click', () => {
+        loginButtons.style.display = 'none';
+        emailSignIn.style.display = 'block';
+    });
+
+    document.getElementById('phoneLoginBtn').addEventListener('click', () => {
+        loginButtons.style.display = 'none';
+        phoneSignIn.style.display = 'block';
+    });
+</script>
+
+
 </section>
 
     <script>const body = document.body;
