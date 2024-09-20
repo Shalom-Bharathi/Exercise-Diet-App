@@ -11,6 +11,7 @@
 	<script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-auth.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-firestore.js"></script>
     
+
     <script src="app.js" defer></script>
     
     <style>
@@ -65,8 +66,10 @@
 </head>
 <body class="min-h-screen flex flex-col transition-colors duration-300 bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
     <header class="p-4 flex justify-between items-center sticky top-0 z-50 frosted-bg">
-        <div class="text-2xl font-bold">
-            <a href="index.html" class="text-blue-600">Nourish</a>
+        <div class="text-2xl font-bold flex items-center space-x-2">
+            <a href="index.html">
+            <span class="text-3xl font-extrabold text-blue-600"><img src="logo.png" alt="Logo" class="h-12 w-auto"></span>
+        </a>
         </div>
         <nav class="hidden md:flex space-x-4">
             <a href="#" onclick="ExerciseORPreferences('e')" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Exercises</a>
@@ -102,7 +105,14 @@
                                 <i data-lucide="mail" class="w-4 h-4 mr-1"></i>
                                 <span id="user-email">Loading...</span>
                             </span>
-                            
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-200 dark:bg-gray-700">
+                                <i data-lucide="user" class="w-4 h-4 mr-1"></i>
+                                <span id="user-age">Loading...</span>
+                            </span>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-200 dark:bg-gray-700">
+                                <i data-lucide="user" class="w-4 h-4 mr-1"></i>
+                                <span id="user-gender">Loading...</span>
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -177,16 +187,20 @@
                     </div>
                 </div>
             </div>
-            <!-- End of BMI Section -->
-        </div>
-    </main>
+            <div  class="bg-white dark:bg-gray-800 rounded-lg shadow-md mb-8 p-6">
+                <h3 class="text-xl font-semibold mb-4">Your Generated Meal Plan</h3>
+                <div id="MealPlanTableDIV" class="relative overflow-x-auto">
+                <table id="MealPlanTable" class="min-w-full bg-white dark:bg-gray-800">
+                </table>
+                </div>
+            </div>
 
     <footer class="py-4 text-center text-gray-600 dark:text-gray-400">
         <p>&copy; 2023 FitTrack. All rights reserved.</p>
     </footer>
 
     <script>
-        var firebaseConfig = {
+        const firebaseConfig = {
             apiKey: "AIzaSyBvONbLQcR-XqSsJ9hi7xAsk8sTwej43aA",
             authDomain: "ed-project-42419.firebaseapp.com",
             projectId: "ed-project-42419",
@@ -234,7 +248,8 @@
                     displayUserInfo(user);
                     fetchWorkoutCount(user);
                     fetchAchievements(user);
-                    fetchUserData(user); // Fetch user data for height, weight, and BMI
+                    fetchUserData(user); // Fetch user data for height, weight, BMI, age, and gender
+                    fetchUserData();
                 } else {
                     // No user is signed in, handle this case (e.g., redirect to login page)
                     console.log('No user signed in');
@@ -313,28 +328,115 @@
                         console.error("Error fetching achievements: ", error);
                     });
             }
+            function fetchUserData() {
+                auth.onAuthStateChanged(function(user) {
+                    db.collection('userData').doc(user.uid).get()
+                        .then((doc) => {
+                            if (doc.exists) {
+                                const data = doc.data();
+                                const height = data.Height; // Assuming height is in cm
+                                const weight = data.Weight; // Assuming weight is in kg
+                                const bmi = (weight / ((height / 100) ** 2)).toFixed(2); // BMI calculation
+                                const age = data.Age; // Assuming age is in years
+                                const gender = data.Gender; // Assuming gender is a string
 
-            function fetchUserData(user) {
-                db.collection('userData').doc(user.uid).get()
-                    .then((doc) => {
-                        if (doc.exists) {
-                            const data = doc.data();
-                            const height = data.Height; // Assuming height is in cm
-                            const weight = data.Weight; // Assuming weight is in kg
-                            const bmi = (weight / ((height / 100) ** 2)).toFixed(2); // BMI calculation
+                                document.getElementById('user-height').textContent = `${height} cm`;
+                                document.getElementById('user-weight').textContent = `${weight} kg`;
+                                document.getElementById('user-bmi').textContent = bmi;
+                                document.getElementById('user-age').textContent = `${age} years`;
+                                document.getElementById('user-gender').textContent = gender;
+                            } else {
+                                console.log("No user data found");
+                            }
+                        })
+                        .catch((error) => {
+                            console.error("Error fetching user data: ", error);
+                        });
 
-                            document.getElementById('user-height').textContent = `${height} cm`;
-                            document.getElementById('user-weight').textContent = `${weight} kg`;
-                            document.getElementById('user-bmi').textContent = bmi;
-                        } else {
-                            console.log("No user data found");
-                        }
-                    })
-                    .catch((error) => {
-                        console.error("Error fetching user data: ", error);
-                    });
+                });
             }
-        });
+        })
+
+        window.addEventListener('DOMContentLoaded', async () => {
+        try {
+            const db = firebase.firestore();
+            const mealPlansRef = db.collection('mealPlans');
+            const snapshot = await mealPlansRef.get();
+            if (!snapshot.empty) {
+                const mealPlanDoc = snapshot.docs[0];
+                const csvContent = mealPlanDoc.data().mealPlan;
+                if (csvContent) {
+                    const rows = csvContent.split('\n').map(row => row.split(','));
+                    const table = document.getElementById('MealPlanTable');
+                    table.className = 'min-w-full divide-y divide-gray-200';
+                    
+                    // Create table header
+                    const thead = document.createElement('thead');
+                    const headerRow = document.createElement('tr');
+                    ['Calories', 'Protein', 'Carbs', 'Fats', 'Micronutrients'].forEach(headerText => {
+                        const th = document.createElement('th');
+                        th.className = 'px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider';
+                        th.textContent = headerText;
+                        headerRow.appendChild(th);
+                    });
+                    thead.appendChild(headerRow);
+                    table.appendChild(thead);
+                    
+                    // Create table body
+                    const tbody = document.createElement('tbody');
+                    tbody.className = 'bg-white divide-y divide-gray-200';
+                    const maxColumns = 5;
+                    rows.forEach((row, index) => {
+                        if (index === 0) return; // skip header
+                        const tr = document.createElement('tr');
+                        for (let i = 0; i < maxColumns; i++) {
+                            const td = document.createElement('td');
+                            td.className = 'px-6 py-4 whitespace-nowrap';
+                            if (i < maxColumns - 1) {
+                                td.textContent = row[i] ? row[i].trim() : '';
+                            } else {
+                                if (row.length > maxColumns) {
+                                    const extra = row.slice(i).join(', ').trim();
+                                    td.textContent = row[i] ? `${row[i].trim()}, ${extra}` : extra;
+                                } else {
+                                    td.textContent = row[i] ? row[i].trim() : '';
+                                }
+                            }
+                            tr.appendChild(td);
+                        }
+                        tbody.appendChild(tr);
+                    });
+                    table.appendChild(tbody);
+                    
+                    const overviewCard = document.getElementById('MealPlanTableDIV');
+                    if (overviewCard) {
+                        overviewCard.innerHTML = '';
+                        overviewCard.appendChild(table);
+
+                        // Add a button to download the meal plan as CSV
+                                // Start of Selection
+                                const downloadButton = document.createElement('button');
+                                downloadButton.textContent = 'Download Meal Plan';
+                                downloadButton.className = 'mt-4 px-4 py-2 bg-blue-500 text-white rounded mx-auto block';
+                                downloadButton.onclick = () => {
+                                    const blob = new Blob([csvContent], { type: 'text/csv' });
+                                    const url = URL.createObjectURL(blob);
+                                    const a = document.createElement('a');
+                                    a.href = url;
+                                    a.download = 'meal_plan.csv';
+                                    document.body.appendChild(a);
+                                    a.click();
+                                    document.body.removeChild(a);
+                                    URL.revokeObjectURL(url);
+                                };
+                                overviewCard.appendChild(downloadButton);
+                    }
+                }
+            }
+        } catch (error) {
+            console.error("Error loading meal plan from Firebase:", error);
+        }
+    });
     </script>
 </body>
 </html>

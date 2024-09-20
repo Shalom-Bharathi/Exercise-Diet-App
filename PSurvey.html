@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nourish Lifestyle Survey</title>
+    <title>Lifestyle Survey</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -171,8 +171,10 @@
 <body class="min-h-screen flex flex-col transition-colors duration-300">
     <section id="survey-section">
         <header class="p-4 flex justify-between items-center sticky top-0 z-50 frosted-bg">
-            <div class="text-2xl font-bold">
-                <a href="index.html" class="text-blue-600">Nourish</a>
+            <div class="text-2xl font-bold flex items-center space-x-2">
+                <a href="index.html">
+                <span class="text-3xl font-extrabold text-blue-600"><img src="logo.png" alt="Logo" class="h-12 w-auto"></span>
+            </a>
             </div>
             <nav class="hidden md:flex space-x-4">
                 <a href="#" onclick="ExerciseORPreferences('e')"
@@ -299,6 +301,8 @@
         const surveyData = {
             height: '',
             weight: '',
+            age: '',
+            gender: '',
             activityLevel: '',
             healthGoal: '',
             dietaryRestrictions: '',
@@ -373,6 +377,18 @@
                     <div>
                         <label for="weight" class="block mb-1">Weight (kg)</label>
                         <input type="number" id="weight" name="weight" value="${surveyData.weight}" required>
+                    </div>
+                    <div>
+                        <label for="age" class="block mb-1">Age</label>
+                        <input type="number" id="age" name="age" value="${surveyData.age}" required>
+                    </div>
+                    <div>
+                        <label for="gender" class="block mb-1">Gender</label>
+                        <select id="gender" name="gender" required>
+                            <option value="">Select your gender</option>
+                            <option value="male" ${surveyData.gender === 'male' ? 'selected' : ''}>Male</option>
+                            <option value="female" ${surveyData.gender === 'female' ? 'selected' : ''}>Female</option>
+                        </select>
                     </div>
                 </div>
             `;
@@ -525,7 +541,9 @@
             const userData = {
                 uid: user.uid,
                 Weight: Number(surveyData.weight),
-                Height: Number(surveyData.height)
+                Height: Number(surveyData.height),
+                Age: Number(surveyData.age),
+                Gender: surveyData.gender,
             };
 
             userRef.set(userData)
@@ -547,11 +565,12 @@
                 querySnapshot.docs.forEach(doc => {
                     console.log(doc.data().API);
                     getUserPreferences(surveyData, allPreferences, doc.data().API);
+                    setTimeout(() => {
+                        window.location.href = "PreferencesGen.html";
+                    }, 6000);
                 });
             });
         }
-
-
 
         darkModeToggle.addEventListener('click', toggleDarkMode);
         prevButton.addEventListener('click', prevStep);
