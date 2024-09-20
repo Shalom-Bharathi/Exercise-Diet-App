@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nourish - Leaderboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/tailwindcss@latest/dist/tailwind.js"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-firestore.js"></script>
+    <script>
+        // Your Firebase configuration here
+        var firebaseConfig = {
+            apiKey: "AIzaSyBvONbLQcR-XqSsJ9hi7xAsk8sTwej43aA",
+            authDomain: "ed-project-42419.firebaseapp.com",
+            projectId: "ed-project-42419",
+            storageBucket: "ed-project-42419.appspot.com",
+            messagingSenderId: "909551078814",
+            appId: "1:909551078814:web:456608495b9655eef6da8f"
+        };
+        firebase.initializeApp(firebaseConfig);
+    </script>
+
+    
+    <style>
+        .dark {
+            background-color: #1a202c;
+            color: #f7fafc;
+        }
+        .dark .bg-gray-100 { background-color: #2d3748; }
+        .dark .bg-white { background-color: #4a5568; }
+        .dark .text-gray-900 { color: #f7fafc; }
+        .dark .text-blue-600 { color: #63b3ed; }
+        .animated-text {
+            background: linear-gradient(45deg, #540202, #AB3131, #EDE0A6);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientText 5s ease infinite;
+        }
+        @keyframes gradientText {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .leaderboard-card {
+            transition: all 0.3s ease;
+        }
+        .leaderboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col transition-colors duration-300">
+    <header class="p-4 flex justify-between items-center sticky top-0 z-50 bg-white dark:bg-gray-800 shadow-md">
+        <div class="text-2xl font-bold flex items-center space-x-2">
+            <a href="index.html">
+                <span class="text-3xl font-extrabold text-blue-600"><img src="logo.png" alt="Logo" class="h-12 w-auto"></span>
+            </a>
+        </div>
+        <nav class="hidden md:flex space-x-4">
+            <a href="index.html" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Home</a>
+            <a href="#" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Leaderboard</a>
+            <a href="Profile.html" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Profile</a>
+        </nav>
+        <div class="flex items-center space-x-4">
+            <button id="darkModeToggle" class="focus:outline-none">
+                <i data-lucide="moon" class="dark:hidden"></i>
+                <i data-lucide="sun" class="hidden dark:inline-block"></i>
+            </button>
+            <button id="menuToggle" class="md:hidden focus:outline-none">
+                <i data-lucide="menu"></i>
+            </button>
+        </div>
+    </header>
+
+    <div id="mobileMenu" class="hidden md:hidden bg-gray-100 dark:bg-gray-800">
+        <a href="index.html" class="block py-2 px-4 text-sm uppercase tracking-wider hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Home</a>
+        <a href="#" class="block py-2 px-4 text-sm uppercase tracking-wider hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Leaderboard</a>
+        <a href="Profile.html" class="block py-2 px-4 text-sm uppercase tracking-wider hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Profile</a>
+    </div>
+
+    <main class="flex-grow container mx-auto px-4 py-8">
+        <h1 class="text-4xl font-bold text-center mb-12 animated-text">Nourish Leaderboard</h1>
+
+        <div class="grid md:grid-cols-2 gap-8">
+            <!-- Most Workouts Leaderboard -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6" data-aos="fade-up">
+                <h2 class="text-2xl font-semibold mb-4" style="color: #540202;">Most Workouts</h2>
+                <div id="workoutsLeaderboard" class="space-y-4">
+                    <!-- Leaderboard entries will be dynamically inserted here -->
+                </div>
+            </div>
+
+            <!-- Most Achievements Leaderboard -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6" data-aos="fade-up" data-aos-delay="200">
+                <h2 class="text-2xl font-semibold mb-4" style="color: #540202;">Most Achievements</h2>
+                <div id="achievementsLeaderboard" class="space-y-4">
+                    <!-- Leaderboard entries will be dynamically inserted here -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="py-6 px-4 bg-gray-100 dark:bg-gray-800 text-center">
+        <p>&copy; 2024 Nourish. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Dark mode toggle
+        const body = document.body;
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        let isDarkMode = localStorage.getItem('darkMode') === 'true';
+        updateDarkMode();
+
+        darkModeToggle.addEventListener('click', () => {
+            isDarkMode = !isDarkMode;
+            updateDarkMode();
+        });
+
+        function updateDarkMode() {
+            body.classList.toggle('dark', isDarkMode);
+            localStorage.setItem('darkMode', isDarkMode);
+            darkModeToggle.innerHTML = isDarkMode ? '<i data-lucide="sun"></i>' : '<i data-lucide="moon"></i>';
+            lucide.createIcons();
+        }
+
+        // Mobile menu toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            menuToggle.innerHTML = mobileMenu.classList.contains('hidden') ? '<i data-lucide="menu"></i>' : '<i data-lucide="x"></i>';
+            lucide.createIcons();
+        });
+
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100
+        });
+
+        // Fetch and display leaderboard data
+        const db = firebase.firestore();
+        firebase.auth().onAuthStateChanged((user) => {
+          if (user) {
+              // User is signed in
+              const userRef = firebase.firestore().collection('users').doc(user.uid);
+              userRef.set({
+                  displayName: user.displayName || 'Anonymous',
+                  email: user.email || 'No email provided',
+                  photoURL: user.photoURL || 'https://via.placeholder.com/40'
+              }, { merge: true }).then(() => {
+                  console.log('User data updated in Firestore');
+              }).catch((error) => {
+                  console.error('Error updating user data: ', error);
+              });
+          }
+      });
+        
+        function fetchLeaderboardData(collection, leaderboardId, metric) {
+            const leaderboardElement = document.getElementById(leaderboardId);
+            leaderboardElement.innerHTML = '<p class="text-center text-gray-500">Loading...</p>';
+
+            db.collection(collection)
+                .get()
+                .then((querySnapshot) => {
+                    console.log(`Fetched ${querySnapshot.size} documents from ${collection}`);
+                    const userCounts = {};
+                    querySnapshot.forEach((doc) => {
+                        const userId = doc.data().uid;
+                        if (userId) {
+                            userCounts[userId] = (userCounts[userId] || 0) + 1;
+                        }
+                    });
+
+                    const sortedUsers = Object.entries(userCounts)
+                        .sort((a, b) => b[1] - a[1])
+                        .slice(0, 15); // Show top 15 users
+
+                    console.log(`Sorted users for ${collection}:`, sortedUsers);
+
+                    leaderboardElement.innerHTML = '';
+
+                    if (sortedUsers.length === 0) {
+                        leaderboardElement.innerHTML = '<div class="text-center text-gray-500">No data available</div>';
+                        return;
+                    }
+
+                    sortedUsers.forEach(([userId, count], index) => {
+                        db.collection('users').doc(userId).get().then((userDoc) => {
+                            const userData = userDoc.data();
+                            const userName = userData ? userData.displayName || 'Anonymous' : 'User ' + (index + 1);
+                            const userEmail = userData ? userData.email || 'No email provided' : 'No email available';
+                            const userAvatar = userData ? userData.photoURL || 'https://via.placeholder.com/40' : 'https://via.placeholder.com/40';
+
+                            const entryElement = document.createElement('div');
+                            entryElement.className = 'leaderboard-card flex items-center justify-between bg-gray-100 dark:bg-gray-700 p-4 rounded-lg';
+                            entryElement.innerHTML = `
+                                <div class="flex items-center space-x-4">
+                                    <span class="text-2xl font-bold" style="color: #AB3131;">#${index + 1}</span>
+                                    <img src="${userAvatar}" alt="${userName}" class="w-10 h-10 rounded-full">
+                                    <div>
+                                        <span class="font-semibold">${userName}</span>
+                                        <span class="text-sm text-gray-500">${userEmail}</span>
+                                    </div>
+                                </div>
+                                <span class="text-lg font-bold" style="color: #799163;">${count || 0} ${metric}</span>
+                            `;
+                            leaderboardElement.appendChild(entryElement);
+                        }).catch((error) => {
+                            console.error("Error fetching user data: ", error);
+                        });
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error fetching leaderboard data: ", error);
+                    leaderboardElement.innerHTML = '<p class="text-center text-gray-500">Error loading data</p>';
+                });
+            }
+
+        // Fetch data for both leaderboards
+        fetchLeaderboardData('sessions', 'workoutsLeaderboard', 'workouts');
+        fetchLeaderboardData('achevements', 'achievementsLeaderboard', 'achievements');
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
