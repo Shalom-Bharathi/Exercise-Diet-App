@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Personalized Routine</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <link rel="stylesheet" href="/styles/Global.css">
+    <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-firestore.js"></script>
+    <link rel="icon" type="image/png" href="/assets/icons/icon.png" sizes="32x32" />
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyBvONbLQcR-XqSsJ9hi7xAsk8sTwej43aA",
+            authDomain: "ed-project-42419.firebaseapp.com",
+            projectId: "ed-project-42419",
+            storageBucket: "ed-project-42419.appspot.com",
+            messagingSenderId: "909551078814",
+            appId: "1:909551078814:web:456608495b9655eef6da8f"
+        };
+        firebase.initializeApp(firebaseConfig);
+    </script>
+
+    <script src="/scripts/app.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #10B981;
+            --primary-dark: #065F46;
+            --bg-color: #F0FDF4;
+            --text-color: #1F2937;
+            --text-light: #4B5563;
+            --card-bg: #FFFFFF;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        .routine-item {
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Dark mode styles */
+        body.dark {
+            --bg-color: #111827;
+            --text-color: #F9FAFB;
+            --text-light: #D1D5DB;
+            --card-bg: #1F2937;
+            --primary-color: #34D399;
+            --primary-dark: #10B981;
+        }
+
+        .dark .card {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        #darkModeToggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        .sun-icon, .moon-icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        .dark .sun-icon {
+            display: none;
+        }
+
+        .dark .moon-icon {
+            display: inline-block;
+        }
+
+        .sun-icon {
+            display: inline-block;
+        }
+
+        .moon-icon {
+            display: none;
+        }
+
+        /* New styles for button and inner div */
+        .button-custom {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .inner-div {
+            background-color: var(--card-bg); /* Change to dark color in dark mode */
+        }
+
+        /* Dark mode inner div styles */
+        body.dark .inner-div {
+            background-color: #1F2937; /* Dark background for inner div */
+        }
+    </style>
+</head>
+<body>
+    <button id="darkModeToggle" class="focus:outline-none">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sun-icon"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y1="4.22"></line></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="moon-icon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    </button>
+
+    <div class="container mx-auto p-8 max-w-2xl">
+        <div class="card">
+            <div class="p-6 space-y-1 text-center inner-div">
+                <h1 class="text-3xl font-bold">Your Personalized Routine</h1>
+                <p class="text-lg text-light">Based on the information you provided</p>
+            </div>
+            <div class="p-6">
+                <div class="space-y-6">
+                    <h2 class="text-2xl font-semibold text-center mb-6">Daily Schedule</h2>
+                    <div class="space-y-4" id="routineItems">
+                        <!-- Routine items will be inserted here by JavaScript -->
+                    </div>
+                </div>
+            </div>
+            <div class="p-6 flex justify-center">
+                <a href="/index.html" id="goBackBtn" class="button-custom hover:bg-primary-dark text-white font-semibold py-2 px-4 rounded shadow-md transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-color focus:ring-opacity-50 flex items-center">
+                    <i data-lucide="house" class="w-5 h-5 mr-2"></i>
+                    Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let routineItems;
+
+        function fetchRoutines() {
+            firebase.auth().onAuthStateChanged(user => {
+                if (user) {
+                    const thingsRef = firebase.firestore().collection('routines');
+                    thingsRef.where('uid', '==', user.uid)
+                        .onSnapshot(querySnapshot => {
+                            routineItems = querySnapshot.docs.map(doc => doc.data().routines)[0];
+                            console.log(routineItems);
+                            populateRoutineItems();
+                        });
+                }
+            });
+        }
+        fetchRoutines();
+
+        function createRoutineItem(time, activity, index) {
+            const div = document.createElement('div');
+            div.className = `routine-item flex items-center justify-between p-4 rounded-lg shadow`;
+            div.style.animationDelay = `${index * 0.1}s`;
+            div.innerHTML = `
+                <span class="font-semibold">${time}</span>
+                <p class="text-light">${activity}</p>
+            `;
+            return div;
+        }
+
+        function populateRoutineItems() {
+            const container = document.getElementById('routineItems');
+            container.innerHTML = ''; // Clear existing items
+            
+            // Convert object to array of [time, activity] pairs
+            const items = Object.entries(routineItems);
+            
+            // Sort items based on start time
+            items.sort((a, b) => {
+                const timeA = a[0].split(' - ')[0];
+                const timeB = b[0].split(' - ')[0];
+                return convertTo24Hour(timeA) - convertTo24Hour(timeB);
+            });
+            
+            // Create routine items in the sorted order
+            items.forEach((item, index) => {
+                const [time, activity] = item;
+                container.appendChild(createRoutineItem(time, activity, index));
+            });
+        }
+
+        function convertTo24Hour(time) {
+            const [hours, minutes] = time.split(':').map(Number);
+            return hours * 60 + minutes;
+        }
+
+        // Dark mode functionality
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+        const sunIcon = document.querySelector('.sun-icon');
+        const moonIcon = document.querySelector('.moon-icon');
+
+        function toggleDarkMode() {
+            body.classList.toggle('dark');
+            const isDarkMode = body.classList.contains('dark');
+            localStorage.setItem('darkMode', isDarkMode);
+            updateDarkModeIcon(isDarkMode);
+        }
+
+        function updateDarkModeIcon(isDarkMode) {
+            if (isDarkMode) {
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'inline-block';
+            } else {
+                sunIcon.style.display = 'inline-block';
+                moonIcon.style.display = 'none';
+            }
+        }
+
+        function initializeDarkMode() {
+            const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+            if (savedDarkMode) {
+                body.classList.add('dark');
+            }
+            updateDarkModeIcon(savedDarkMode);
+        }
+
+        darkModeToggle.addEventListener('click', toggleDarkMode);
+        initializeDarkMode();
+
+        lucide.createIcons();
+    </script>
+</body>
+</html>

@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrifit360 Lifestyle</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="/styles/Global.css">
+    <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-firestore.js"></script>
+    <link rel="icon" type="image/png" href="/assets/icons/icon.png" sizes="32x32" />
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyBvONbLQcR-XqSsJ9hi7xAsk8sTwej43aA",
+            authDomain: "ed-project-42419.firebaseapp.com",
+            projectId: "ed-project-42419",
+            storageBucket: "ed-project-42419.appspot.com",
+            messagingSenderId: "909551078814",
+            appId: "1:909551078814:web:456608495b9655eef6da8f"
+        };
+        firebase.initializeApp(firebaseConfig);
+    </script>
+
+    <script src="/scripts/app.js"></script>
+
+    <style>
+        .progress-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: conic-gradient(var(--primary-color) 0deg, #e5e7eb 0deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .progress-circle::before {
+            content: attr(data-progress) '%';
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--background-color);
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        :root {
+            --primary-color: #3b82f6;
+            --secondary-color: #1e40af;
+            --background-color: #ffffff;
+            --text-color: #1f2937;
+            --card-background: #ffffff;
+            --card-border: #e5e7eb;
+        }
+
+        .dark {
+            --primary-color: #60a5fa;
+            --secondary-color: #93c5fd;
+            --background-color: #1f2937;
+            --text-color: #f3f4f6;
+            --card-background: #374151;
+            --card-border: #4b5563;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .card {
+            background-color: var(--card-background);
+            border: 1px solid var(--card-border);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+        }
+
+        .tab-trigger {
+            padding: 0.5rem 1rem;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab-trigger.active {
+            border-bottom-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .accordion-item {
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .accordion-trigger {
+            width: 100%;
+            text-align: left;
+            padding: 1rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .accordion-trigger:hover {
+            color: var(--primary-color);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .accordion-content.active {
+            max-height: 1000px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col transition-colors duration-300">
+    <header class="p-4 flex justify-between items-center sticky top-0 z-50 frosted-bg">
+        <div class="text-2xl font-bold flex items-center space-x-2">
+            <a href="/index.html">
+            <span class="text-3xl font-extrabold text-blue-600"><img src="/assets/icons/logo.png" alt="Logo" class="h-12 w-auto"></span>
+        </a>
+        </div>
+        <nav class="hidden md:flex space-x-4">
+            <a href="#" onclick="ExerciseORPreferences('e')" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Exercises</a>
+            <a href="#" onclick="RoutineFinder()" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Routines</a>
+            <a href="#" onclick="PreferencesCheck('d')" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Diets</a>
+            <a href="/pages/singlePageFeatures/AiTutor.html" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Tutor</a>
+            <a onclick="preferencechooser()" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Preferences</a>
+            <a href="/pages/singlePageFeatures/Profile.html" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Profile</a>
+        </nav>
+        <div class="flex items-center space-x-4">
+            <button id="darkModeToggle" class="focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden dark:inline-block"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y1="4.22"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-block dark:hidden"><path d="M21 12.79A9 9 0 1 1 11.21 3 A7 7 0 0 0 21 12.79z"></path></svg>
+            </button>
+            <button id="menuToggle" class="md:hidden focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-grow p-4 md:p-6 lg:p-8">
+        <div class="max-w-7xl mx-auto">
+            <div id="overviewCard" class="card mb-8">
+            </div>
+
+            <div id="challengeCard" class="card mb-8">
+                <h3 class="text-xl font-semibold mb-4 text-center">30-Day Challenge</h3>
+                <div class="flex items-center justify-center mb-4">
+                    <div class="progress-circle" data-progress="0"></div>
+                    <div class="ml-4 text-center">
+                        <p class="text-lg font-semibold mb-2">Days Completed: <span id="daysCompleted">0</span>/30</p>
+                        <button id="markDayButton" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">Mark Today as Completed</button>
+                    </div>
+                </div>
+                <button id="completeChallengeButton" class="w-full bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors opacity-50 cursor-not-allowed" disabled>Complete 30-Day Challenge</button>
+                <button id="finishDietButton" class="mt-4 w-full bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 transition-colors opacity-0 cursor-not-allowed" disabled style="display: none;">Finish Diet</button>
+            </div>
+
+            <div class="tabs mb-8">
+                <div class="tab-list grid w-full grid-cols-4">
+                    <button class="tab-trigger active" data-tab="foods">Foods</button>
+                    <button class="tab-trigger" data-tab="meal-plan">Meal Plan</button>
+                    <button class="tab-trigger" data-tab="benefits">Benefits</button>
+                    <button class="tab-trigger" data-tab="considerations">Considerations</button>
+                </div>
+                <div id="tabContent" class="tab-content">
+                </div>
+            </div>
+
+            <div id="foodChartCard" class="card mb-8 shadow-lg rounded-lg overflow-hidden">
+                <h3 class="text-2xl font-bold text-center mb-4 dark:text-gray-200">Generate Food Chart</h3>
+                <div id="foodChartContent" class="p-6 bg-gray-100 dark:bg-gray-800 rounded-lg">
+                    <p class="text-center mb-4 dark:text-gray-200">Generate food personalized chart based on needs...</p>
+                    <div class="mt-4">
+                        <label for="cuisineInput" class="block  mb-4 dark:text-gray-200">Enter Cuisine:</label>
+                        <input type="text" id="cuisineInput" placeholder="e.g., Italian, Mexican, Indian" class="mt-2 p-2 border rounded w-full ">
+                    </div>
+                </div>
+                <button id="generateFoodChartButton" onclick="generateDailyMealPlan();" class="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold mt-4">Generate Food Chart</button>
+                <br>
+                <br>
+                <div id="MealPlanTableDIV" class="relative overflow-x-auto">
+                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400" id="MealPlanTable">
+                    </table>
+                </div>
+            </div>
+            
+            </div>
+            <div id="aiCheckerCard" class="card mb-8">
+                <h3 class="text-xl font-semibold mb-4">Food Checker</h3>
+                <div class="flex space-x-2 mb-4">
+                    <input type="text" id="foodInput" placeholder="Enter a food to check if it is applicable in this diet..." class="flex-grow p-2 border rounded dark:bg-gray-700 dark:text-gray-200 text-black"> 
+                    <button id="checkButton" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">Check</button>
+                </div>
+                <div id="aiResponse" class="hidden p-4 rounded-md"></div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="py-4 text-center text-gray-600">
+        <p>&copy; 2024 Nutrifit360 Lifestyle. All rights reserved.</p>
+    </footer>
+    <script src="/scripts/util.js"></script>
+    <script>
+        // Global variable to store lifestyle data
+        let lifestyleData;
+        let unsubscribe;
+
+        function dietFetcher(callback) {
+            firebase.auth().onAuthStateChanged(user => {
+                if (user) {
+                    console.log("User authenticated");
+                    const thingsRef = firebase.firestore().collection('dietPlans');
+                    unsubscribe = thingsRef
+                        .where('uid', '==', user.uid)
+                        .onSnapshot(querySnapshot => {
+                            console.log("Fetching data");
+                            if (querySnapshot.empty) {
+                                console.log("No diet plan found for user");
+                                callback(null);
+                            } else {
+                                console.log("Diet plan found");
+                                querySnapshot.docs.forEach(doc => {
+                                    const dietPlanIndex = Number(doc.data().DietPlan);
+                                    if (DietsDB[dietPlanIndex]) {
+                                        lifestyleData = DietsDB[dietPlanIndex];
+                                        console.log("Lifestyle data set:", lifestyleData);
+                                        callback(lifestyleData);
+                                    } else {
+                                        console.error("Invalid diet plan index");
+                                        callback(null);
+                                    }
+                                });
+                            }
+                        }, error => {
+                            console.error("Error fetching diet plan:", error);
+                            callback(null);
+                        });
+                } else {
+                    console.log("User not authenticated");
+                    callback(null);
+                }
+            });
+        }
+
+        function initializeApp() {
+            dietFetcher((data) => {
+                if (data) {
+                    console.log("Rendering with data:", data);
+                    renderOverviewCard();
+                    renderChallengeCard();
+                    renderTabs();
+                    renderAIChecker();
+                } else {
+                    console.error("Failed to fetch lifestyle data");
+                    document.getElementById('overviewCard').innerHTML = '<p>Failed to load lifestyle data. Please make sure you are logged in and have a diet plan assigned.</p>';
+                }
+            });
+        }
+
+        function renderChallengeCard() {
+            const challengeCard = document.getElementById('challengeCard');
+            challengeCard.innerHTML = `
+                <h3 class="text-xl font-semibold mb-4 text-center">30-Day Challenge</h3>
+                <div class="flex items-center justify-center mb-4">
+                    <div class="progress-circle" data-progress="0"></div>
+                    <div class="ml-4 text-center">
+                        <p class="text-lg font-semibold mb-2">Days Completed: <span id="daysCompleted">0</span>/30</p>
+                        <button id="markDayButton" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">Mark Today as Completed</button>
+                    </div>
+                </div>
+                <button id="completeChallengeButton" class="w-full bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors opacity-50 cursor-not-allowed" disabled>Complete 30-Day Challenge</button>
+                <button id="finishDietButton" class="mt-4 w-full bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 transition-colors opacity-0 cursor-not-allowed" disabled style="display: none;">Finish Diet</button>
+            `;
+
+            const markDayButton = document.getElementById('markDayButton');
+            const completeChallengeButton = document.getElementById('completeChallengeButton');
+            const finishDietButton = document.getElementById('finishDietButton');
+            const daysCompletedSpan = document.getElementById('daysCompleted');
+            const progressCircle = document.querySelector('.progress-circle');
+
+            let daysCompleted = parseInt(localStorage.getItem('daysCompleted')) || 0;
+            daysCompletedSpan.textContent = daysCompleted;
+
+            // Update progress circle on load
+            updateProgress();
+
+            // Fetch current progress and check for existing achievement
+            firebase.auth().onAuthStateChanged(user => {
+                if (user) {
+                    // Check if 30-day challenge achievement already exists
+                    firebase.firestore().collection('achievements').where('uid', '==', user.uid).where('name', '==', `${lifestyleData.name} 30 day challenge`).get()
+                        .then(querySnapshot => {
+                            if (!querySnapshot.empty) {
+                                completeChallengeButton.classList.add('opacity-50', 'cursor-not-allowed');
+                                completeChallengeButton.disabled = true;
+                                completeChallengeButton.textContent = 'Challenge Already Completed';
+                            }
+                        });
+                }
+            });
+
+            markDayButton.addEventListener('click', () => {
+                if (daysCompleted < 30) {
+                    daysCompleted++;
+                    localStorage.setItem('daysCompleted', daysCompleted);
+                    updateProgress();
+                }
+            });
+
+            completeChallengeButton.addEventListener('click', () => {
+                firebase.auth().onAuthStateChanged(user => {
+                    if (user) {
+                        const date = new Date();
+                        let day = date.getDate();
+                        let month = date.getMonth() + 1;
+                        let year = date.getFullYear();
+                        let currentDate = `${day} / ${month} / ${year}`;
+                        // Add achievement
+                        firebase.firestore().collection('achievements').add({
+                            uid: user.uid,
+                            name: `${lifestyleData.name} 30 day challenge`,
+                            date: currentDate,
+                        }).then(() => {
+                            alert('Congratulations on completing the 30-day challenge!');
+                            completeChallengeButton.classList.add('opacity-50', 'cursor-not-allowed');
+                            completeChallengeButton.disabled = true;
+                            completeChallengeButton.textContent = 'Challenge Completed';
+                        });
+                    }
+                });
+            });
+            
+            finishDietButton.addEventListener('click', () => {
+                firebase.auth().onAuthStateChanged(user => {
+                    if (user) {
+                        let date = new Date();
+                        let day = date.getDate();
+                        let month = date.getMonth() + 1;
+                        let year = date.getFullYear();
+                        let currentDate = `${day} / ${month} / ${year}`;
+                        // Add diet completion achievement
+                        firebase.firestore().collection('achievements').add({
+                            uid: user.uid,
+                            name: lifestyleData.name,
+                            date: currentDate,
+                        }).then(() => {
+                            const thingsRef = firebase.firestore().collection('dietPlans');
+                            
+                            unsubscribe = thingsRef
+                                .where('uid', '==', user.uid)
+                                .onSnapshot(querySnapshot => {
+                                    querySnapshot.forEach(doc => {
+                                        thingsRef.doc(doc.id).delete();
+                                        console.log("Deleted");
+                                    });
+                                    setTimeout(() => {
+                                        window.location.href = '/index.html';
+                                    }, 3000);
+                                });
+                        });
+                    }
+                });
+            });
+
+            function updateProgress() {
+                daysCompletedSpan.textContent = daysCompleted;
+                const progress = (daysCompleted / 30) * 100;
+                progressCircle.style.background = `conic-gradient(var(--primary-color) ${progress * 3.6}deg, #e5e7eb 0deg)`;
+                progressCircle.setAttribute('data-progress', Math.round(progress));
+
+                if (daysCompleted === 30) {
+                    completeChallengeButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                    completeChallengeButton.removeAttribute('disabled');
+                    finishDietButton.style.display = 'block';
+                    finishDietButton.classList.remove('opacity-0', 'cursor-not-allowed');
+                    finishDietButton.removeAttribute('disabled');
+                }
+            }
+        }
+
+        function initializeDarkMode() {
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            
+            function setDarkMode(isDark) {
+                document.documentElement.classList.toggle('dark', isDark);
+                localStorage.setItem('darkMode', isDark);
+            }
+
+            // Set initial dark mode state
+            setDarkMode(isDarkMode);
+
+            darkModeToggle.addEventListener('click', () => {
+                const isDark = !document.documentElement.classList.contains('dark');
+                setDarkMode(isDark);
+            });
+        }
+            function updateDarkModeIcons(isDark) {
+                sunIcon.classList.toggle('hidden', !isDark);
+                moonIcon.classList.toggle('hidden', isDark);
+            }
+        
+
+        function renderOverviewCard() {
+            if (!lifestyleData) {
+                console.error("Lifestyle data is not available");
+                return;
+            }
+
+            // Fetch user data to calculate BMI
+            const user = firebase.auth().currentUser;
+            if (!user) {
+                console.error("User is not signed in");
+                return;
+            }
+
+            db.collection('userData').doc(user.uid).get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        const data = doc.data();
+                        const height = data.Height; // in cm
+                        const weight = data.Weight; // in kg
+                        const bmi = (weight / ((height / 100) ** 2)).toFixed(2); // BMI calculation
+
+                        // Adjust calories based on BMI
+                        const calorieAdjustment = 500;
+                        const bmiRanges = [
+                            { range: [0, 16], adjustment: calorieAdjustment * 2 },
+                            { range: [16, 18.5], adjustment: calorieAdjustment }, // Underweight
+                            { range: [18.5, 24.9], adjustment: 0 }, // Normal weight
+                            { range: [24.9, 29.9], adjustment: -calorieAdjustment }, // Overweight
+                            { range: [29.9, 34.9], adjustment: -calorieAdjustment * 1.5 }, // Obesity Class I
+                            { range: [34.9, 39.9], adjustment: -calorieAdjustment * 2 }, // Obesity Class II
+                            { range: [39.9, Infinity], adjustment: -calorieAdjustment * 2.5 } // Obesity Class III
+                        ];
+                        const adjustedCalories = lifestyleData.averageCalories + 
+                            bmiRanges.find(({ range }) => bmi >= range[0] && bmi < range[1]).adjustment;
+
+                        const overviewCard = document.getElementById('overviewCard');
+                        overviewCard.innerHTML = `
+                            <h2 class="text-3xl font-bold text-center mb-6">${lifestyleData.name}</h2>
+                            <p class="text-center mb-6">${lifestyleData.description}</p>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                                <div class="card">
+                                    <h3 class="text-lg font-semibold mb-2">Average Calories</h3>
+                                    <p class="text-3xl font-bold text-center" id="caloriesintakeperday">${adjustedCalories}</p>
+                                    <p class="text-center">calories per day</p>
+                                </div>
+                                <div class="card">
+                                    <h3 class="text-lg font-semibold mb-2">Macronutrients</h3>
+                                    <div class="space-y-2">
+                                        ${Object.entries(lifestyleData.macronutrients).map(([nutrient, percentage]) => `
+                                            <div>
+                                                <div class="flex justify-between mb-1">
+                                                    <span class="capitalize">${nutrient}</span>
+                                                    <span>${percentage}%</span>
+                                                </div>
+                                                <div class="progress-bar">
+                                                    <div class="progress-bar-fill" style="width: ${percentage}%"></div>
+                                                </div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <h3 class="text-lg font-semibold mb-2">Key Nutrients</h3>
+                                    <ul class="space-y-2">
+                                        ${lifestyleData.keyNutrients.map(nutrient => `
+                                            <li class="flex justify-between">
+                                                <span>${nutrient.name}</span>
+                                                <span>${nutrient.amount} ${nutrient.unit}</span>
+                                            </li>
+                                        `).join('')}
+                                    </ul>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        console.error("No user data found");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error fetching user data: ", error);
+                });
+        }
+
+        function renderTabs() {
+            if (!lifestyleData) {
+                console.error("Lifestyle data is not available");
+                return;
+            }
+            const tabTriggers = document.querySelectorAll('.tab-trigger');
+            const tabContent = document.getElementById('tabContent');
+
+            tabTriggers.forEach(trigger => {
+                trigger.addEventListener('click', () => {
+                    tabTriggers.forEach(t => t.classList.remove('active'));
+                    trigger.classList.add('active');
+                    renderTabContent(trigger.dataset.tab);
+                });
+            });
+
+            renderTabContent('foods');
+
+            function renderTabContent(tab) {
+                let content = '';
+                switch (tab) {
+                    case 'foods':
+                        content = `
+                            <div class="card">
+                                <h3 class="text-xl font-semibold mb-4">Recommended Foods</h3>
+                                <div class="accordion">
+                                    ${lifestyleData.foodCategories.map((category, index) => `
+                                        <div class="accordion-item">
+                                            <button class="accordion-trigger" data-index="${index}">
+                                                <div class="flex items-center">
+                                                    <i data-lucide="${category.icon}" class="w-6 h-6 mr-2"></i>
+                                                    <span>${category.name}</span>
+                                                </div>
+                                                <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                                            </button>
+                                            <div class="accordion-content">
+                                                <ul class="list-disc list-inside pl-4 py-2">
+                                                    ${category.foods.map(food => `<li>${food}</li>`).join('')}
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+                        break;
+                    case 'meal-plan':
+                        content = `
+                            <div class="card">
+                                <h3 class="text-xl font-semibold mb-4">Sample Meal Plan</h3>
+                                <div class="space-y-4">
+                                    ${lifestyleData.mealPlan.map(meal => `
+                                        <div>
+                                            <h4 class="font-semibold text-lg mb-2">${meal.meal}</h4>
+                                            <ul class="list-disc list-inside">
+                                                ${meal.options.map(option => `<li>${option}</li>`).join('')}
+                                            </ul>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+                        break;
+                    case 'benefits':
+                        content = `
+                            <div class="card">
+                                <h3 class="text-xl font-semibold mb-4">Benefits</h3>
+                                <ul class="list-disc list-inside">
+                                    ${lifestyleData.benefits.map(benefit => `<li>${benefit}</li>`).join('')}
+                                </ul>
+                            </div>
+                        `;
+                        break;
+                    case 'considerations':
+                        content = `
+                            <div class="card">
+                                <h3 class="text-xl font-semibold mb-4">Considerations</h3>
+                                <ul class="list-disc list-inside">
+                                    ${lifestyleData.considerations.map(consideration => `<li>${consideration}</li>`).join('')}
+                                </ul>
+                            </div>
+                        `;
+                        break;
+                }
+                tabContent.innerHTML = content;
+                lucide.createIcons();
+                initializeAccordion();
+            }
+        }
+
+        function initializeAccordion() {
+            const accordionTriggers = document.querySelectorAll('.accordion-trigger');
+            accordionTriggers.forEach(trigger => {
+                trigger.addEventListener('click', () => {
+                    const content = trigger.nextElementSibling;
+                    const icon = trigger.querySelector('[data-lucide="chevron-down"]');
+                    content.classList.toggle('active');
+                    icon.style.transform = content.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0)';
+                });
+            });
+        }
+
+        function renderAIChecker() {
+            if (!lifestyleData) {
+                console.error("Lifestyle data is not available");
+                return;
+            }
+            const aiCheckerCard = document.getElementById('aiCheckerCard');
+            const foodInput = document.getElementById('foodInput');
+            const checkButton = document.getElementById('checkButton');
+            const aiResponse = document.getElementById('aiResponse');
+
+            checkButton.addEventListener('click', () => {
+                const food = foodInput.value.trim();
+                if (food) {
+                    checkFood(food);
+                }
+            });
+        }
+
+        async function checkFood(food) {
+    try {
+        let API;
+        const thingsRef = firebase.firestore().collection('API');
+
+        const unsubscribe = thingsRef.onSnapshot(async querySnapshot => {
+            if (!querySnapshot.empty) {
+                API = querySnapshot.docs[0].data().API; // Get the first document's API
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API}`,
+                    },
+                    body: JSON.stringify({
+                        model: "gpt-4o-mini",
+                        messages: [{ role: "user", content: `Is ${food} good for ${lifestyleData.name}? Give the answer in 40 words or less.` }]
+                    })
+                });
+                const data = await response.json();
+                aiResponse.classList.remove('hidden');
+                aiResponse.innerHTML = `<p>${data.choices[0].message.content}</p>`;
+                console.log(data.choices[0].message.content);
+            } else {
+                console.error("No API key found");
+            }
+        });
+        // Unsubscribe from the listener when done
+        return () => unsubscribe();
+    } catch (error) {
+        console.error("Error checking food:", error);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    initializeApp();
+    initializeDarkMode();
+});
+
+async function generateDailyMealPlan() {
+    try {
+        console.log("Starting to generate daily meal plan...");
+        const user = firebase.auth().currentUser;
+        if (!user) {
+            console.error("User is not signed in");
+            return;
+        }
+
+        console.log("User is signed in. Fetching user data...");
+        const userDoc = await db.collection('userData').doc(user.uid).get();
+        if (!userDoc.exists) {
+            console.error("User data not found");
+            return;
+        }
+        const userData = userDoc.data();
+        const height = userData.Height; // in cm
+        const weight = userData.Weight; // in kg
+        const bmi = (weight / ((height / 100) ** 2)).toFixed(2); // BMI calculation
+        console.log(`User's height: ${height}, weight: ${weight}, calculated BMI: ${bmi}`);
+
+        const cuisine = document.getElementById('cuisineInput').value;
+        const caloriesIntake = document.getElementById('caloriesintakeperday').textContent;
+        console.log(`Cuisine input: ${cuisine}, Daily calorie intake: ${caloriesIntake}`);
+        
+        const thingsRef = db.collection('API');
+        const querySnapshot = await thingsRef.get();
+        if (querySnapshot.empty) {
+            console.error("API key not found");
+            return;
+        }
+        const apiDoc = querySnapshot.docs[0].data(); // Access the first document's data
+        const API = apiDoc.API; 
+        console.log(`Fetched API key: ${API}`);
+
+        // Show loading popup
+        const loadingPopup = document.createElement('div');
+        loadingPopup.id = 'loadingPopup';
+        loadingPopup.className = 'fixed top-0 right-0 bg-white dark:bg-gray-800 p-4 shadow-lg rounded-l-lg z-50';
+        loadingPopup.innerHTML = `
+            <div class="flex items-center space-x-2">
+                <div class="loader"></div>
+                <span>Generating daily meal plan...</span>
+            </div>
+        `;
+        document.body.appendChild(loadingPopup);
+
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${API}`,
+            },
+            body: JSON.stringify({
+                model: "gpt-4o",
+                messages: [{ 
+                    role: "user", 
+                    content: `Generate a meal plan for a single day for a ${lifestyleData.name} diet based on a BMI of ${bmi}. Only use foods from ${cuisine} cuisine. Include breakfast, lunch, dinner, and snacks with respective food names, calories, protein, carbs, fats, and micronutrients. Ensure that breakfast is included and the total for the day's meals adds up to the following daily intake:
+                    Daily consumption:
+                    ${JSON.stringify(lifestyleData.macronutrients)} per day,
+                    ${JSON.stringify(lifestyleData.keyNutrients)} per day,
+                    ${caloriesIntake} calories per day.
+                    Format the response ONLY as a CSV with columns: Meal, Food Name, Calories, Protein, Carbs, Fats, Micronutrients. Do not include any other text or explanations. Only provide the content without any headings.` 
+                }]
+            })
+        });
+
+        const data = await response.json();
+        console.log("Received response from OpenAI API.");
+        console.log("Raw API response:", data.choices[0].message.content);
+
+        if (!data.choices || data.choices.length === 0) {
+            console.error("Invalid response from OpenAI API");
+            return;
+        }
+
+        const mealPlanRaw = data.choices[0].message.content;
+        const csvContent = mealPlanRaw.replace(/```csv\n|\n```/g, ''); // Remove CSV code block markers
+
+        // Parse CSV content
+        const mealPlanLines = csvContent.trim().split('\n').slice(1); // Remove header
+
+        // Save the new meal plan to Firebase
+        const mealPlanRef = db.collection('mealPlans').doc(user.uid);
+        await mealPlanRef.set({ mealPlan: mealPlanRaw, uid: user.uid }, { merge: true });
+        console.log("New meal plan saved to Firebase.");
+
+        // Clear previous meal plan from Firebase
+        await mealPlanRef.update({ mealPlan: firebase.firestore.FieldValue.delete() });
+        await mealPlanRef.set({ mealPlan: mealPlanRaw, uid: user.uid });
+        
+        // Visualize the meal plan in a table
+        const mealPlanTable = document.getElementById('MealPlanTable');
+        if (!mealPlanTable) {
+            console.error("Meal plan table element not found");
+            return;
+        }
+        // Make the table visible
+        mealPlanTable.innerHTML = `
+            <thead class="bg-gray-200">
+                <tr class="text-left">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th class="px-4 py-2">Meal</th>
+                            <th class="px-4 py-2">Food Name</th>
+                            <th class="px-4 py-2">Calories</th>
+                            <th class="px-4 py-2">Protein</th>
+                            <th class="px-4 py-2">Carbs</th>
+                            <th class="px-4 py-2">Fats</th>
+                            <th class="px-4 py-2">Micronutrients</th>
+                        </tr>
+                    </thead>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-300 dark:bg-gray-800 dark:divide-gray-700">
+                ${mealPlanLines.map((line, index) => {
+                    const parts = line.split(',');
+                    // Ignore empty lines
+                    if (parts.length === 1 && parts[0].trim() === '') {
+                        return '';
+                    }
+                    const [meal, foodName, calories, protein, carbs, fats, micronutrients] = parts;
+                    const isTotalRow = index === mealPlanLines.length - 1; // Check if it's the last row
+                    return `
+                        <tr class="${isTotalRow ? 'total-row' : ''}">
+                            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">${meal.trim()}</td>
+                            <td class="px-6 py-4">${foodName.trim()}</td>
+                            <td class="px-6 py-4">${calories.trim()}</td>
+                            <td class="px-6 py-4">${protein.trim()}</td>
+                            <td class="px-6 py-4">${carbs.trim()}</td>
+                            <td class="px-6 py-4">${fats.trim()}</td>
+                            <td class="px-6 py-4">${micronutrients.trim()}</td>
+                        </tr>
+                    `;
+                }).filter(Boolean).join('')}
+            </tbody>
+        `;
+
+        const overviewCard = document.getElementById('MealPlanTableDIV');
+        if (overviewCard) {
+            overviewCard.appendChild(mealPlanTable);
+        } else {
+            console.error("Overview card element not found");
+        }
+
+        // Hide loading popup
+        document.body.removeChild(loadingPopup);
+
+    } catch (error) {
+        console.error("Error generating daily meal plan:", error);
+        // Hide loading popup in case of error
+        const loadingPopup = document.getElementById('loadingPopup');
+        if (loadingPopup) {
+            document.body.removeChild(loadingPopup);
+        }
+    }
+}
+
+    window.addEventListener('DOMContentLoaded', async () => {
+        try {
+            const db = firebase.firestore();
+            const mealPlansRef = db.collection('mealPlans');
+            const snapshot = await mealPlansRef.get();
+            if (!snapshot.empty) {
+                const mealPlanDoc = snapshot.docs[0];
+                const csvContent = mealPlanDoc.data().mealPlan;
+                if (csvContent) {
+                    const rows = csvContent.split('\n').map(row => row.split(','));
+                    const table = document.getElementById('MealPlanTable');
+                    table.className = 'min-w-full divide-y divide-gray-200';
+                    
+                    // Create table header
+                    const thead = document.createElement('thead');
+                    const headerRow = document.createElement('tr');
+                    ['Calories', 'Protein', 'Carbs', 'Fats', 'Micronutrients'].forEach(headerText => {
+                        const th = document.createElement('th');
+                        th.className = 'px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider';
+                        th.textContent = headerText;
+                        headerRow.appendChild(th);
+                    });
+                    thead.appendChild(headerRow);
+                    table.appendChild(thead);
+                    
+                    // Create table body
+                    const tbody = document.createElement('tbody');
+                    tbody.className = 'bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700';
+                    const maxColumns = 5;
+                    rows.forEach((row, index) => {
+                        if (index === 0) return; // skip header
+                        const tr = document.createElement('tr');
+                        for (let i = 0; i < maxColumns; i++) {
+                            const td = document.createElement('td');
+                            td.className = 'px-6 py-4 whitespace-nowrap';
+                            if (i < maxColumns - 1) {
+                                td.textContent = row[i] ? row[i].trim() : '';
+                            } else {
+                                if (row.length > maxColumns) {
+                                    const extra = row.slice(i).join(', ').trim();
+                                    td.textContent = row[i] ? `${row[i].trim()}, ${extra}` : extra;
+                                } else {
+                                    td.textContent = row[i] ? row[i].trim() : '';
+                                }
+                            }
+                            tr.appendChild(td);
+                        }
+                        tbody.appendChild(tr);
+                    });
+                    table.appendChild(tbody);
+                    
+                    const overviewCard = document.getElementById('MealPlanTableDIV');
+                    if (overviewCard) {
+                        overviewCard.innerHTML = '';
+                        overviewCard.appendChild(table);
+
+                        // Add a button to download the meal plan as CSV
+                                // Start of Selection
+                                const downloadButton = document.createElement('button');
+                                downloadButton.textContent = 'Download Meal Plan';
+                                downloadButton.className = 'mt-4 px-4 py-2 bg-blue-500 text-white rounded mx-auto block';
+                                downloadButton.onclick = () => {
+                                    const blob = new Blob([csvContent], { type: 'text/csv' });
+                                    const url = URL.createObjectURL(blob);
+                                    const a = document.createElement('a');
+                                    a.href = url;
+                                    a.download = 'meal_plan.csv';
+                                    document.body.appendChild(a);
+                                    a.click();
+                                    document.body.removeChild(a);
+                                    URL.revokeObjectURL(url);
+                                };
+                                overviewCard.appendChild(downloadButton);
+                    }
+                }
+            }
+        } catch (error) {
+            console.error("Error loading meal plan from Firebase:", error);
+        }
+    });
+    
+
+    </script>
+</body>
+</html>

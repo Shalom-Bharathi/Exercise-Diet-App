@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrifit360 Diet Plans</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <link rel="stylesheet" href="/styles/Global.css">
+    <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-auth.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-firestore.js"></script>
+    <link rel="icon" type="image/png" href="/assets/icons/icon.png" sizes="32x32" />
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyBvONbLQcR-XqSsJ9hi7xAsk8sTwej43aA",
+            authDomain: "ed-project-42419.firebaseapp.com",
+            projectId: "ed-project-42419",
+            storageBucket: "ed-project-42419.appspot.com",
+            messagingSenderId: "909551078814",
+            appId: "1:909551078814:web:456608495b9655eef6da8f"
+        };
+        firebase.initializeApp(firebaseConfig);
+      </script>
+    <script src="/scripts/app.js" defer></script>
+    <style>
+
+.index-badge {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            background-color: #3498db;
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.8rem;
+            z-index: 10;
+        }
+        
+        body {
+    transition: background-color 0.3s, color 0.3s;
+}
+
+body.dark-mode {
+    background-color: #1a202c;
+    color: #e2e8f0;
+}
+
+.card {
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.dark-mode .card {
+    background-color: #2d3748;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    border-bottom: 1px solid #e2e8f0;
+    padding: 1rem;
+}
+
+.dark-mode .card-header {
+    border-bottom-color: #4a5568;
+}
+
+.card-content {
+    padding: 1rem;
+}
+
+.card-footer {
+    border-top: 1px solid #e2e8f0;
+    padding: 1rem;
+}
+
+.dark-mode .card-footer {
+    border-top-color: #4a5568;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    font-weight: 600;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.btn-outline {
+    border: 1px solid #4a5568;
+    color: #4a5568;
+}
+
+.dark-mode .btn-outline {
+    border-color: #e2e8f0;
+    color: #e2e8f0;
+}
+
+.btn-outline:hover {
+    background-color: #4a5568;
+    color: #ffffff;
+}
+
+.dark-mode .btn-outline:hover {
+    background-color: #e2e8f0;
+    color: #1a202c;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background-color: #e2e8f0;
+    color: #4a5568;
+}
+
+.dark-mode .badge {
+    background-color: #4a5568;
+    color: #e2e8f0;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.card:nth-child(even) {
+    animation-delay: 0.2s;
+}
+
+/* Tooltip styles */
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+    </style>
+</head>
+<body class="min-h-screen flex flex-col transition-colors duration-300">
+    <header class="p-4 flex justify-between items-center sticky top-0 z-50 frosted-bg">
+        <div class="text-2xl font-bold flex items-center space-x-2">
+            <a href="/index.html">
+            <span class="text-3xl font-extrabold text-blue-600"><img src="/assets/icons/logo.png" alt="Logo" class="h-12 w-auto"></span>
+        </a>
+        </div>
+        <nav class="hidden md:flex space-x-4">
+            <a href="#" onclick="ExerciseORPreferences('e')" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Exercises</a>
+            <a href="#" onclick="RoutineFinder()" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Routines</a>
+            <a href="#" onclick="PreferencesCheck('d')" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Diets</a>
+            <a href="/pages/singlePageFeatures/AiTutor.html" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Tutor</a>
+            <a onclick="preferencechooser()" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Preferences</a>
+            <a href="/pages/singlePageFeatures/Profile.html" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Profile</a>
+        </nav>
+        <div class="flex items-center space-x-4">
+            <button id="darkModeToggle" class="focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden dark:inline-block"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y1="4.22"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-block dark:hidden"><path d="M21 12.79A9 9 0 1 1 11.21 3 A7 7 0 0 0 21 12.79z"></path></svg>
+            </button>
+            <button id="menuToggle" class="md:hidden focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+        </div>
+    </header>
+    <main class="flex-grow p-4 md:p-6 lg:p-8">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl font-bold mb-6 text-center">Explore Our Diet Plans</h2>
+            <p class="text-center mb-8 text-lg">
+                Discover a variety of diet plans to suit your lifestyle and health needs. Select a plan to get started on your wellness journey.
+            </p>
+
+            <input type="text" id="searchInput" placeholder="Search diet plans..." class="w-full p-2 mb-4 border rounded">
+
+            <div id="recommendedDiets" class="mb-8">
+                <h3 class="text-2xl font-bold mb-4">Recommended Diets for You</h3>
+                <div id="recommendedDietsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- Recommended diet cards will be dynamically inserted here -->
+                </div>
+            </div>
+
+            <div id="allDiets">
+                <h3 class="text-2xl font-bold mb-4">All Diet Plans</h3>
+                <div id="dietPlansGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- Diet plan cards will be dynamically inserted here -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="py-4 text-center text-gray-600">
+        <p>&copy; 2024 Nutrifit360. All rights reserved.</p>
+    </footer>
+    
+<script src="/scripts/util.js"></script>
+
+    <script>
+let userPreferences;
+const dietTypeIcons = {
+    veg: { icon: "salad", color: "#2ecc71" },
+    "non-veg": { icon: "beef", color: "#e74c3c" },
+    egg: { icon: "egg", color: "#f1c40f" },
+};
+
+// DOM Elements
+let darkModeToggle, body, dietPlansGrid, recommendedDietsGrid, searchInput, recommendedDietsSection;
+
+// Initialize DOM elements
+function initializeDOMElements() {
+    darkModeToggle = document.getElementById('darkModeToggle');
+    body = document.body;
+    dietPlansGrid = document.getElementById('dietPlansGrid');
+    recommendedDietsGrid = document.getElementById('recommendedDietsGrid');
+    searchInput = document.getElementById('searchInput');
+    recommendedDietsSection = document.getElementById('recommendedDiets');
+
+    console.log("DOM elements initialized", {
+        darkModeToggle,
+        dietPlansGrid,
+        recommendedDietsGrid,
+        searchInput,
+        recommendedDietsSection
+    });
+}
+
+
+function updateDarkModeIcon() {
+            if (darkModeToggle) {
+                const isDarkMode = body.classList.contains('dark-mode');
+                const sunIcon = darkModeToggle.querySelector('.sun-icon');
+                const moonIcon = darkModeToggle.querySelector('.moon-icon');
+                
+                if (sunIcon && moonIcon) {
+                    if (isDarkMode) {
+                        sunIcon.style.display = 'none';
+                        moonIcon.style.display = 'inline-block';
+                    } else {
+                        sunIcon.style.display = 'inline-block';
+                        moonIcon.style.display = 'none';
+                    }
+                }
+            }
+        }
+
+
+
+// Check for saved dark mode preference 
+function initializeDarkMode() {
+            const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+            if (body) {
+                if (savedDarkMode) {
+                    body.classList.add('dark-mode');
+                } else {
+                    body.classList.remove('dark-mode');
+                }
+                updateHeaderStyles(savedDarkMode);
+                updateDarkModeIcon();
+            }
+            console.log("Dark mode initialized", { savedDarkMode });
+        }
+
+
+        function updateHeaderStyles(isDarkMode) {
+            const header = document.querySelector('header');
+            if (header) {
+                if (isDarkMode) {
+                    header.style.backgroundColor = 'rgba(26, 32, 44, 0.8)';
+                } else {
+                    header.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+                }
+            }
+        }
+
+// User preferences function    
+function getPreferences() {
+    console.log("getPreferences called");
+    if (typeof firebase !== 'undefined' && firebase.auth && firebase.firestore) {
+        firebase.auth().onAuthStateChanged(user => {
+            console.log("Auth state changed", user ? "User logged in" : "No user");
+            if (user) {
+                const preferencesRef = firebase.firestore().collection('preferences');
+
+                preferencesRef
+                    .where('uid', '==', user.uid)
+                    .get()
+                    .then(querySnapshot => {
+                        console.log("Preferences query snapshot", querySnapshot);
+                        if (!querySnapshot.empty) {
+                            const userPreferenceDoc = querySnapshot.docs[0].data();
+                            userPreferences = userPreferenceDoc.Preference || [];
+                            if (typeof userPreferences === 'string') {
+                                userPreferences = [userPreferences];
+                            }
+                        } else {
+                            userPreferences = [];
+                        }
+                        console.log("Set userPreferences", userPreferences);
+                        renderDietPlans();
+                        renderRecommendedDiets();
+                    })
+                    .catch(error => {
+                        console.error("Error getting preferences: ", error);
+                    });
+            } else {
+                console.log("No user signed in, setting default preferences");
+                userPreferences = [];
+                renderDietPlans();
+                renderRecommendedDiets();
+            }
+        });
+    } else {
+        console.error("Firebase auth or firestore not initialized");
+        userPreferences = [];
+        renderDietPlans();
+        renderRecommendedDiets();
+    }
+}
+
+// Render recommended diets
+function renderRecommendedDiets() {
+    console.log("renderRecommendedDiets called", userPreferences);
+    if (!Array.isArray(userPreferences) || userPreferences.length === 0) {
+        console.log("User preferences not set, invalid, or empty");
+        document.getElementById('recommendedDiets').style.display = 'none';
+        return;
+    }
+
+    if (recommendedDietsGrid) {
+        recommendedDietsGrid.innerHTML = '';
+        const recommendedDiets = dietPlans.filter(plan => 
+            userPreferences.some(pref => plan.keywords.includes(pref))
+        );
+        console.log("Recommended diets", recommendedDiets);
+        
+        if (recommendedDiets.length > 0) {
+            recommendedDiets.forEach((plan, index) => {
+                const card = createDietPlanCard(plan, index);
+                recommendedDietsGrid.appendChild(card);
+            });
+            document.getElementById('recommendedDiets').style.display = 'block';
+        } else {
+            document.getElementById('recommendedDiets').style.display = 'none';
+        }
+        
+        lucide.createIcons();
+        console.log("Recommended diets rendered");
+    } else {
+        console.error("recommendedDietsGrid element not found");
+    }
+}
+
+
+function createDietPlanCard(plan, displayIndex) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+        <div class="index-badge">${displayIndex + 1}</div>
+        <div class="card-header">
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="text-lg font-bold">${plan.title}</h3>
+                <i data-lucide="${plan.icon}" class="h-6 w-6" style="color: ${plan.color};"></i>
+            </div>
+            <div class="flex space-x-2 mb-2">
+                ${plan.dietTypes.map(type => `
+                    <div class="tooltip">
+                        <span class="badge">
+                            <i data-lucide="${dietTypeIcons[type].icon}" class="h-4 w-4" style="color: ${dietTypeIcons[type].color};"></i>
+                        </span>
+                        <span class="tooltiptext">${type === 'veg' ? 'Vegetarian' : type === 'non-veg' ? 'Non-vegetarian' : 'Egg-based'}</span>
+                    </div>
+                `).join('')}
+            </div>
+            <p class="text-sm">${plan.description}</p>
+        </div>
+        <div class="card-content">
+            <p class="text-sm font-semibold mt-2">Potential Benefits:</p>
+            <p class="text-sm">${plan.benefits}</p>
+        </div>
+        <div class="card-footer">
+            <button class="btn btn-outline w-full" onclick="DietPlanSelection(${dietPlans.indexOf(plan)})">
+                Accept Plan <i data-lucide="check" class="ml-2 h-4 w-4"></i>
+            </button>
+        </div>
+    `;
+    return card;
+}
+
+
+// Render all diet plans
+function renderDietPlans() {
+    console.log("renderDietPlans called");
+    if (dietPlansGrid) {
+        dietPlansGrid.innerHTML = '';
+        dietPlans.forEach((plan, index) => {
+            const card = createDietPlanCard(plan, index);
+            dietPlansGrid.appendChild(card);
+        });
+        lucide.createIcons();
+        console.log("All diet plans rendered");
+    } else {
+        console.error("dietPlansGrid element not found");
+    }
+}
+
+
+function toggleDarkMode() {
+            if (body) {
+                body.classList.toggle('dark-mode');
+                const isDarkMode = body.classList.contains('dark-mode');
+                localStorage.setItem('darkMode', isDarkMode);
+                updateDarkModeIcon();
+                updateHeaderStyles(isDarkMode);
+            }
+        }
+
+
+
+
+// Search functionality
+function initializeSearch() {
+    if (searchInput && recommendedDietsSection) {
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                const title = card.querySelector('h3').textContent.toLowerCase();
+                const description = card.querySelector('.card-header p').textContent.toLowerCase();
+                if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // Hide recommended diets section when searching
+            if (searchTerm.length > 0) {
+                recommendedDietsSection.style.display = 'none';
+            } else {
+                recommendedDietsSection.style.display = '';
+            }
+            console.log("Search performed", searchTerm);
+        });
+    } else {
+        console.error("Search input or recommended diets section not found");
+    }
+}
+
+// Initialize
+function initialize() {
+            console.log("Initializing app");
+            initializeDOMElements();
+            initializeDarkMode();
+            getPreferences();
+            initializeSearch();
+
+            if (darkModeToggle) {
+                darkModeToggle.addEventListener('click', toggleDarkMode);
+            }
+
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            } else {
+                console.error("Lucide library not loaded");
+            }
+        }
+
+// Run initialization when DOM is fully loaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initialize);
+} else {
+    initialize();
+}
+
+console.log("Script ended, waiting for DOMContentLoaded or immediate initialization");
+
+
+    </script>
+</body>
+</html>

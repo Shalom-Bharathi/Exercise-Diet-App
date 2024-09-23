@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workout Plans - Nutrifit360</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/framer-motion/10.12.16/framer-motion.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <link rel="icon" type="image/png" href="/assets/icons/icon.png" sizes="32x32" />
+    <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-auth.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-firestore.js"></script>
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyBvONbLQcR-XqSsJ9hi7xAsk8sTwej43aA",
+            authDomain: "ed-project-42419.firebaseapp.com",
+            projectId: "ed-project-42419",
+            storageBucket: "ed-project-42419.appspot.com",
+            messagingSenderId: "909551078814",
+            appId: "1:909551078814:web:456608495b9655eef6da8f"
+        };
+        firebase.initializeApp(firebaseConfig);
+      </script>
+
+    <script src="/scripts/app.js"></script>
+    <script src="/scripts/util.js"></script>
+    
+    <style>
+        .dark {
+            background-color: #1a202c;
+            color: #f7fafc;
+        }
+        
+        .dark .bg-gray-100 {
+            background-color: #2d3748;
+        }
+        
+        .dark .text-gray-900 {
+            color: #f7fafc;
+        }
+        
+        .dark .text-blue-600 {
+            color: #63b3ed;
+        }
+        
+        .dark .bg-white {
+            background-color: #2d3748;
+        }
+        
+        .dark .text-gray-600 {
+            color: #e2e8f0;
+        }
+        
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideDown {
+            from { max-height: 0; opacity: 0; }
+            to { max-height: 300px; opacity: 1; }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .slide-down {
+            animation: slideDown 0.3s ease-out;
+        }
+        
+        /* Difficulty colors */
+        .bg-green-500 { background-color: #48bb78; }
+        .bg-yellow-500 { background-color: #ecc94b; }
+        .bg-red-500 { background-color: #f56565; }
+
+        .frosted-bg {
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+}
+.dark .frosted-bg {
+    background-color: rgba(17, 24, 39, 0.8);
+}
+.workout-tasks-container {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+body {
+    background-color:rgb(231, 231, 231)important;
+}
+
+.toggle-btn {
+            background-color: #e2e8f0;
+            color: #4a5568;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .toggle-btn.active {
+            background-color: #3182ce;
+            color: white;
+        }
+        .dark .toggle-btn {
+            background-color: #4a5568;
+            color: #e2e8f0;
+        }
+        .dark .toggle-btn.active {
+            background-color: #63b3ed;
+            color: #1a202c;
+        }
+
+    </style>
+</head>
+<body class="min-h-screen flex flex-col transition-colors duration-300">
+    <header class="p-4 flex justify-between items-center sticky top-0 z-50 frosted-bg">
+        <div class="text-2xl font-bold flex items-center space-x-2">
+            <a href="/index.html">
+            <span class="text-3xl font-extrabold text-blue-600"><img src="/assets/icons/logo.png" alt="Logo" class="h-12 w-auto"></span>
+        </a>
+        </div>
+        <nav class="hidden md:flex space-x-4">
+            <a href="#" onclick="ExerciseORPreferences('e')" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Exercises</a>
+            <a href="#" onclick="RoutineFinder()" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Routines</a>
+            <a href="#" onclick="PreferencesCheck('d')" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Diets</a>
+            <a href="/pages/singlePageFeatures/AiTutor.html" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Tutor</a>
+            <a onclick="preferencechooser()" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Preferences</a>
+            <a href="/pages/singlePageFeatures/Profile.html" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Profile</a>
+        </nav>
+        <div class="flex items-center space-x-4">
+            <button id="darkModeToggle" class="focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden dark:inline-block"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y1="4.22"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-block dark:hidden"><path d="M21 12.79A9 9 0 1 1 11.21 3 A7 7 0 0 0 21 12.79z"></path></svg>
+            </button>
+            <button id="menuToggle" class="md:hidden focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+        </div>
+    </header>
+
+    <div id="mobileMenu" class="hidden md:hidden bg-gray-100 dark:bg-gray-800">
+        <a href="#" class="block py-2 px-4 text-sm uppercase tracking-wider hover:bg-gray-200 dark:hover:bg-gray-700">Home</a>
+        <a href="#" class="block py-2 px-4 text-sm uppercase tracking-wider hover:bg-gray-200 dark:hover:bg-gray-700">Workout Plans</a>
+        <a href="#" class="block py-2 px-4 text-sm uppercase tracking-wider hover:bg-gray-200 dark:hover:bg-gray-700">Nutrition</a>
+        <a href="#" class="block py-2 px-4 text-sm uppercase tracking-wider hover:bg-gray-200 dark:hover:bg-gray-700">Community</a>
+        <a href="#" class="block py-2 px-4 text-sm uppercase tracking-wider hover:bg-gray-200 dark:hover:bg-gray-700">Profile</a>
+    </div>
+
+    <main class="flex-grow p-4">
+        <h1 class="text-3xl md:text-4xl font-bold text-center my-8">Workout Plans</h1>
+        <div class="max-w-6xl mx-auto mb-6">
+            <h2 class="text-xl font-semibold mb-2">Your Preferences</h2>
+            <div id="userPreferences" class="flex flex-wrap gap-2">
+                <!-- User preferences will be dynamically inserted here -->
+            </div>
+        </div>
+
+        <div class="max-w-6xl mx-auto mb-6 flex justify-center">
+            <div class="inline-flex rounded-full">
+                <button id="recommendedToggle" class="toggle-btn active" style="margin-right: 10px;">Recommended</button>
+                <button id="allToggle" class="toggle-btn">All Exercises</button>
+            </div>
+        </div>
+
+        <div id="workoutPlansContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            <!-- Workout plan cards will be dynamically inserted here -->
+        </div>
+    </main>
+
+    <footer class="py-8 px-4 mt-12 bg-gray-100 text-gray-600">
+        <div class="max-w-6xl mx-auto text-center text-sm">
+            <p>&copy; 2024 Nutrifit360. All rights reserved.</p>
+            <p class="mt-2">
+                <a href="#" class="hover:text-blue-500 transition-colors">Privacy Policy</a>
+                 | 
+                <a href="#" class="hover:text-blue-500 transition-colors">Terms of Service</a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="/scripts/util.js"></script>
+
+    <script>
+        lucide.createIcons();
+
+        const body = document.body;
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const menuToggle = document.getElementById('menuToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const workoutPlansContainer = document.getElementById('workoutPlansContainer');
+
+        let isDarkMode = localStorage.getItem('darkMode') === 'true';
+        updateDarkMode();
+
+        darkModeToggle.addEventListener('click', () => {
+            isDarkMode = !isDarkMode;
+            updateDarkMode();
+        });
+
+        function updateDarkMode() {
+            body.classList.toggle('dark', isDarkMode);
+            localStorage.setItem('darkMode', isDarkMode.toString());
+            darkModeToggle.innerHTML = isDarkMode ? '<i data-lucide="sun"></i>' : '<i data-lucide="moon"></i>';
+            lucide.createIcons();
+        }
+
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            mobileMenu.classList.toggle('slide-down');
+            menuToggle.innerHTML = mobileMenu.classList.contains('hidden') ? '<i data-lucide="menu"></i>' : '<i data-lucide="x"></i>';
+            lucide.createIcons();
+        });
+
+
+const recommendedToggle = document.getElementById('recommendedToggle');
+const allToggle = document.getElementById('allToggle');
+
+// Dark mode functionality
+
+darkModeToggle.addEventListener('click', () => {
+    isDarkMode = !isDarkMode;
+    updateDarkMode();
+});
+
+function updateDarkMode() {
+    if (isDarkMode) {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('darkMode', isDarkMode.toString());
+    darkModeToggle.innerHTML = isDarkMode ? '<i data-lucide="sun"></i>' : '<i data-lucide="moon"></i>';
+    lucide.createIcons();
+}
+
+// Initialize dark mode on page load
+document.addEventListener('DOMContentLoaded', () => {
+    isDarkMode = localStorage.getItem('darkMode') === 'true';
+    updateDarkMode();
+});
+
+darkModeToggle.addEventListener('click', () => {
+    isDarkMode = !isDarkMode;
+    updateDarkMode();
+});
+
+function renderUserPreferences(preferences) {
+    const userPreferencesContainer = document.getElementById('userPreferences');
+    userPreferencesContainer.innerHTML = preferences.map(pref => `
+        <span class="px-2 py-1 rounded-full text-xs border border-blue-300 bg-blue-100 text-blue-800">${pref}</span>
+    `).join('');
+}
+
+function filterWorkoutPlans(plans, preferences) {
+    return plans.filter(plan => 
+        plan.keywords.some(keyword => preferences.includes(keyword))
+    );
+}
+
+function renderWorkoutPlans(plans) {
+    currentWorkoutPlans = plans; // Store the current displayed plans
+    if (plans.length === 0) {
+        workoutPlansContainer.innerHTML = '<p class="text-center col-span-full">No matching workout plans found. Try adjusting your preferences.</p>';
+        return;
+    }
+
+    workoutPlansContainer.innerHTML = plans.map((plan, index) => `
+        <div class="p-6 rounded-lg shadow-lg bg-white dark:bg-gray-800 fade-in" style="animation-delay: ${index * 100}ms">
+            <h2 class="text-xl font-semibold mb-2">${plan.name}</h2>
+            <p class="text-sm mb-4">${plan.description}</p>
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-sm">Age: ${plan.ageRating}</span>
+                <span class="px-2 py-1 rounded-full text-xs text-white ${getDifficultyColor(plan.difficulty)}">${plan.difficulty}</span>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                ${plan.keywords.map(keyword => `
+                    <span class="px-2 py-1 rounded-full text-xs border ${userPreferences.includes(keyword) ? 'border-green-300 bg-green-100 text-green-800' : 'border-gray-300 dark:border-gray-600'}">${keyword}</span>
+                `).join('')}
+            </div>
+            <button onclick="startPlan(${index})" class="PlanButton mt-4 px-4 py-2 rounded-full text-sm uppercase tracking-wider font-semibold w-full bg-blue-600 text-white hover:bg-blue-700 transition-colors">
+                Start Plan <i data-lucide="chevron-right" class="inline-block ml-2"></i>
+            </button>
+        </div>
+    `).join('');
+    lucide.createIcons();
+}
+
+function getDifficultyColor(difficulty) {
+    const colors = {
+        Easy: "bg-green-500",
+        Medium: "bg-yellow-500",
+        Hard: "bg-red-500",
+    };
+    return colors[difficulty] || "";
+}
+
+function startPlan(index) {
+    const selectedPlan = currentWorkoutPlans[index];
+    const originalIndex = workoutPlans.findIndex(plan => plan.name === selectedPlan.name);
+    auth.onAuthStateChanged(user => {
+        if (user) {
+
+            thingsRef = db.collection('exercises')
+            thingsRef.add({
+                uid: user.uid,
+                Plan: originalIndex
+            });
+        }
+    });
+
+    console.log(`Starting plan: ${selectedPlan.name} (Original Index: ${originalIndex})`);
+    setTimeout(() => {
+        window.location.href = '/pages/exercises/ePlanDetails.html';
+    }, 3000);
+    
+
+
+}
+
+recommendedToggle.addEventListener('click', () => {
+    recommendedToggle.classList.add('active');
+    allToggle.classList.remove('active');
+    renderWorkoutPlans(filterWorkoutPlans(workoutPlans, userPreferences));
+});
+
+allToggle.addEventListener('click', () => {
+    allToggle.classList.add('active');
+    recommendedToggle.classList.remove('active');
+    renderWorkoutPlans(workoutPlans);
+});
+
+// Firebase auth state listener and preference fetching
+auth.onAuthStateChanged(user => {
+    if (user) {
+        const preferencesRef = db.collection('preferences');
+        preferencesRef.where('uid', '==', user.uid).onSnapshot(querySnapshot => {
+            querySnapshot.forEach(doc => {
+                userPreferences = doc.data().Preference || [];
+                renderUserPreferences(userPreferences);  
+                renderWorkoutPlans(filterWorkoutPlans(workoutPlans, userPreferences));
+            });
+        });
+    }
+});
+
+// Button hover and click effects
+document.querySelectorAll('button').forEach(button => {
+    button.addEventListener('mouseenter', () => {
+        button.style.transform = 'scale(1.05)';
+        button.style.transition = 'transform 0.2s';
+    });
+    button.addEventListener('mouseleave', () => {
+        button.style.transform = 'scale(1)';
+    });
+    button.addEventListener('click', () => {
+        button.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            button.style.transform = 'scale(1)';
+        }, 100);
+    });
+});
+
+// Initialize icons
+lucide.createIcons();
+
+    </script>
+</body>
+</html>

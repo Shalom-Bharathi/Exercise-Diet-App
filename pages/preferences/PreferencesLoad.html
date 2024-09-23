@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/assets/icons/icon.png" sizes="32x32" />
+    <link rel="stylesheet" href="/styles/Global.css">
+    <title>Loading Screen</title>
+    <style>
+        :root {
+    --bg-light: #ffffff;
+    --bg-dark: #1a202c;
+    --text-light: #1a202c;
+    --text-dark: #f7fafc;
+    --card-bg-light: #ffffff;
+    --card-bg-dark: #2d3748;
+    --blue-500: #3b82f6;
+    --gray-600: #4b5563;
+    --gray-400: #9ca3af;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.min-h-screen {
+    min-height: 100vh;
+}
+
+.flex {
+    display: flex;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.w-full {
+    width: 100%;
+}
+
+.max-w-md {
+    max-width: 28rem;
+}
+
+.card {
+    background-color: var(--card-bg-light);
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-content {
+    padding: 2rem;
+}
+
+.mb-6 {
+    margin-bottom: 1.5rem;
+}
+
+.mb-4 {
+    margin-bottom: 1rem;
+}
+
+.text-2xl {
+    font-size: 1.5rem;
+}
+
+.font-bold {
+    font-weight: 700;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-blue-500 {
+    color: var(--blue-500);
+}
+
+.text-gray-600 {
+    color: var(--gray-600);
+}
+
+/* Dark mode styles */
+body.dark-mode {
+    background-color: var(--bg-dark);
+    color: var(--text-dark);
+}
+
+body.dark-mode .card {
+    background-color: var(--card-bg-dark);
+}
+
+body.dark-mode .text-gray-600 {
+    color: var(--gray-400);
+}
+
+/* Animations */
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#loader svg {
+    animation: rotate 2s linear infinite;
+}
+
+#loading-title {
+    animation: fadeInUp 0.5s ease-out 0.2s both;
+}
+
+#loading-text {
+    animation: fadeInUp 0.5s ease-out 0.4s both;
+}
+
+/* Responsive design */
+@media (max-width: 640px) {
+    .card {
+        margin: 0 1rem;
+    }
+}
+.dark {
+    background-color: #1a202c;
+    color: #f7fafc;
+}
+
+.dark .bg-gray-100 {
+    background-color: #2d3748;
+}
+
+.dark .bg-white {
+    background-color: #4a5568;
+}
+
+.dark .text-gray-900 {
+    color: #f7fafc;
+}
+
+.dark .text-blue-600 {
+    color: #63b3ed;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.slide-in {
+    animation: slideIn 0.5s ease-out;
+}
+
+@keyframes scaleIn {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.scale-in {
+    animation: scaleIn 0.5s ease-out;
+}
+
+.hover-effect:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes slideDown {
+    from { max-height: 0; opacity: 0; }
+    to { max-height: 300px; opacity: 1; }
+}
+
+.slide-down {
+    animation: slideDown 0.3s ease-out;
+}
+
+.animated-text {
+    background: linear-gradient(45deg, #1E3A8A, #3B82F6, #60A5FA);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientText 5s ease infinite;
+}
+
+@keyframes gradientText {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.scroll-reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s, transform 0.5s;
+}
+
+.scroll-reveal.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.nav-link {
+    position: relative;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    bottom: -5px;
+    left: 0;
+    background-color: #1E3A8A;
+    transform: scaleX(0);
+    transition: transform 0.3s ease-out;
+}
+
+.nav-link:hover::after {
+    transform: scaleX(1);
+}
+
+.landerHeading {
+	background: radial-gradient(circle, #3B82F6 0%, #60A5FA 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.frosted-bg {
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+}
+.dark .frosted-bg {
+    background-color: rgba(17, 24, 39, 0.8);
+}
+    </style>
+   <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-app.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-auth.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-firestore.js"></script>
+   <script>
+       var firebaseConfig = {
+           apiKey: "AIzaSyBvONbLQcR-XqSsJ9hi7xAsk8sTwej43aA",
+           authDomain: "ed-project-42419.firebaseapp.com",
+           projectId: "ed-project-42419",
+           storageBucket: "ed-project-42419.appspot.com",
+           messagingSenderId: "909551078814",
+           appId: "1:909551078814:web:456608495b9655eef6da8f"
+       };
+       firebase.initializeApp(firebaseConfig);
+     </script>
+
+   <script src="/scripts/app.js" defer></script>
+</head>
+<body>
+    <div id="loading-screen" class="min-h-screen flex items-center justify-center">
+        <div class="card w-full max-w-md">
+            <div class="card-content flex flex-col items-center justify-center p-6">
+                <div id="loader" class="mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500">
+                        <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+                    </svg>
+                </div>
+                <h2 id="loading-title" class="text-2xl font-bold text-center mb-4">Loading Preferences</h2>
+                <p id="loading-text" class="text-center text-gray-600 dark:text-gray-400">
+                    You haven't chosen preferences yet. We're setting things up for you.
+                </p>
+            </div>
+        </div>
+    </div>
+    <script>
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            
+    const body = document.body;
+    const loadingScreen = document.getElementById('loading-screen');
+    const loader = document.getElementById('loader');
+    const loadingTitle = document.getElementById('loading-title');
+    const loadingText = document.getElementById('loading-text');
+
+    // Check for dark mode preference
+    const isDarkMode = localStorage.getItem('darkMode') === 'true';
+    if (isDarkMode) {
+        body.classList.add('dark-mode');
+    }
+
+    // Function to toggle dark mode
+    function toggleDarkMode() {
+        body.classList.toggle('dark-mode');
+        localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
+    }
+
+    // Add a subtle parallax effect to the loader
+    document.addEventListener('mousemove', (e) => {
+        const moveX = (e.clientX - window.innerWidth / 2) / 100;
+        const moveY = (e.clientY - window.innerHeight / 2) / 100;
+        loader.style.transform = `translate(${moveX}px, ${moveY}px)`;
+    });
+
+    // Add keyboard shortcut for toggling dark mode (Ctrl + D)
+    document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.key === 'd') {
+            e.preventDefault();
+            toggleDarkMode();
+    
+            
+        }
+    });
+    let thingsRef;
+    let unsubscribe;
+    auth.onAuthStateChanged(user => {
+    if (user) {
+      const thingsRef = db.collection('preferences');
+      
+      unsubscribe = thingsRef
+          .where('uid', '==', user.uid)
+          .onSnapshot(querySnapshot => {
+            if (querySnapshot.empty) {
+              console.log("EMPTY");
+              setTimeout(() => {
+                window.location.href = "/pages/preferences/PSurvey.html";
+              }, 3000); // 2 seconds timeout
+            } else {
+              console.log("NOT EMPTY");
+              setTimeout(() => {
+                window.location.href = "/pages/preferences/PreferencesGen.html";
+              }, 2000); // 2 seconds timeout
+            }
+          });
+    } else {
+      unsubscribe && unsubscribe();
+    }
+  });
+});
+    </script>
+</body>
+</html>

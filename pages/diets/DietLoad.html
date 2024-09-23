@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diet Plan Loading</title>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/Global.css">
+    <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-auth.js"></script>
+    <link rel="icon" type="image/png" href="/assets/icons/icon.png" sizes="32x32" />
+	<script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-firestore.js"></script>
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyBvONbLQcR-XqSsJ9hi7xAsk8sTwej43aA",
+            authDomain: "ed-project-42419.firebaseapp.com",
+            projectId: "ed-project-42419",
+            storageBucket: "ed-project-42419.appspot.com",
+            messagingSenderId: "909551078814",
+            appId: "1:909551078814:web:456608495b9655eef6da8f"
+        };
+        firebase.initializeApp(firebaseConfig);
+      </script>
+
+    <script src="/scripts/app.js" defer></script>
+
+    <style>
+      :root {
+    --primary-color: #10B981;
+    --primary-dark: #065F46;
+    --bg-color: #F0FDF4;
+    --text-color: #1F2937;
+    --text-light: #4B5563;
+    --card-bg: #FFFFFF;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    max-width: 480px;
+    width: 100%;
+    padding: 2rem;
+}
+
+.diet-plan-creator {
+    background-color: var(--card-bg);
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.content {
+    text-align: center;
+}
+
+h1 {
+    font-size: 1.875rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.description {
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+}
+
+.loader-container {
+    position: relative;
+    width: 5rem;
+    height: 5rem;
+    margin: 0 auto 1.5rem;
+}
+
+.loader {
+    width: 100%;
+    height: 100%;
+    border: 0.25rem solid var(--primary-color);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.loader-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--primary-dark);
+}
+
+.message {
+    font-weight: 500;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.food-icons-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+.food-icon {
+    position: absolute;
+    animation: bounce 2s infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-color: #111827;
+        --text-color: #F9FAFB;
+        --text-light: #D1D5DB;
+        --card-bg: #1F2937;
+        --primary-color: #34D399;
+        --primary-dark: #10B981;
+    }
+
+    body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+    }
+
+    .diet-plan-creator {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .loader {
+        border-color: var(--primary-color);
+        border-top-color: transparent;
+    }
+
+    .loader-icon {
+        color: var(--primary-color);
+    }
+}
+
+/* Base styles for the menu */
+.menu-item {
+    color: #333; /* Dark color for light mode */
+    transition: color 0.3s ease;
+}
+
+/* Hover effect for menu items */
+.menu-item:hover {
+    color: #10B981; /* Primary color on hover */
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+    .menu-item {
+        color: #E5E7EB; /* Light gray color for better visibility in dark mode */
+    }
+
+    .menu-item:hover {
+        color: #34D399; /* Lighter shade of primary color for hover in dark mode */
+    }
+
+    /* Active menu item style */
+    .menu-item.active {
+        color: #34D399; /* Highlight active item */
+        font-weight: bold;
+    }
+}
+
+/* Additional styles for the header/navigation bar if needed */
+.header {
+    background-color: #F3F4F6; /* Light gray for light mode */
+}
+
+@media (prefers-color-scheme: dark) {
+    .header {
+        background-color: #1F2937; /* Dark blue-gray for dark mode */
+    }
+}
+#darkModeToggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        /* Transition for smooth color changes */
+        body, .diet-plan-creator, .header {
+            transition: background-color 0.3s, color 0.3s;
+        }
+    </style> 
+</head>
+<body class="bg-white dark:bg-gray-900 min-h-screen">
+    <button id="darkModeToggle" class="focus:outline-none">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sun-icon"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y1="4.22"></line></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="moon-icon" style="display: none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    </button>
+    
+    <div class="container">
+        <div class="diet-plan-creator bg-white dark:bg-gray-800">
+            <div class="food-icons-container"></div>
+            <div class="content">
+                <h1 class="text-gray-900 dark:text-white">Fetching Diet Plans</h1>
+                <p class="description text-gray-600 dark:text-gray-300">Fetching Personalized Diet Plans for You </p>
+                <div class="loader-container">
+                    <div class="loader"></div>
+                    <div class="loader-icon"></div>
+                </div>
+                <p id="message" class="message"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dark mode functionality
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+        const sunIcon = document.querySelector('.sun-icon');
+        const moonIcon = document.querySelector('.moon-icon');
+
+        function toggleDarkMode() {
+            body.classList.toggle('dark');
+            const isDarkMode = body.classList.contains('dark');
+            localStorage.setItem('darkMode', isDarkMode);
+            updateDarkModeIcon(isDarkMode);
+        }
+
+        function updateDarkModeIcon(isDarkMode) {
+            if (isDarkMode) {
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'inline-block';
+            } else {
+                sunIcon.style.display = 'inline-block';
+                moonIcon.style.display = 'none';
+            }
+        }
+
+        function initializeDarkMode() {
+            const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+            if (savedDarkMode) {
+                body.classList.add('dark');
+            }
+            updateDarkModeIcon(savedDarkMode);
+        }
+
+        darkModeToggle.addEventListener('click', toggleDarkMode);
+        initializeDarkMode();
+
+        // Existing script for fetching diet plans
+        setTimeout(() => {
+            firebase.auth().onAuthStateChanged(user => {
+                if (user) {
+                    const thingsRef = firebase.firestore().collection('dietPlans');
+                    const unsubscribe = thingsRef
+                        .where('uid', '==', user.uid)
+                        .onSnapshot(querySnapshot => {
+                            if (querySnapshot.empty) {
+                                window.location.href = "/pages/diets/DietPlans.html";
+                            } else {
+                                window.location.href = "/pages/diets/DietDetails.html"; 
+                            }
+                        });
+                } else {
+                    // Handle case when user is not logged in
+                    console.log("User not logged in");
+                    // You might want to redirect to a login page or show a message
+                }
+            });
+        }, 2000);
+    </script>
+</body>
