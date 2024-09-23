@@ -11,6 +11,9 @@
     <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-app.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-auth.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-firestore.js"></script>
+    <link rel="stylesheet" href="./styles/Global.css">
+    <link rel="icon" type="image/png" href="/assets/icons/icon.png" sizes="32x32" />
+    
     <script>
         var firebaseConfig = {
             apiKey: "AIzaSyBvONbLQcR-XqSsJ9hi7xAsk8sTwej43aA",
@@ -25,7 +28,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/framer-motion@11.5.4/dist/framer-motion.min.js"></script>
 
-    <script src="app.js" defer></script>
+    <script src="./scripts/app.js" defer></script>
     
     <style>
 .dark {
@@ -91,7 +94,7 @@
 }
 
 .animated-text {
-    background: linear-gradient(45deg, #540202, #AB3131, #EDE0A6);
+    background: linear-gradient(45deg, #1E3A8A, #3B82F6, #60A5FA);
     background-size: 200% 200%;
     -webkit-background-clip: text;
     background-clip: text;
@@ -127,7 +130,7 @@
     height: 2px;
     bottom: -5px;
     left: 0;
-    background-color: #540202;
+    background-color: #1E3A8A;
     transform: scaleX(0);
     transition: transform 0.3s ease-out;
 }
@@ -137,10 +140,10 @@
 }
 
 .landerHeading {
-	background: radial-gradient(circle, #80ffc1 0%, #ff6161 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
+	background: radial-gradient(circle, #3B82F6 0%, #60A5FA 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
 }
 
 .frosted-bg {
@@ -156,21 +159,21 @@
     <section id="whenSignedIn" hidden="true">
     <header class="p-4 flex justify-between items-center sticky top-0 z-50 frosted-bg">
         <div class="text-2xl font-bold flex items-center space-x-2">
-            <a href="index.html">
-            <span class="text-3xl font-extrabold text-blue-600"><img src="logo.png" alt="Logo" class="h-12 w-auto"></span>
+            <a href="/index.html">
+            <span class="text-3xl font-extrabold text-blue-600"><img src="/assets/icons/logo.png" alt="Logo" class="h-12 w-auto"></span>
         </a>
         </div>
         <nav class="hidden md:flex space-x-4">
             <a href="#" onclick="ExerciseORPreferences('e')" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Exercises</a>
             <a href="#" onclick="RoutineFinder()" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Routines</a>
             <a href="#" onclick="PreferencesCheck('d')" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Diets</a>
-            <a href="AiTutor.html" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Tutor</a>
+            <a href="/pages/singlePageFeatures/AiTutor.html" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Tutor</a>
             <a onclick="preferencechooser()" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Preferences</a>
-            <a href="Profile.html" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Profile</a>
+            <a href="/pages/singlePageFeatures/Profile.html" class="nav-link text-sm uppercase tracking-wider hover:text-blue-500 transition-colors">Profile</a>
         </nav>
         <div class="flex items-center space-x-4">
             <button id="darkModeToggle" class="focus:outline-none">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden dark:inline-block"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden dark:inline-block"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y1="4.22"></line></svg>
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-block dark:hidden"><path d="M21 12.79A9 9 0 1 1 11.21 3 A7 7 0 0 0 21 12.79z"></path></svg>
             </button>
             <button id="menuToggle" class="md:hidden focus:outline-none">
@@ -183,18 +186,18 @@
         <a onclick="ExerciseORPreferences()" class="block py-2 px-4 text-sm uppercase tracking-wider hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Exercises</a>
         <a onclick="RoutineFinder()" class="block py-2 px-4 text-sm uppercase tracking-wider hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Routines</a>
         <a onclick="PreferencesCheck('d')" class="block py-2 px-4 text-sm uppercase tracking-wider hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Diets</a>
-        <a href="AiTutor.html" class="block py-2 px-4 text-sm uppercase tracking-wider hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Tutor</a>
+        <a href="/pages/singlePageFeatures/AiTutor.html" class="block py-2 px-4 text-sm uppercase tracking-wider hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Tutor</a>
         <a onclick="preferencechooser()" class="block py-2 px-4 text-sm uppercase tracking-wider hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Preferences</a>
-        <a href="Profile.html" class="block py-2 px-4 text-sm uppercase tracking-wider hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Profile</a>
+        <a href="/pages/singlePageFeatures/Profile.html" class="block py-2 px-4 text-sm uppercase tracking-wider hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Profile</a>
     </div>
 
     <main class="flex-grow">
         <section id="hero" class="max-w-4xl mx-auto text-center py-20 px-4 relative overflow-hidden" style="margin-bottom: -60px; ">
-            <h1 class="text-4xl md:text-5xl font-bold mb-6 animated-text" >Nourish Your Body and Mind</h1>
+            <h1 class="text-4xl md:text-5xl font-bold mb-6 animated-text" >Nutrifit360 Your Body and Mind</h1>
             <p class="text-lg mb-8 max-w-2xl mx-auto fade-in-element">
                 Discover a healthier, happier you with personalized exercise routines and nutrition plans.
             </p>
-            <a href="#StartJourney" style="background-color: #507B58;" class="px-8 py-3 rounded-full text-sm uppercase tracking-wider font-semibold bg-[#540202] text-white hover:bg-[#AB3131] transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
+            <a href="#StartJourney" style="background-color: #3B82F6;" class="px-8 py-3 rounded-full text-sm uppercase tracking-wider font-semibold bg-[#1E3A8A] text-white hover:bg-[#60A5FA] transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
                 Start Your Journey
             </a>
             <br>
@@ -205,21 +208,21 @@
             <h2 class="text-3xl font-bold text-center mb-12 animated-text">Why Choose Nutrifit360?</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
                 <div class="p-6 rounded-lg bg-gray-100 dark:bg-gray-800 transition-all duration-300 hover:shadow-xl transform hover:-translate-y-2">
-                    <h3 class="text-lg font-semibold mb-2" style="color: #540202;">Personalized Workouts</h3>
-                    <p class="text-sm" style="color: #AB3131;">Tailored exercise routines based on your fitness level and goals.</p>
-                    <img src="assets/workout.png" alt="Personalized Workouts" class="w-full h-auto mt-4">
+                    <h3 class="text-lg font-semibold mb-2" style="color: #1E3A8A;">Personalized Workouts</h3>
+                    <p class="text-sm" style="color: #3B82F6;">Tailored exercise routines based on your fitness level and goals.</p>
+                    <img src="assets/images/workout.png" alt="Personalized Workouts" class="w-full h-auto mt-4">
                 </div>
 
                 <div class="p-6 rounded-lg bg-gray-100 dark:bg-gray-800 transition-all duration-300 hover:shadow-xl transform hover:-translate-y-2">
-                    <h3 class="text-lg font-semibold mb-2" style="color: #540202;">AI-Powered Guidance</h3>
-                    <p class="text-sm" style="color: #AB3131;">Advanced AI analyzes your data to provide real-time feedback and optimize your health journey. </p>
-                    <img src="assets/trainer.png" alt="AI-Powered Guidance" class="w-full h-auto mt-4">
+                    <h3 class="text-lg font-semibold mb-2" style="color: #1E3A8A;">AI-Powered Guidance</h3>
+                    <p class="text-sm" style="color: #3B82F6;">Advanced AI analyzes your data to provide real-time feedback and optimize your health journey. </p>
+                    <img src="assets/images/trainer.png" alt="AI-Powered Guidance" class="w-full h-auto mt-4">
                 </div>
 
                 <div class="p-6 rounded-lg bg-gray-100 dark:bg-gray-800 transition-all duration-300 hover:shadow-xl transform hover:-translate-y-2">
-                    <h3 class="text-lg font-semibold mb-2" style="color: #540202;">Comprehensive Wellness</h3>
-                    <p class="text-sm" style="color: #AB3131;">Achieve a balanced lifestyle with integrated fitness, nutrition, and routine management all in one app. </p>
-                    <img src="assets/diet.png" alt="Comprehensive Wellness" class="w-full h-auto mt-4">
+                    <h3 class="text-lg font-semibold mb-2" style="color: #1E3A8A;">Comprehensive Wellness</h3>
+                    <p class="text-sm" style="color: #3B82F6;">Achieve a balanced lifestyle with integrated fitness, nutrition, and routine management all in one app. </p>
+                    <img src="assets/images/diet.png" alt="Comprehensive Wellness" class="w-full h-auto mt-4">
                 </div>
             </div>
         </section>
@@ -228,23 +231,23 @@
             <h2 class="text-3xl font-bold text-center mb-12 animated-text">Success Stories</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
                 <div class="p-6 rounded-lg bg-white dark:bg-gray-700 transition-all duration-300 hover:shadow-xl transform hover:-translate-y-2">
-                    <img src="sarah.jpg" alt="Sarah L." class="w-16 h-16 rounded-full mx-auto mb-4">
-                    <p class="text-sm mb-4 italic" style="color: #507B58;">"Nutrifit360 helped me lose 30 pounds and gain confidence!"</p>
-                    <p class="text-sm font-semibold" style="color: #799163;">Sarah L.</p>
+                    <img src="/assets/images/sarah.jpg" alt="Sarah L." class="w-16 h-16 rounded-full mx-auto mb-4">
+                    <p class="text-sm mb-4 italic" style="color: #3B82F6;">"Nutrifit360 helped me lose 30 pounds and gain confidence!"</p>
+                    <p class="text-sm font-semibold" style="color: #1E3A8A;">Sarah L.</p>
                     
                 </div>
 
                 <div class="p-6 rounded-lg bg-white dark:bg-gray-700 transition-all duration-300 hover:shadow-xl transform hover:-translate-y-2">
-                    <img src="emily.jpeg" alt="Emily T." class="w-16 h-16 rounded-full mx-auto mb-4">
-                    <p class="text-sm mb-4 italic" style="color: #507B58;">"I gained muscle and energy with Nutrifit360 customized plans!"</p>
-                    <p class="text-sm font-semibold" style="color: #799163;">Emily T.</p>
+                    <img src="/assets/images/emily.jpeg" alt="Emily T." class="w-16 h-16 rounded-full mx-auto mb-4">
+                    <p class="text-sm mb-4 italic" style="color: #3B82F6;">"I gained muscle and energy with Nutrifit360 customized plans!"</p>
+                    <p class="text-sm font-semibold" style="color: #1E3A8A;">Emily T.</p>
                     
                 </div>
 
                 <div class="p-6 rounded-lg bg-white dark:bg-gray-700 transition-all duration-300 hover:shadow-xl transform hover:-translate-y-2">
-                    <img src="alex.jpg" alt="Alex M." class="w-16 h-16 rounded-full mx-auto mb-4">
-                    <p class="text-sm mb-4 italic" style="color: #507B58;">"Nutrifit360 transformed my life by making healthy living easy!"</p>
-                    <p class="text-sm font-semibold" style="color: #799163;">Alex M.</p>
+                    <img src="/assets/images/alex.jpg" alt="Alex M." class="w-16 h-16 rounded-full mx-auto mb-4">
+                    <p class="text-sm mb-4 italic" style="color: #3B82F6;">"Nutrifit360 transformed my life by making healthy living easy!"</p>
+                    <p class="text-sm font-semibold" style="color: #1E3A8A;">Alex M.</p>
                    
                 </div>
             </div>
@@ -256,9 +259,9 @@
                     <div class="rounded-full bg-gray-300 text-black w-20 h-20 flex items-center justify-center mx-auto mb-4">
                         <i data-lucide="brain" class="w-10 h-10"></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2" style="color: #540202;">AI-Powered Plans</h3>
+                    <h3 class="text-xl font-semibold mb-2" style="color: #1E3A8A;">AI-Powered Plans</h3>
                     <center>
-                    <p class="text-sm" style="width: 90% !important; color: #AB3131;" >Intelligent algorithms create personalized fitness and nutrition plans.</p>
+                    <p class="text-sm" style="width: 90% !important; color: #3B82F6;" >Intelligent algorithms create personalized fitness and nutrition plans.</p>
                     </center>
                    
                 </div>
@@ -266,9 +269,9 @@
                     <div class="rounded-full bg-gray-300 text-black w-20 h-20 flex items-center justify-center mx-auto mb-4">
                         <i data-lucide="users" class="w-10 h-10"></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2" style="color: #540202;">Community Support</h3>
+                    <h3 class="text-xl font-semibold mb-2" style="color: #1E3A8A;">Community Support</h3>
                     <center>
-                    <p class="text-sm" style="width: 90% !important; color: #AB3131;">Connect with like-minded individuals on your wellness journey.</p>
+                    <p class="text-sm" style="width: 90% !important; color: #3B82F6;">Connect with like-minded individuals on your wellness journey.</p>
                     </center>
                                       
                 </div>
@@ -276,9 +279,9 @@
                     <div class="rounded-full bg-gray-300 text-black w-20 h-20 flex items-center justify-center mx-auto mb-4">
                         <i data-lucide="trending-up" class="w-10 h-10"></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2" style="color: #540202;">Progress Tracking</h3>
+                    <h3 class="text-xl font-semibold mb-2" style="color: #1E3A8A;">Progress Tracking</h3>
                     <Center>
-                    <p class="text-sm" style="width: 90% !important; color: #AB3131;">Visualize your improvements with advanced analytics and insights.</p>
+                    <p class="text-sm" style="width: 90% !important; color: #3B82F6;">Visualize your improvements with advanced analytics and insights.</p>
                 </Center>
                
                 </div>
@@ -292,37 +295,36 @@
             </p>
             <div class="flex justify-center space-x-4">
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <button style="background-color: #799163;" class="px-4 py-2 rounded-full text-sm uppercase tracking-wider font-semibold bg-[#540202] text-white hover:bg-[#AB3131] transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
+                    <button style="background-color: #3B82F6;" class="px-4 py-2 rounded-full text-sm uppercase tracking-wider font-semibold bg-[#1E3A8A] text-white hover:bg-[#60A5FA] transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
                         Home <i data-lucide="home" class="inline-block ml-2"></i>
                     </button>
-                    <button style="background-color: #507B58;" onclick="PreferencesCheck('e')" class="px-4 py-2 rounded-full text-sm uppercase tracking-wider font-semibold bg-[#540202] text-white hover:bg-[#AB3131] transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
+                    <button style="background-color: #89B4F9;" onclick="PreferencesCheck('e')" class="px-4 py-2 rounded-full text-sm uppercase tracking-wider font-semibold bg-[#1E3A8A] text-white hover:bg-[#60A5FA] transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
                         Exercises <i data-lucide="dumbbell" class="inline-block ml-2"></i>
                     </button>
-                    <button style="background-color: #799163;" onclick="RoutineFinder()" class="px-4 py-2 rounded-full text-sm uppercase tracking-wider font-semibold bg-[#540202] text-white hover:bg-[#AB3131] transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
+                    <button style="background-color: #3B82F6;" onclick="RoutineFinder()" class="px-4 py-2 rounded-full text-sm uppercase tracking-wider font-semibold bg-[#1E3A8A] text-white hover:bg-[#60A5FA] transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
                         Routines <i data-lucide="repeat" class="inline-block ml-2"></i>
                     </button>
-                    <button style="background-color: #507B58;" onclick="PreferencesCheck('d')" class="px-4 py-2 rounded-full text-sm uppercase tracking-wider font-semibold bg-[#540202] text-white hover:bg-[#AB3131] transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
+                    <button style="background-color: #89B4F9;" onclick="PreferencesCheck('d')" class="px-4 py-2 rounded-full text-sm uppercase tracking-wider font-semibold bg-[#1E3A8A] text-white hover:bg-[#60A5FA] transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
                         Diets <i data-lucide="apple" class="inline-block ml-2"></i>
                     </button>
-                    <a style="background-color: #507B58;" href="AiTutor.html" class="px-4 py-2 rounded-full text-sm uppercase tracking-wider font-semibold bg-[#540202] text-white hover:bg-[#AB3131] transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
+                    <a style="background-color: #89B4F9;" href="/pages/singlePageFeatures/AiTutor.html" class="px-4 py-2 rounded-full text-sm uppercase tracking-wider font-semibold bg-[#1E3A8A] text-white hover:bg-[#60A5FA] transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
                         Tutor <i data-lucide="user" class="inline-block ml-2"></i>
                     </a>
-                    <button style="background-color: #799163;" onclick="preferencechooser()" class="px-4 py-2 rounded-full text-sm uppercase tracking-wider font-semibold bg-[#540202] text-white hover:bg-[#AB3131] transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
+                    <button style="background-color: #3B82F6;" onclick="preferencechooser()" class="px-4 py-2 rounded-full text-sm uppercase tracking-wider font-semibold bg-[#1E3A8A] text-white hover:bg-[#60A5FA] transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
                         Preferences <i data-lucide="settings" class="inline-block ml-2"></i>
                     </button>
-                    <a style="background-color: #507B58;" href="Profile.html" class="px-4 py-2 rounded-full text-sm uppercase tracking-wider font-semibold bg-[#540202] text-white hover:bg-[#AB3131] transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
+                    <a style="background-color: #89B4F9;" href="/pages/singlePageFeatures/Profile.html" class="px-4 py-2 rounded-full text-sm uppercase tracking-wider font-semibold bg-[#1E3A8A] text-white hover:bg-[#60A5FA] transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
                         Profile <i data-lucide="user" class="inline-block ml-2"></i>
                     </a>
-                    <a style="background-color: #799163;" href="FAQ.html" class="px-4 py-2 rounded-full text-sm uppercase tracking-wider font-semibold bg-[#540202] text-white hover:bg-[#AB3131] transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
+                    <a style="background-color: #3B82F6;" href="/pages/singlePageFeatures/FAQ.html" class="px-4 py-2 rounded-full text-sm uppercase tracking-wider font-semibold bg-[#1E3A8A] text-white hover:bg-[#60A5FA] transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
                         FAQ AI <i data-lucide="notebook-text" class="inline-block ml-2"></i>
                     </a>
                     
                         <div class="flex justify-center">
-                            <a style="background-color: #799163;" href="Leaderboard.html" class="px-4 py-2 rounded-full text-sm uppercase tracking-wider font-semibold bg-[#540202] text-white hover:bg-[#AB3131] transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
+                            <a style="background-color: #3B82F6;" href="/pages/singlePageFeatures/Leaderboard.html" class="px-4 py-2 rounded-full text-sm uppercase tracking-wider font-semibold bg-[#1E3A8A] text-white hover:bg-[#60A5FA] transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
                                 Leaderboard <i data-lucide="theater" class="inline-block ml-2"></i>
                             </a>
                         </div>
-                
                 </div>
             </div>
         </section>
@@ -331,14 +333,14 @@
 
     <footer class="py-12 px-4 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300">
         <center>
-        <button style="background:linear-gradient(90deg, #540202, #AB3131);" id="SignOutBtn" class="px-4 py-2 rounded-full text-sm uppercase tracking-wider font-semibold text-white hover:bg-[#AB3131] transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
+        <button style="background-color: #8B0000;" id="SignOutBtn" class="px-4 py-2 rounded-full text-sm uppercase tracking-wider font-semibold text-white hover:bg-[#60A5FA] transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
             
             Log Out <i data-lucide="log-out" class="inline-block ml-2"></i>
            
         </button>
         </center>
         <div class="mt-8 text-center text-sm">
-            <p>&copy; 2024 Nourish. All rights reserved.</p>
+            <p>&copy; 2024 Nutrifit360. All rights reserved.</p>
         </div>
 
     </footer>
@@ -351,15 +353,15 @@
             
             <div id="loginButtons">
                 
-                <button id="SignInBtn" style="width: 100%; padding: 0.75rem; background-color: #540202; color: white; border: none; border-radius: 0.25rem; font-size: 1rem; cursor: pointer; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center;">
+                <button id="SignInBtn" style="width: 100%; padding: 0.75rem; background-color: #1E3A8A; color: white; border: none; border-radius: 0.25rem; font-size: 1rem; cursor: pointer; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center;">
                     <i data-lucide="mail" style="margin-right: 0.5rem;"></i>
                     Log In with Email
                 </button>
-                <button id="normalLoginBtn" style="width: 100%; padding: 0.75rem; background-color: #AB3131; color: white; border: none; border-radius: 0.25rem; font-size: 1rem; cursor: pointer; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center;">
+                <button id="normalLoginBtn" style="width: 100%; padding: 0.75rem; background-color: #3B82F6; color: white; border: none; border-radius: 0.25rem; font-size: 1rem; cursor: pointer; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center;">
                     <i data-lucide="user" style="margin-right: 0.5rem;"></i>
                     Log In Via Google
                 </button>
-                <button id="phoneLoginBtn" style="width: 100%; padding: 0.75rem; background-color: #EDE0A6; color: white; border: none; border-radius: 0.25rem; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                <button id="phoneLoginBtn" style="width: 100%; padding: 0.75rem; background-color: #60A5FA; color: white; border: none; border-radius: 0.25rem; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">
                     <i data-lucide="phone" style="margin-right: 0.5rem;"></i>
                     Log In with Phone Number
                 </button>
@@ -368,7 +370,7 @@
             <div id="emailSignIn" class="signInStep" style="display: none;">
                 <input type="text" id="username" placeholder="Username or Email" style="width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 0.25rem; margin-bottom: 1rem;">
                 <input type="password" id="password" placeholder="Password" style="width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 0.25rem; margin-bottom: 1rem;">
-                <button id="SignInBtnEmail" style="width: 100%; padding: 0.75rem; background-color: #540202; color: white; border: none; border-radius: 0.25rem; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                <button id="SignInBtnEmail" style="width: 100%; padding: 0.75rem; background-color: #1E3A8A; color: white; border: none; border-radius: 0.25rem; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
                     <i class="lucide-mail" style="margin-right: 0.5rem;"></i>
                     Sign in with Email
                 </button>
@@ -376,7 +378,7 @@
 
             <div id="phoneSignIn" class="signInStep" style="display: none;">
                 <input type="text" id="phoneNumber" placeholder="Phone Number" style="width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 0.25rem; margin-bottom: 1rem;">
-                <button id="SignInBtnPhone" style="width: 100%; padding: 0.75rem; background-color: #540202; color: white; border: none; border-radius: 0.25rem; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                <button id="SignInBtnPhone" style="width: 100%; padding: 0.75rem; background-color: #1E3A8A; color: white; border: none; border-radius: 0.25rem; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">
                     <i class="lucide-phone" style="margin-right: 0.5rem;"></i>
                     Sign in with Phone Number (OTP)
                 </button>
@@ -548,10 +550,10 @@
           .onSnapshot(querySnapshot => {
             
               if (querySnapshot.empty) {
-                window.location.href = "PSurvey.html";
+                window.location.href = "/pages/preferences/PSurvey.html";
               } 
               else {
-                window.location.href = "PreferencesLoad.html";
+                window.location.href = "/pages/preferences/PreferencesLoad.html";
               }
           });
   }
