@@ -13,7 +13,8 @@
 	<script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-firestore.js"></script>
     <link rel="stylesheet" href="./styles/Global.css">
     <link rel="icon" type="image/png" href="/assets/icons/icon.png" sizes="32x32" />
-    
+    <link rel="stylesheet" href="https://unpkg.com/ionicons@5.5.2/dist/css/ionicons.min.css">
+
     <script>
         var firebaseConfig = {
             apiKey: "AIzaSyBvONbLQcR-XqSsJ9hi7xAsk8sTwej43aA",
@@ -307,7 +308,7 @@
                         Routines <i data-lucide="repeat" class="inline-block ml-2"></i>
                     </button>
                     <button style="background-color: #89B4F9;" onclick="PreferencesCheck('d')" class="px-4 py-2 rounded-full text-sm uppercase tracking-wider font-semibold bg-[#1E3A8A] text-white hover:bg-[#60A5FA] transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
-                        Diets <i data-lucide="apple" class="inline-block ml-2"></i>
+                        Diets <i class="ion-logo-apple inline-block ml-2"></i>
                     </button>
                     <a style="background-color: #89B4F9;" href="/pages/singlePageFeatures/AiTutor.html" class="px-4 py-2 rounded-full text-sm uppercase tracking-wider font-semibold bg-[#1E3A8A] text-white hover:bg-[#60A5FA] transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
                         Tutor <i data-lucide="user" class="inline-block ml-2"></i>
@@ -352,7 +353,7 @@
     <div id="signInContainer" class="flex flex-col items-center justify-center w-full mt-24 p-4">
         <div class="max-w-md w-full p-8 rounded-lg shadow-lg transition-all duration-300 bg-white dark:bg-gray-800">
             <div id="mainAuthSection">
-                <h1 id="authTitle" class="text-3xl font-bold text-center mb-2 text-gray-800 dark:text-white">Welcome Back</h1>
+                <h1 id="authTitle" class="text-3xl font-bold text-center mb-2 text-gray-800 dark:text-white"><center><img src="/assets/icons/logo.png" alt="Logo" style="height:75px"></center></h1>
                 <p id="authSubtitle" class="text-center text-gray-600 dark:text-gray-300 mb-6">Sign in to your account</p>
 
                 <div id="emailSignIn" class="space-y-4">
@@ -367,57 +368,25 @@
 
                 <div class="mt-6 space-y-4">
                     <button id="googleSignInBtn" class="w-full py-2 px-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75 transition-all duration-300 flex items-center justify-center">
-                        <i data-lucide="user" class="mr-2"></i>
-                        Log In with Google
+                        <ion-icon name="logo-google" style="scale:110%; margin-right: 10px;"></ion-icon> Log In with Google
                     </button>
-                    <button id="showPhoneAuthBtn" class="w-full py-2 px-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75 transition-all duration-300 flex items-center justify-center">
-                        <i data-lucide="phone" class="mr-2"></i>
-                        Log In with Phone Number
+                    <button id="appleSignInBtn" class="w-full py-2 px-4 bg-black hover:bg-gray-800 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-black focus:ring-opacity-75 transition-all duration-300 flex items-center justify-center">
+                        <ion-icon name="logo-apple" style="scale:110%; margin-right: 10px;"></ion-icon> Log In with Apple
                     </button>
                 </div>
-            </div>
-            <div id="phoneAuthSection" class="hidden">
-                <h2 class="text-2xl font-bold text-center mb-4 text-gray-800 dark:text-white">Phone Authentication</h2>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Please enter your phone number in the international format (e.g., +1234567890). Include your country code.</p>
-                <div class="space-y-4">
-                    <input type="tel" id="phoneNumber" placeholder="+1234567890" class="w-full px-4 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <button id="sendCodeBtn" class="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300">
-                        Send Verification Code
-                    </button>
-                    <div id="verificationCodeSection" class="hidden space-y-4">
-                        <input type="text" id="verificationCode" placeholder="Enter 6-digit code" class="w-full px-4 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <button id="verifyCodeBtn" class="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300">
-                            Verify Code
-                        </button>
-                    </div>
-                    <button id="backToMainAuth" class="w-full py-2 px-4 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-75 transition-all duration-300">
-                        Back to Main Login
-                    </button>
-                </div>
-                <div id="recaptcha-container" class="mt-4"></div>
             </div>
         </div>
     </div>
 </section>
 <script>
-
-
 const emailInput = document.getElementById('email');
 const passwordInput = document.getElementById('password');
 const authActionBtn = document.getElementById('authActionBtn');
 const toggleAuthModeBtn = document.getElementById('toggleAuthMode');
 const googleSignInBtn = document.getElementById('googleSignInBtn');
-const showPhoneAuthBtn = document.getElementById('showPhoneAuthBtn');
-const phoneNumberInput = document.getElementById('phoneNumber');
-const sendCodeBtn = document.getElementById('sendCodeBtn');
-const verificationCodeSection = document.getElementById('verificationCodeSection');
-const verificationCodeInput = document.getElementById('verificationCode');
-const verifyCodeBtn = document.getElementById('verifyCodeBtn');
-const backToMainAuthBtn = document.getElementById('backToMainAuth');
-const recaptchaContainer = document.getElementById('recaptcha-container');
+const appleSignInBtn = document.getElementById('appleSignInBtn');
 
 // Firebase Authentication configurations
-let confirmationResult;
 let currentUser;
 
 // Email sign-in/sign-up
@@ -437,23 +406,6 @@ authActionBtn.addEventListener('click', async () => {
   }
 });
 
-// Toggle between sign-in and sign-up modes
-toggleAuthModeBtn.addEventListener('click', () => {
-  const authTitle = document.getElementById('authTitle');
-  const authSubtitle = document.getElementById('authSubtitle');
-  const authActionBtnText = authActionBtn.textContent;
-
-  if (authActionBtnText.includes('Sign Up')) {
-    authTitle.textContent = 'Welcome Back';
-    authSubtitle.textContent = 'Sign in to your account';
-    authActionBtn.textContent = 'Log In with Email';
-  } else {
-    authTitle.textContent = 'Create an Account';
-    authSubtitle.textContent = 'Sign up with your email';
-    authActionBtn.textContent = 'Sign Up with Email';
-  }
-});
-
 // Google sign-in
 googleSignInBtn.addEventListener('click', async () => {
   const provider = new firebase.auth.GoogleAuthProvider();
@@ -466,45 +418,15 @@ googleSignInBtn.addEventListener('click', async () => {
   }
 });
 
-// Phone sign-in
-showPhoneAuthBtn.addEventListener('click', () => {
-  document.getElementById('mainAuthSection').classList.add('hidden');
-  document.getElementById('phoneAuthSection').classList.remove('hidden');
-});
-
-sendCodeBtn.addEventListener('click', async () => {
-  const phoneNumber = phoneNumberInput.value;
+// Apple sign-in
+appleSignInBtn.addEventListener('click', async () => {
+  const provider = new firebase.auth.OAuthProvider('apple.com');
 
   try {
-    confirmationResult = await firebase.auth().signInWithPhoneNumber(phoneNumber, window.recaptchaVerifier);
-    verificationCodeSection.classList.remove('hidden');
+    await firebase.auth().signInWithPopup(provider);
   } catch (error) {
     console.error('Error:', error.message);
     // Handle the error, e.g., display an error message
-  }
-});
-
-verifyCodeBtn.addEventListener('click', async () => {
-  const verificationCode = verificationCodeInput.value;
-
-  try {
-    await confirmationResult.confirm(verificationCode);
-  } catch (error) {
-    console.error('Error:', error.message);
-    // Handle the error, e.g., display an error message
-  }
-});
-
-backToMainAuthBtn.addEventListener('click', () => {
-  document.getElementById('mainAuthSection').classList.remove('hidden');
-  document.getElementById('phoneAuthSection').classList.add('hidden');
-});
-
-// Initialize the reCAPTCHA widget
-window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-  'size': 'invisible',
-  'callback': (response) => {
-    // reCAPTCHA solved, allow signInWithPhoneNumber.
   }
 });
 
@@ -623,7 +545,7 @@ function updateDarkMode(isDarkMode) {
                 trigger: "body",
                 start: "top top",
                 end: "bottom top",
-                scrub: true
+                scrub: true,
             },
             backgroundColor: isDarkMode ? "rgba(26, 32, 44, 0.8)" : "rgba(255, 255, 255, 0.8)",
             height: "60px",
@@ -668,5 +590,8 @@ function updateDarkMode(isDarkMode) {
   });
 }
         </script>
+
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </body>
 </html>
