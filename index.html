@@ -366,11 +366,21 @@
                     <p id="toggleAuthMode" class="text-center text-blue-500 dark:text-blue-400 cursor-pointer hover:underline">Don't have an account? Sign Up</p>
                 </div>
 
+                <div id="signUpSection" class="hidden mt-6 space-y-4">
+                    <input type="email" id="signUpEmail" placeholder="Email" class="w-full px-4 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <input type="password" id="signUpPassword" placeholder="Password" class="w-full px-4 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button id="signUpBtn" class="w-full py-2 px-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75 transition-all duration-300 flex items-center justify-center">
+                        <i data-lucide="user-plus" class="mr-2"></i>
+                        Sign Up
+                    </button>
+                    <p id="toggleSignInMode" class="text-center text-blue-500 dark:text-blue-400 cursor-pointer hover:underline">Already have an account? Log In</p>
+                </div>
+
                 <div class="mt-6 space-y-4">
                     <button id="googleSignInBtn" class="w-full py-2 px-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75 transition-all duration-300 flex items-center justify-center">
                         <ion-icon name="logo-google" style="scale:110%; margin-right: 10px;"></ion-icon> Log In with Google
                     </button>
-                    <button id="appleSignInBtn" class="w-full py-2 px-4 bg-black hover:bg-gray-800 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-black focus:ring-opacity-75 transition-all duration-300 flex items-center justify-center">
+                    <button id="appleSignInBtn" class="hidden w-full py-2 px-4 bg-black hover:bg-gray-800 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-black focus:ring-opacity-75 transition-all duration-300 flex items-center justify-center">
                         <ion-icon name="logo-apple" style="scale:110%; margin-right: 10px;"></ion-icon> Log In with Apple
                     </button>
                 </div>
@@ -381,29 +391,50 @@
 <script>
 const emailInput = document.getElementById('email');
 const passwordInput = document.getElementById('password');
+const signUpEmailInput = document.getElementById('signUpEmail');
+const signUpPasswordInput = document.getElementById('signUpPassword');
 const authActionBtn = document.getElementById('authActionBtn');
+const signUpBtn = document.getElementById('signUpBtn');
 const toggleAuthModeBtn = document.getElementById('toggleAuthMode');
+const toggleSignInModeBtn = document.getElementById('toggleSignInMode');
 const googleSignInBtn = document.getElementById('googleSignInBtn');
 const appleSignInBtn = document.getElementById('appleSignInBtn');
 
-// Firebase Authentication configurations
-let currentUser;
-
-// Email sign-in/sign-up
+// Email sign-in
 authActionBtn.addEventListener('click', async () => {
   const email = emailInput.value;
   const password = passwordInput.value;
 
   try {
-    if (authActionBtn.textContent.includes('Sign Up')) {
-      await firebase.auth().createUserWithEmailAndPassword(email, password);
-    } else {
-      await firebase.auth().signInWithEmailAndPassword(email, password);
-    }
+    await firebase.auth().signInWithEmailAndPassword(email, password);
   } catch (error) {
     console.error('Error:', error.message);
-    // Handle the error, e.g., display an error message
+    alert('Login Error: ' + error.message);
   }
+});
+
+// Email sign-up
+signUpBtn.addEventListener('click', async () => {
+  const email = signUpEmailInput.value;
+  const password = signUpPasswordInput.value;
+
+  try {
+    await firebase.auth().createUserWithEmailAndPassword(email, password);
+  } catch (error) {
+    console.error('Error:', error.message);
+    alert('Sign Up Error: ' + error.message);
+  }
+});
+
+// Toggle between Sign In and Sign Up
+toggleAuthModeBtn.addEventListener('click', () => {
+  document.getElementById('emailSignIn').classList.add('hidden');
+  document.getElementById('signUpSection').classList.remove('hidden');
+});
+
+toggleSignInModeBtn.addEventListener('click', () => {
+  document.getElementById('signUpSection').classList.add('hidden');
+  document.getElementById('emailSignIn').classList.remove('hidden');
 });
 
 // Google sign-in
@@ -414,33 +445,36 @@ googleSignInBtn.addEventListener('click', async () => {
     await firebase.auth().signInWithPopup(provider);
   } catch (error) {
     console.error('Error:', error.message);
-    // Handle the error, e.g., display an error message
+    alert('Login Error: ' + error.message);
   }
 });
 
 // Apple sign-in
-appleSignInBtn.addEventListener('click', async () => {
-  const provider = new firebase.auth.OAuthProvider('apple.com');
+// Check if the user is using a supported platform (e.g., iOS, macOS) before showing the Apple sign-in button
+if (firebase.auth.UserAgent.isIOS() || firebase.auth.UserAgent.isMacOS()) {
+  appleSignInBtn.classList.remove('hidden');
+  appleSignInBtn.addEventListener('click', async () => {
+    const provider = new firebase.auth.OAuthProvider('apple.com');
 
-  try {
-    await firebase.auth().signInWithPopup(provider);
-  } catch (error) {
-    console.error('Error:', error.message);
-    // Handle the error, e.g., display an error message
-  }
-});
-
+    try {
+      await firebase.auth().signInWithPopup(provider);
+    } catch (error) {
+      console.error('Error:', error.message);
+      alert('Login Error: ' + error.message);
+    }
+  });
+}
 
 // Update UI for dark mode compatibility
 function updateDarkMode(isDarkMode) {
-    const container = document.getElementById('signInContainer').firstElementChild;
-    if (isDarkMode) {
-        container.classList.add('dark:bg-gray-800', 'dark:text-white');
-        container.classList.remove('bg-white', 'text-gray-800');
-    } else {
-        container.classList.add('bg-white', 'text-gray-800');
-        container.classList.remove('dark:bg-gray-800', 'dark:text-white');
-    }
+  const container = document.getElementById('signInContainer').firstElementChild;
+  if (isDarkMode) {
+    container.classList.add('dark:bg-gray-800', 'dark:text-white');
+    container.classList.remove('bg-white', 'text-gray-800');
+  } else {
+    container.classList.add('bg-white', 'text-gray-800');
+    container.classList.remove('dark:bg-gray-800', 'dark:text-white');
+  }
 }
 
 </script>
