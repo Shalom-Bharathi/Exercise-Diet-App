@@ -1,6 +1,17 @@
 const auth = firebase.auth();
 const db = firebase.firestore();
 
+auth.onAuthStateChanged(user => {
+    if (user) {
+        console.log("LOGGED IN")
+        whenSignedIn.hidden = false;
+        whenSignedOut.hidden = true;
+    } else {
+        whenSignedIn.hidden = true;
+        whenSignedOut.hidden = false;
+    }
+})
+
 // DOM Elements
 const whenSignedIn = document.getElementById('whenSignedIn');
 const whenSignedOut = document.getElementById('whenSignedOut');
@@ -8,24 +19,8 @@ const SignInBtn = document.getElementById('SignInBtn');
 const SignOutBtn = document.getElementById('SignOutBtn');
 const submitBtn = document.getElementById('submitBtn');
 
-// Firebase Auth Provider
-const provider = new firebase.auth.GoogleAuthProvider();
+SignOutBtn.onclick = () => auth.signOut();
 
-// Sign In and Sign Out Handlers
-SignInBtn.onclick = () => auth.signInWithPopup(provider);
-SignOutBtn.onclick = () => {
-    try {
-        auth.signOut();
-    } catch (error) {
-        console.error('Sign out error:', error);
-    }
-};
-
-// Auth State Change Listener
-auth.onAuthStateChanged(user => {
-    whenSignedIn.hidden = !user;
-    whenSignedOut.hidden = !!user;
-});
 
 // Function to Handle Exercise or Preferences
 function ExerciseORPreferences() {

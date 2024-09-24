@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nourish</title>
+    <title>Nutrifit360</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
@@ -28,131 +28,133 @@
 
     <script src="https://cdn.jsdelivr.net/npm/framer-motion@11.5.4/dist/framer-motion.min.js"></script>
 
-    <script src="./scripts/app.js" defer></script>
+    <script src="/scripts/app.js" defer></script>
     
     <style>
-.dark {
-    background-color: #1a202c;
-    color: #f7fafc;
-}
 
-.dark .bg-gray-100 {
-    background-color: #2d3748;
-}
+    .dark {
+        background-color: #1a202c;
+        color: #f7fafc;
+    }
 
-.dark .bg-white {
-    background-color: #4a5568;
-}
+    .dark .bg-gray-100 {
+        background-color: #2d3748;
+    }
 
-.dark .text-gray-900 {
-    color: #f7fafc;
-}
+    .dark .bg-white {
+        background-color: #4a5568;
+    }
 
-.dark .text-blue-600 {
-    color: #63b3ed;
-}
+    .dark .text-gray-900 {
+        color: #f7fafc;
+    }
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
+    .dark .text-blue-600 {
+        color: #63b3ed;
+    }
 
-.fade-in {
-    animation: fadeIn 0.5s ease-out;
-}
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
 
-@keyframes slideIn {
-    from { transform: translateY(20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
+    .fade-in {
+        animation: fadeIn 0.5s ease-out;
+    }
 
-.slide-in {
-    animation: slideIn 0.5s ease-out;
-}
+    @keyframes slideIn {
+        from { transform: translateY(20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
 
-@keyframes scaleIn {
-    from { transform: scale(0.95); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-}
+    .slide-in {
+        animation: slideIn 0.5s ease-out;
+    }
 
-.scale-in {
-    animation: scaleIn 0.5s ease-out;
-}
+    @keyframes scaleIn {
+        from { transform: scale(0.95); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+    }
 
-.hover-effect:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
+    .scale-in {
+        animation: scaleIn 0.5s ease-out;
+    }
 
-@keyframes slideDown {
-    from { max-height: 0; opacity: 0; }
-    to { max-height: 300px; opacity: 1; }
-}
+    .hover-effect:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
 
-.slide-down {
-    animation: slideDown 0.3s ease-out;
-}
+    @keyframes slideDown {
+        from { max-height: 0; opacity: 0; }
+        to { max-height: 300px; opacity: 1; }
+    }
 
-.animated-text {
-    background: linear-gradient(45deg, #1E3A8A, #3B82F6, #60A5FA);
-    background-size: 200% 200%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: gradientText 5s ease infinite;
-}
+    .slide-down {
+        animation: slideDown 0.3s ease-out;
+    }
 
-@keyframes gradientText {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
+    .animated-text {
+        background: linear-gradient(45deg, #1E3A8A, #3B82F6, #60A5FA);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: gradientText 5s ease infinite;
+    }
 
-.scroll-reveal {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.5s, transform 0.5s;
-}
+    @keyframes gradientText {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
 
-.scroll-reveal.revealed {
-    opacity: 1;
-    transform: translateY(0);
-}
+    .scroll-reveal {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.5s, transform 0.5s;
+    }
 
-.nav-link {
-    position: relative;
-}
+    .scroll-reveal.revealed {
+        opacity: 1;
+        transform: translateY(0);
+    }
 
-.nav-link::after {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 2px;
-    bottom: -5px;
-    left: 0;
-    background-color: #1E3A8A;
-    transform: scaleX(0);
-    transition: transform 0.3s ease-out;
-}
+    .nav-link {
+        position: relative;
+    }
 
-.nav-link:hover::after {
-    transform: scaleX(1);
-}
+    .nav-link::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        bottom: -5px;
+        left: 0;
+        background-color: #1E3A8A;
+        transform: scaleX(0);
+        transition: transform 0.3s ease-out;
+    }
 
-.landerHeading {
-	background: radial-gradient(circle, #3B82F6 0%, #60A5FA 100%);
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: transparent;
-}
+    .nav-link:hover::after {
+        transform: scaleX(1);
+    }
 
-.frosted-bg {
-    background-color: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(10px);
-}
-.dark .frosted-bg {
-    background-color: rgba(17, 24, 39, 0.8);
-}
+    .landerHeading {
+    	background: radial-gradient(circle, #3B82F6 0%, #60A5FA 100%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+    }
+
+    .frosted-bg {
+        background-color: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+    }
+    .dark .frosted-bg {
+        background-color: rgba(17, 24, 39, 0.8);
+    }
+
     </style>
 </head>
 <body class="min-h-screen flex flex-col transition-colors duration-300">
@@ -345,68 +347,181 @@
 
     </footer>
 </section>
+
 <section id="whenSignedOut">
-    <div id="signInContainer" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; margin-top: 100px;">
-        <div style="max-width: 350px; width: 100%; padding: 2rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); border-radius: 0.5rem; background-color: #ffffff;">
-            <h1 style="text-align: center; font-size: 2rem; margin-bottom: 1rem;">Welcome Back</h1>
-            <p style="text-align: center; color: #6b7280; margin-bottom: 1.5rem;">Sign in to your account</p>
-            
-            <div id="loginButtons">
-                
-                <button id="SignInBtn" style="width: 100%; padding: 0.75rem; background-color: #1E3A8A; color: white; border: none; border-radius: 0.25rem; font-size: 1rem; cursor: pointer; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center;">
-                    <i data-lucide="mail" style="margin-right: 0.5rem;"></i>
-                    Log In with Email
-                </button>
-                <button id="normalLoginBtn" style="width: 100%; padding: 0.75rem; background-color: #3B82F6; color: white; border: none; border-radius: 0.25rem; font-size: 1rem; cursor: pointer; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center;">
-                    <i data-lucide="user" style="margin-right: 0.5rem;"></i>
-                    Log In Via Google
-                </button>
-                <button id="phoneLoginBtn" style="width: 100%; padding: 0.75rem; background-color: #60A5FA; color: white; border: none; border-radius: 0.25rem; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-                    <i data-lucide="phone" style="margin-right: 0.5rem;"></i>
-                    Log In with Phone Number
-                </button>
-            </div>
+    <div id="signInContainer" class="flex flex-col items-center justify-center w-full mt-24 p-4">
+        <div class="max-w-md w-full p-8 rounded-lg shadow-lg transition-all duration-300 bg-white dark:bg-gray-800">
+            <div id="mainAuthSection">
+                <h1 id="authTitle" class="text-3xl font-bold text-center mb-2 text-gray-800 dark:text-white">Welcome Back</h1>
+                <p id="authSubtitle" class="text-center text-gray-600 dark:text-gray-300 mb-6">Sign in to your account</p>
 
-            <div id="emailSignIn" class="signInStep" style="display: none;">
-                <input type="text" id="username" placeholder="Username or Email" style="width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 0.25rem; margin-bottom: 1rem;">
-                <input type="password" id="password" placeholder="Password" style="width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 0.25rem; margin-bottom: 1rem;">
-                <button id="SignInBtnEmail" style="width: 100%; padding: 0.75rem; background-color: #1E3A8A; color: white; border: none; border-radius: 0.25rem; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
-                    <i class="lucide-mail" style="margin-right: 0.5rem;"></i>
-                    Sign in with Email
-                </button>
-            </div>
+                <div id="emailSignIn" class="space-y-4">
+                    <input type="email" id="email" placeholder="Email" class="w-full px-4 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <input type="password" id="password" placeholder="Password" class="w-full px-4 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button id="authActionBtn" class="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 flex items-center justify-center">
+                        <i data-lucide="log-in" class="mr-2"></i>
+                        Log In with Email
+                    </button>
+                    <p id="toggleAuthMode" class="text-center text-blue-500 dark:text-blue-400 cursor-pointer hover:underline">Don't have an account? Sign Up</p>
+                </div>
 
-            <div id="phoneSignIn" class="signInStep" style="display: none;">
-                <input type="text" id="phoneNumber" placeholder="Phone Number" style="width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 0.25rem; margin-bottom: 1rem;">
-                <button id="SignInBtnPhone" style="width: 100%; padding: 0.75rem; background-color: #1E3A8A; color: white; border: none; border-radius: 0.25rem; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-                    <i class="lucide-phone" style="margin-right: 0.5rem;"></i>
-                    Sign in with Phone Number (OTP)
-                </button>
+                <div class="mt-6 space-y-4">
+                    <button id="googleSignInBtn" class="w-full py-2 px-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75 transition-all duration-300 flex items-center justify-center">
+                        <i data-lucide="user" class="mr-2"></i>
+                        Log In with Google
+                    </button>
+                    <button id="showPhoneAuthBtn" class="w-full py-2 px-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75 transition-all duration-300 flex items-center justify-center">
+                        <i data-lucide="phone" class="mr-2"></i>
+                        Log In with Phone Number
+                    </button>
+                </div>
+            </div>
+            <div id="phoneAuthSection" class="hidden">
+                <h2 class="text-2xl font-bold text-center mb-4 text-gray-800 dark:text-white">Phone Authentication</h2>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Please enter your phone number in the international format (e.g., +1234567890). Include your country code.</p>
+                <div class="space-y-4">
+                    <input type="tel" id="phoneNumber" placeholder="+1234567890" class="w-full px-4 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button id="sendCodeBtn" class="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300">
+                        Send Verification Code
+                    </button>
+                    <div id="verificationCodeSection" class="hidden space-y-4">
+                        <input type="text" id="verificationCode" placeholder="Enter 6-digit code" class="w-full px-4 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <button id="verifyCodeBtn" class="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300">
+                            Verify Code
+                        </button>
+                    </div>
+                    <button id="backToMainAuth" class="w-full py-2 px-4 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-75 transition-all duration-300">
+                        Back to Main Login
+                    </button>
+                </div>
+                <div id="recaptcha-container" class="mt-4"></div>
             </div>
         </div>
     </div>
 </section>
-
 <script>
-    const loginButtons = document.getElementById('loginButtons');
-    const emailSignIn = document.getElementById('emailSignIn');
-    const phoneSignIn = document.getElementById('phoneSignIn');
 
-    
 
-    document.getElementById('emailLoginBtn').addEventListener('click', () => {
-        loginButtons.style.display = 'none';
-        emailSignIn.style.display = 'block';
-    });
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('password');
+const authActionBtn = document.getElementById('authActionBtn');
+const toggleAuthModeBtn = document.getElementById('toggleAuthMode');
+const googleSignInBtn = document.getElementById('googleSignInBtn');
+const showPhoneAuthBtn = document.getElementById('showPhoneAuthBtn');
+const phoneNumberInput = document.getElementById('phoneNumber');
+const sendCodeBtn = document.getElementById('sendCodeBtn');
+const verificationCodeSection = document.getElementById('verificationCodeSection');
+const verificationCodeInput = document.getElementById('verificationCode');
+const verifyCodeBtn = document.getElementById('verifyCodeBtn');
+const backToMainAuthBtn = document.getElementById('backToMainAuth');
+const recaptchaContainer = document.getElementById('recaptcha-container');
 
-    document.getElementById('phoneLoginBtn').addEventListener('click', () => {
-        loginButtons.style.display = 'none';
-        phoneSignIn.style.display = 'block';
-    });
+// Firebase Authentication configurations
+let confirmationResult;
+let currentUser;
+
+// Email sign-in/sign-up
+authActionBtn.addEventListener('click', async () => {
+  const email = emailInput.value;
+  const password = passwordInput.value;
+
+  try {
+    if (authActionBtn.textContent.includes('Sign Up')) {
+      await firebase.auth().createUserWithEmailAndPassword(email, password);
+    } else {
+      await firebase.auth().signInWithEmailAndPassword(email, password);
+    }
+  } catch (error) {
+    console.error('Error:', error.message);
+    // Handle the error, e.g., display an error message
+  }
+});
+
+// Toggle between sign-in and sign-up modes
+toggleAuthModeBtn.addEventListener('click', () => {
+  const authTitle = document.getElementById('authTitle');
+  const authSubtitle = document.getElementById('authSubtitle');
+  const authActionBtnText = authActionBtn.textContent;
+
+  if (authActionBtnText.includes('Sign Up')) {
+    authTitle.textContent = 'Welcome Back';
+    authSubtitle.textContent = 'Sign in to your account';
+    authActionBtn.textContent = 'Log In with Email';
+  } else {
+    authTitle.textContent = 'Create an Account';
+    authSubtitle.textContent = 'Sign up with your email';
+    authActionBtn.textContent = 'Sign Up with Email';
+  }
+});
+
+// Google sign-in
+googleSignInBtn.addEventListener('click', async () => {
+  const provider = new firebase.auth.GoogleAuthProvider();
+
+  try {
+    await firebase.auth().signInWithPopup(provider);
+  } catch (error) {
+    console.error('Error:', error.message);
+    // Handle the error, e.g., display an error message
+  }
+});
+
+// Phone sign-in
+showPhoneAuthBtn.addEventListener('click', () => {
+  document.getElementById('mainAuthSection').classList.add('hidden');
+  document.getElementById('phoneAuthSection').classList.remove('hidden');
+});
+
+sendCodeBtn.addEventListener('click', async () => {
+  const phoneNumber = phoneNumberInput.value;
+
+  try {
+    confirmationResult = await firebase.auth().signInWithPhoneNumber(phoneNumber, window.recaptchaVerifier);
+    verificationCodeSection.classList.remove('hidden');
+  } catch (error) {
+    console.error('Error:', error.message);
+    // Handle the error, e.g., display an error message
+  }
+});
+
+verifyCodeBtn.addEventListener('click', async () => {
+  const verificationCode = verificationCodeInput.value;
+
+  try {
+    await confirmationResult.confirm(verificationCode);
+  } catch (error) {
+    console.error('Error:', error.message);
+    // Handle the error, e.g., display an error message
+  }
+});
+
+backToMainAuthBtn.addEventListener('click', () => {
+  document.getElementById('mainAuthSection').classList.remove('hidden');
+  document.getElementById('phoneAuthSection').classList.add('hidden');
+});
+
+// Initialize the reCAPTCHA widget
+window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+  'size': 'invisible',
+  'callback': (response) => {
+    // reCAPTCHA solved, allow signInWithPhoneNumber.
+  }
+});
+
+
+// Update UI for dark mode compatibility
+function updateDarkMode(isDarkMode) {
+    const container = document.getElementById('signInContainer').firstElementChild;
+    if (isDarkMode) {
+        container.classList.add('dark:bg-gray-800', 'dark:text-white');
+        container.classList.remove('bg-white', 'text-gray-800');
+    } else {
+        container.classList.add('bg-white', 'text-gray-800');
+        container.classList.remove('dark:bg-gray-800', 'dark:text-white');
+    }
+}
+
 </script>
-
-
-</section>
     
     <script>const body = document.body;
         const darkModeToggle = document.getElementById('darkModeToggle');
@@ -484,19 +599,7 @@
             });
         });
         
-        document.querySelectorAll('button').forEach(button => {
-            button.addEventListener('mouseenter', () => {
-                framerMotion.animate(button, { scale: 1.05 }, { duration: 0.2 });
-            });
-            button.addEventListener('mouseleave', () => {
-                framerMotion.animate(button, { scale: 1 }, { duration: 0.2 });
-            });
-            button.addEventListener('click', () => {
-                framerMotion.animate(button, { scale: 0.95 }, { duration: 0.1 }).then(() => {
-                    framerMotion.animate(button, { scale: 1 }, { duration: 0.1 });
-                });
-            });
-        });
+        
         
         try {gsap.registerPlugin(ScrollTrigger);}
         catch{ }
