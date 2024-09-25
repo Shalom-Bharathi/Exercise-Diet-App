@@ -342,7 +342,7 @@
                         const achievementsContainer = document.getElementById('achievements-container');
                         achievementsContainer.innerHTML = ''; // Clear existing achievements
 
-                        db.collection('achievements').where('uid', '==', user.uid).get()
+                        db.collection('achevements').where('uid', '==', user.uid).get()
                             .then((querySnapshot) => {
                                 querySnapshot.forEach((doc) => {
                                     const achievement = doc.data();

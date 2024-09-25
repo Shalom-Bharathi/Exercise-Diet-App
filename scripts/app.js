@@ -154,7 +154,7 @@ function ExerciseFinder() {
         .onSnapshot((querySnapshot) => {
           window.location.href = querySnapshot.empty
             ? "/pages/exercises/Eplan.html"
-            : "/pages/exercises/ePlanDetails.html";
+            : "/pages/exercises/EPlanDetails.html";
         });
     }
   });
@@ -177,7 +177,7 @@ function StartPlan(index) {
           setTimeout(() => {
             window.location.href = querySnapshot.empty
               ? "/pages/exercises/Eplan.html"
-              : "/pages/exercises/ePlanDetails.html";
+              : "/pages/exercises/EPlanDetails.html";
           }, 2000);
         });
     }
