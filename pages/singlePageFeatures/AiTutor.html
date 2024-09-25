@@ -132,61 +132,13 @@
     </div>
 
     <script>
-        const darkModeToggle = document.getElementById('darkModeToggle');
-const body = document.body;
-const sunIcon = document.querySelector('.sun-icon');
-const moonIcon = document.querySelector('.moon-icon');
-
-function toggleDarkMode() {
-    body.classList.toggle('dark');
-    const isDarkMode = body.classList.contains('dark');
-    localStorage.setItem('darkMode', isDarkMode);
-    updateDarkModeIcon(isDarkMode);
-    updateBackgroundColor(isDarkMode);
-}
-
-function updateDarkModeIcon(isDarkMode) {
-    if (isDarkMode) {
-        sunIcon.style.display = 'none';
-        moonIcon.style.display = 'inline-block';
-    } else {
-        sunIcon.style.display = 'inline-block';
-        moonIcon.style.display = 'none';
-    }
-}
-
-function updateBackgroundColor(isDarkMode) {
-    if (isDarkMode) {
-        body.style.backgroundColor = '#1a1a1a'; // Dark background color
-        body.style.backgroundImage = 'none'; // Remove gradient in dark mode
-    } else {
-        body.style.backgroundColor = ''; // Reset to default
-        body.style.backgroundImage = 'linear-gradient(to bottom right, #EBF4FF, #F3E8FF)'; // Light mode gradient
-    }
-}
-
-function initializeDarkMode() {
-    const savedDarkMode = localStorage.getItem('darkMode') === 'true';
-    if (savedDarkMode) {
-        body.classList.add('dark');
-    }
-    updateDarkModeIcon(savedDarkMode);
-    updateBackgroundColor(savedDarkMode);
-}
-
-darkModeToggle.addEventListener('click', toggleDarkMode);
-initializeDarkMode();
-
-
-       
-        let apiKey;
+       let apiKey;
 let thingsRefx;
 let unsubscribex;
 let db = firebase.firestore();
 thingsRefx = db.collection('API');
 
-unsubscribex = thingsRefx
-.onSnapshot(querySnapshot => {
+unsubscribex = thingsRefx.onSnapshot(querySnapshot => {
   querySnapshot.docs.forEach(doc => {
     console.log(doc.data().API);
     apiKey = doc.data().API;
@@ -201,7 +153,8 @@ const homeButton = document.getElementById('homeButton');
 
 // Chat state
 let messages = [
-{ id: 1, text: "Hello! I'm your AI fitness and nutrition tutor. How can I help you today?", sender: 'ai' }
+  { role: "system", content: "You are a knowledgeable and friendly AI fitness and nutrition tutor. Provide helpful, accurate, and motivating advice. Keep your responses concise but informative." },
+  { role: "assistant", content: "Hello! I'm your AI fitness and nutrition tutor. How can I help you today?" }
 ];
 
 // Handle sending a message
@@ -222,48 +175,53 @@ async function sendMessage() {
         sendButton.disabled = true;
 
         // Show typing indicator
-        const typingIndicator = addMessage("Typing...", 'ai');
+        const typingIndicator = addMessage("Thinking...", 'ai');
 
-        const aiResponse = await sendMessageToAI(userMessage);
+        try {
+            const aiResponse = await getAIResponse(userMessage);
+            
+            // Remove typing indicator
+            if (typingIndicator) {
+                chatArea.removeChild(typingIndicator);
+            }
 
-        // Remove typing indicator
-        if (typingIndicator) {
-            chatArea.removeChild(typingIndicator);
+            // Add AI response
+            addMessage(aiResponse, 'ai');
+        } catch (error) {
+            console.error('Error:', error);
+            addMessage("I'm sorry, I couldn't process your request at the moment. Please try again later.", 'ai');
+        } finally {
+            // Re-enable input and button
+            userInput.disabled = false;
+            sendButton.disabled = false;
+            userInput.focus();
         }
-
-        // Add AI response
-        addMessage(aiResponse, 'ai');
-
-        // Re-enable input and button
-        userInput.disabled = false;
-        sendButton.disabled = false;
-        userInput.focus();
     }
 }
 
 // Add a new message to the chat
 function addMessage(text, sender) {
-    const newMessage = { id: messages.length + 1, text, sender };
+    const newMessage = { role: sender === 'user' ? 'user' : 'assistant', content: text };
     messages.push(newMessage);
-    return renderMessage(newMessage); // Return the message element
+    return renderMessage(newMessage);
 }
 
 // Render a single message
 function renderMessage(message) {
     const messageDiv = document.createElement('div');
-    messageDiv.className = `flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'} mb-4 message`;
+    messageDiv.className = `flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} mb-4 message`;
 
     messageDiv.innerHTML = `
-    <div class="flex items-start max-w-[70%] ${message.sender === 'user' ? 'flex-row-reverse' : ''}">
+    <div class="flex items-start max-w-[70%] ${message.role === 'user' ? 'flex-row-reverse' : ''}">
         <div class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">
-            ${message.sender === 'ai' ? '<i data-lucide="zap"></i>' : '<i data-lucide="user"></i>'}
+            ${message.role === 'assistant' ? '<i data-lucide="zap"></i>' : '<i data-lucide="user"></i>'}
         </div>
         <div class="mx-2 p-3 rounded-lg ${
-            message.sender === 'user' 
+            message.role === 'user' 
                 ? 'bg-blue-500 text-white' 
                 : 'bg-gray-100 dark:bg-gray-700 dark:text-white'
         }">
-            <p class="text-sm ${message.sender === 'user' ? 'text-white' : 'text-gray-800 dark:text-white'}">${message.text}</p>
+            <p class="text-sm ${message.role === 'user' ? 'text-white' : 'text-gray-800 dark:text-white'}">${message.content}</p>
         </div>
     </div>
     `;
@@ -271,104 +229,86 @@ function renderMessage(message) {
     chatArea.appendChild(messageDiv);
     lucide.createIcons();
     scrollToBottom();
-    return messageDiv; // Return the message element for removal later
+    return messageDiv;
 }
 
 // Scroll chat area to bottom
 function scrollToBottom() {
-chatArea.scrollTop = chatArea.scrollHeight;
+    chatArea.scrollTop = chatArea.scrollHeight;
 }
 
-// Send message to AI and get response
-async function sendMessageToAI(message) {
-
-const apiUrl = 'https://api.openai.com/v1/chat/completions';
-
-try {
-const response = await fetch(apiUrl, {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-    },
-    body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: [
-            { role: "system", content: "You are a knowledgeable fitness and nutrition AI tutor. Provide helpful, accurate, and motivating advice." },
-            { role: "user", content: message }
-        ],
-        max_tokens: 150
-    })
-});
-
-if (!response.ok) {
-    throw new Error('API request failed');
-}
-
-const data = await response.json();
-let aiMessage = data.choices[0].message.content;
-
-// Check if the message is capped and request more tokens if needed
-while (data.choices[0].finish_reason === 'length') {
-    const continuationResponse = await fetch(apiUrl, {
+// Get AI response
+async function getAIResponse(userMessage) {
+    const apiUrl = 'https://api.openai.com/v1/chat/completions';
+    
+    const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${apiKey}`
         },
         body: JSON.stringify({
-            model: "gpt-4o-mini",
+            model: "gpt-3.5-turbo",
             messages: [
-                { role: "system", content: "You are a knowledgeable fitness and nutrition AI tutor. Provide helpful, accurate, and motivating advice." },
-                { role: "user", content: message },
-                { role: "assistant", content: aiMessage }
+                ...messages,
+                { role: "user", content: userMessage }
             ],
-            max_tokens: 150
+            max_tokens: 150,
+            temperature: 0.7,
+            top_p: 1,
+            frequency_penalty: 0,
+            presence_penalty: 0
         })
     });
 
-    if (!continuationResponse.ok) {
+    if (!response.ok) {
         throw new Error('API request failed');
     }
 
-    const continuationData = await continuationResponse.json();
-    aiMessage += continuationData.choices[0].message.content;
+    const data = await response.json();
+    const aiMessage = data.choices[0].message.content;
+
+    // Update messages array with the new interaction
+    messages.push({ role: "user", content: userMessage });
+    messages.push({ role: "assistant", content: aiMessage });
+
+    // Trim conversation history if it gets too long
+    if (messages.length > 10) {
+        messages = [
+            messages[0], // Keep the system message
+            ...messages.slice(-9) // Keep the last 9 messages
+        ];
+    }
+
+    return aiMessage;
 }
 
-// Replace stars and hashes with appropriate HTML tags
-aiMessage = aiMessage.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-aiMessage = aiMessage.replace(/## (.*?)\n/g, '<h2>$1</h2>');
-
-return aiMessage;
-} catch (error) {
-console.error('Error:', error);
-return "I'm sorry, I couldn't process your request at the moment. Please try again later.";
-}
+// Function to clear chat
+function clearChat() {
+    messages = [
+        { role: "system", content: "You are a knowledgeable and friendly AI fitness and nutrition tutor. Provide helpful, accurate, and motivating advice. Keep your responses concise but informative." },
+        { role: "assistant", content: "Chat cleared. How can I assist you today?" }
+    ];
+    chatArea.innerHTML = '';
+    renderMessage(messages[1]);
 }
 
 // Event listeners
 sendButton.addEventListener('click', sendMessage);
 userInput.addEventListener('keypress', (e) => {
-if (e.key === 'Enter' && !e.shiftKey) {
-e.preventDefault();
-sendMessage();
-}
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+    }
 });
-
-// Function to clear chat
-function clearChat() {
-messages = [{ id: 1, text: "Chat cleared. How can I assist you today?", sender: 'ai' }];
-chatArea.innerHTML = '';
-renderMessage(messages[0]);
-}
 
 // Home button functionality
 homeButton.addEventListener('click', () => {
-clearChat();
+    clearChat();
 });
 
 // Initial message render
-renderMessage(messages[0]);
+renderMessage(messages[1]);
     </script>
 </body>
 </html>

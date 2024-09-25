@@ -685,7 +685,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     .then((querySnapshot) => {
                         if (querySnapshot.empty) {
                             console.log("No exercises found for this user");
-                            window.location.href = "ePlan.html";
+                            window.location.href = "Eplan.html";
                         } else {
                             querySnapshot.forEach((doc) => {
                                 planIndex = Number(doc.data().Plan);
