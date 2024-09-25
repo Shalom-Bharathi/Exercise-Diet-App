@@ -153,7 +153,7 @@ function ExerciseFinder() {
         .where("uid", "==", user.uid)
         .onSnapshot((querySnapshot) => {
           window.location.href = querySnapshot.empty
-            ? "/pages/exercises/Eplan.html"
+            ? "/pages/exercises/EPlan.html"
             : "/pages/exercises/EPlanDetails.html";
         });
     }
