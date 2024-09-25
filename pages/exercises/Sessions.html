@@ -1,943 +1,1243 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nutrifit360 - Workout Session</title>
-    <link rel="stylesheet" href="style5.css">
+    <link rel="stylesheet" href="style5.css" />
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="icon" type="image/png" href="/assets/icons/icon.png" sizes="32x32" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="/assets/icons/icon.png"
+      sizes="32x32"
+    />
     <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-firestore.js"></script>
     <script>
-        var firebaseConfig = {
-            apiKey: "AIzaSyBvONbLQcR-XqSsJ9hi7xAsk8sTwej43aA",
-            authDomain: "ed-project-42419.firebaseapp.com",
-            projectId: "ed-project-42419",
-            storageBucket: "ed-project-42419.appspot.com",
-            messagingSenderId: "909551078814",
-            appId: "1:909551078814:web:456608495b9655eef6da8f"
-        };
-        firebase.initializeApp(firebaseConfig);
+      var firebaseConfig = {
+        apiKey: "AIzaSyBvONbLQcR-XqSsJ9hi7xAsk8sTwej43aA",
+        authDomain: "ed-project-42419.firebaseapp.com",
+        projectId: "ed-project-42419",
+        storageBucket: "ed-project-42419.appspot.com",
+        messagingSenderId: "909551078814",
+        appId: "1:909551078814:web:456608495b9655eef6da8f",
+      };
+      firebase.initializeApp(firebaseConfig);
     </script>
 
     <script src="/scripts/app.js"></script>
 
     <style>
-        .screen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
+      .screen {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+      }
 
-        .hidden {
-            display: none;
-        }
+      .hidden {
+        display: none;
+      }
 
-        #nextTaskInfo {
-            margin-top: 20px;
-            text-align: center;
-            background-color: var(--card-bg);
-            color: var(--text-color);
-        }
+      #nextTaskInfo {
+        margin-top: 20px;
+        text-align: center;
+        background-color: var(--card-bg);
+        color: var(--text-color);
+      }
 
-        #breakScreen {
-            background-color: #e0f7fa; /* Light blue */
-            color: #333;
-        }
+      #breakScreen {
+        background-color: #e0f7fa; /* Light blue */
+        color: #333;
+      }
 
-        .dark #breakScreen {
-            background-color: #004d40; /* Dark teal */
-            color: #fff;
-        }
-        :root {
-            --primary-color: #3b82f6; /* Blue */
-            --secondary-color: #0d47a1; /* Darker blue */
-            --accent-color: #f59e0b; /* Yellow */
-            --text-color: #1f2937; /* Dark gray */
-            --bg-color: #ffffff; /* White */
-            --card-bg: #f3f4f6; /* Light gray */
-            --hover-color: #1e88e5; /* Lighter blue */
-            --light-blue: #bbdefb; /* Light blue */
-            --medium-blue: #64b5f6; /* Medium blue */
-            --dark-blue: #1976d2; /* Dark blue */
-        }
+      .dark #breakScreen {
+        background-color: #004d40; /* Dark teal */
+        color: #fff;
+      }
+      :root {
+        --primary-color: #3b82f6; /* Blue */
+        --secondary-color: #0d47a1; /* Darker blue */
+        --accent-color: #f59e0b; /* Yellow */
+        --text-color: #1f2937; /* Dark gray */
+        --bg-color: #ffffff; /* White */
+        --card-bg: #f3f4f6; /* Light gray */
+        --hover-color: #1e88e5; /* Lighter blue */
+        --light-blue: #bbdefb; /* Light blue */
+        --medium-blue: #64b5f6; /* Medium blue */
+        --dark-blue: #1976d2; /* Dark blue */
+      }
 
-        .dark {
-            --primary-color: #60a5fa; /* Light blue */
-            --secondary-color: #0d47a1; /* Darker blue */
-            --accent-color: #fbbf24; /* Yellow */
-            --text-color: #f9fafb; /* Light gray */
-            --bg-color: #111827; /* Dark gray */
-            --card-bg: #1f2937; /* Dark gray */
-            --hover-color: #3b82f6; /* Blue */
-        }
+      .dark {
+        --primary-color: #60a5fa; /* Light blue */
+        --secondary-color: #0d47a1; /* Darker blue */
+        --accent-color: #fbbf24; /* Yellow */
+        --text-color: #f9fafb; /* Light gray */
+        --bg-color: #111827; /* Dark gray */
+        --card-bg: #1f2937; /* Dark gray */
+        --hover-color: #3b82f6; /* Blue */
+      }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            transition: background-color 0.3s, color 0.3s;
-        }
+      body {
+        font-family: "Arial", sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        transition: background-color 0.3s, color 0.3s;
+      }
 
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 2rem;
-            background-color: var(--bg-color);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+        background-color: var(--bg-color);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--primary-color);
-        }
+      .logo {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--primary-color);
+      }
 
+      nav {
+        display: flex;
+        gap: 1.5rem;
+      }
+
+      .nav-item {
+        text-decoration: none;
+        color: var(--text-color);
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        transition: color 0.3s;
+      }
+
+      .nav-item:hover {
+        color: var(--primary-color);
+      }
+
+      .header-buttons button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1.2rem;
+        color: var(--text-color);
+        transition: color 0.3s;
+      }
+
+      .header-buttons button:hover {
+        color: var(--primary-color);
+      }
+
+      .menu-toggle {
+        display: none;
+      }
+
+      .mobile-menu {
+        display: none;
+        flex-direction: column;
+        background-color: var(--card-bg);
+        padding: 1rem;
+      }
+
+      main {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+        text-align: center;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+        animation: fadeInUp 0.8s ease-out;
+        color: var(--primary-color);
+      }
+
+      .subtitle {
+        font-size: 1.2rem;
+        color: var(--secondary-color);
+        margin-bottom: 2rem;
+        animation: fadeInUp 0.8s ease-out 0.2s both;
+      }
+
+      .workout-card {
+        background-color: var(--card-bg);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        animation: fadeInUp 0.8s ease-out 0.4s both;
+        text-align: center;
+        border: 2px solid var(--primary-color);
+      }
+
+      .task-info,
+      .task-description,
+      .task-sets,
+      .task-timer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .task-info i,
+      .task-description i,
+      .task-sets i,
+      .task-timer i {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        color: var(--accent-color);
+      }
+
+      .task-info h2 {
+        color: var(--primary-color);
+        font-size: 1.8rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .task-description p,
+      .task-sets p {
+        color: var(--text-color);
+        font-size: 1.1rem;
+      }
+
+      .task-timer p {
+        color: var(--secondary-color);
+        font-size: 2rem;
+        font-weight: bold;
+      }
+
+      .workout-controls {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 2rem;
+        animation: fadeInUp 0.8s ease-out 0.6s both;
+      }
+
+      .btn {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background-color 0.3s, transform 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .btn:hover {
+        background-color: var(--hover-color);
+        transform: translateY(-2px);
+      }
+
+      .music-player {
+        position: fixed;
+        bottom: 1rem;
+        right: 1rem;
+        background-color: var(--card-bg);
+        padding: 1rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        animation: fadeInUp 0.8s ease-out 0.8s both;
+        border: 1px solid var(--primary-color);
+      }
+
+      .music-info {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+
+      .music-info i {
+        font-size: 1.5rem;
+        margin-right: 0.5rem;
+        color: var(--accent-color);
+      }
+
+      .music-controls {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+      }
+
+      .music-controls button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1.2rem;
+        color: var(--text-color);
+        transition: color 0.3s, transform 0.2s;
+      }
+
+      .music-controls button:hover {
+        color: var(--primary-color);
+        transform: scale(1.1);
+      }
+
+      .volume-control {
+        display: flex;
+        align-items: center;
+      }
+
+      .volume-control i {
+        margin-right: 0.5rem;
+        color: var(--secondary-color);
+      }
+
+      #volumeSlider {
+        width: 100%;
+        appearance: none;
+        height: 5px;
+        border-radius: 5px;
+        background: var(--primary-color);
+        outline: none;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+      }
+
+      #volumeSlider:hover {
+        opacity: 1;
+      }
+
+      #volumeSlider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background: var(--accent-color);
+        cursor: pointer;
+      }
+
+      #volumeSlider::-moz-range-thumb {
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background: var(--accent-color);
+        cursor: pointer;
+      }
+
+      footer {
+        text-align: center;
+        padding: 2rem;
+        background-color: var(--card-bg);
+        margin-top: 2rem;
+      }
+
+      footer a {
+        color: var(--primary-color);
+        text-decoration: none;
+      }
+
+      footer a:hover {
+        text-decoration: underline;
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 768px) {
         nav {
-            display: flex;
-            gap: 1.5rem;
-        }
-
-        .nav-item {
-            text-decoration: none;
-            color: var(--text-color);
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            transition: color 0.3s;
-        }
-
-        .nav-item:hover {
-            color: var(--primary-color);
-        }
-
-        .header-buttons button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.2rem;
-            color: var(--text-color);
-            transition: color 0.3s;
-        }
-
-        .header-buttons button:hover {
-            color: var(--primary-color);
+          display: none;
         }
 
         .menu-toggle {
-            display: none;
+          display: block;
         }
 
         .mobile-menu {
-            display: none;
-            flex-direction: column;
-            background-color: var(--card-bg);
-            padding: 1rem;
+          display: none;
         }
 
-        main {
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-            text-align: center;
+        .mobile-menu.active {
+          display: flex;
         }
-
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-            animation: fadeInUp 0.8s ease-out;
-            color: var(--primary-color);
-        }
-
-        .subtitle {
-            font-size: 1.2rem;
-            color: var(--secondary-color);
-            margin-bottom: 2rem;
-            animation: fadeInUp 0.8s ease-out 0.2s both;
-        }
-
-        .workout-card {
-            background-color: var(--card-bg);
-            border-radius: 16px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            animation: fadeInUp 0.8s ease-out 0.4s both;
-            text-align: center;
-            border: 2px solid var(--primary-color);
-        }
-
-        .task-info, .task-description, .task-sets, .task-timer {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .task-info i, .task-description i, .task-sets i, .task-timer i {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-            color: var(--accent-color);
-        }
-
-        .task-info h2 {
-            color: var(--primary-color);
-            font-size: 1.8rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .task-description p, .task-sets p {
-            color: var(--text-color);
-            font-size: 1.1rem;
-        }
-
-        .task-timer p {
-            color: var(--secondary-color);
-            font-size: 2rem;
-            font-weight: bold;
-        }
-
-        .workout-controls {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-top: 2rem;
-            animation: fadeInUp 0.8s ease-out 0.6s both;
-        }
-
-        .btn {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: background-color 0.3s, transform 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn:hover {
-            background-color: var(--hover-color);
-            transform: translateY(-2px);
-        }
-
-        .music-player {
-            position: fixed;
-            bottom: 1rem;
-            right: 1rem;
-            background-color: var(--card-bg);
-            padding: 1rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            animation: fadeInUp 0.8s ease-out 0.8s both;
-            border: 1px solid var(--primary-color);
-        }
-
-        .music-info {
-            display: flex;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .music-info i {
-            font-size: 1.5rem;
-            margin-right: 0.5rem;
-            color: var(--accent-color);
-        }
-
-        .music-controls {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-        }
-
-        .music-controls button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.2rem;
-            color: var(--text-color);
-            transition: color 0.3s, transform 0.2s;
-        }
-
-        .music-controls button:hover {
-            color: var(--primary-color);
-            transform: scale(1.1);
-        }
-
-        .volume-control {
-            display: flex;
-            align-items: center;
-        }
-
-        .volume-control i {
-            margin-right: 0.5rem;
-            color: var(--secondary-color);
-        }
-
-        #volumeSlider {
-            width: 100%;
-            appearance: none; 
-            height: 5px;
-            border-radius: 5px;
-            background: var(--primary-color);
-            outline: none;
-            opacity: 0.7;
-            transition: opacity 0.2s;
-        }
-
-        #volumeSlider:hover {
-            opacity: 1;
-        }
-
-        #volumeSlider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 15px;
-            height: 15px;
-            border-radius: 50%;
-            background: var(--accent-color);
-            cursor: pointer;
-        }
-
-        #volumeSlider::-moz-range-thumb {
-            width: 15px;
-            height: 15px;
-            border-radius: 50%;
-            background: var(--accent-color);
-            cursor: pointer;
-        }
-
-        footer {
-            text-align: center;
-            padding: 2rem;
-            background-color: var(--card-bg);
-            margin-top: 2rem;
-        }
-
-        footer a {
-            color: var(--primary-color);
-            text-decoration: none;
-        }
-
-        footer a:hover {
-            text-decoration: underline;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @media (max-width: 768px) {
-            nav {
-                display: none;
-            }
-
-            .menu-toggle {
-                display: block;
-            }
-
-            .mobile-menu {
-                display: none;
-            }
-
-            .mobile-menu.active {
-                display: flex;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="header-buttons" hidden>
-        <button id="darkModeToggle"><i data-lucide="moon"></i></button>
+      <button id="darkModeToggle"><i data-lucide="moon"></i></button>
     </div>
     <main>
-        <div id="startScreen" class="screen flex flex-col items-center justify-center h-full">
-            <h1 class="text-4xl font-bold mb-8">Ready to Start Your Workout?</h1>
-            <button id="startSession" class="btn bg-indigo-600 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-indigo-700 transition duration-300">
-                <i data-lucide="play" class="w-6 h-6 inline-block mr-2"></i> Start Session
-            </button>
-            <br>
-            <a id="backToExercise" class="btn bg-indigo-600 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-indigo-700 transition duration-300">
-                <i data-lucide="chevron-left" class="w-6 h-6 inline-block mr-2"></i> back to exercise
-            </a>
+      <div
+        id="startScreen"
+        class="screen flex flex-col items-center justify-center h-full"
+      >
+        <h1 class="text-4xl font-bold mb-8">Ready to Start Your Workout?</h1>
+        <button
+          id="startSession"
+          class="btn bg-indigo-600 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-indigo-700 transition duration-300"
+        >
+          <i data-lucide="play" class="w-6 h-6 inline-block mr-2"></i> Start
+          Session
+        </button>
+        <br />
+        <a
+          id="backToExercise"
+          class="btn bg-indigo-600 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-indigo-700 transition duration-300"
+        >
+          <i data-lucide="chevron-left" class="w-6 h-6 inline-block mr-2"></i>
+          back to exercise
+        </a>
+      </div>
+
+      <div id="workoutScreen" class="screen hidden">
+        <h1>Workout Session</h1>
+        <p class="subtitle">Stay focused and push your limits!</p>
+
+        <div class="workout-card">
+          <div class="task-info">
+            <i data-lucide="dumbbell"></i>
+            <h2 id="taskName"></h2>
+          </div>
+          <div class="task-description">
+            <i data-lucide="clipboard-list"></i>
+            <p id="taskDescription"></p>
+          </div>
+          <div class="task-sets">
+            <i data-lucide="check-circle"></i>
+            <p id="taskSets"></p>
+          </div>
+          <div class="task-timer">
+            <i data-lucide="clock"></i>
+            <p id="taskTimer"></p>
+          </div>
+          <div
+            id="nextTaskInfo"
+            class="hidden bg-indigo-100 dark:bg-indigo-900 rounded-lg p-4 text-gray-800 dark:text-gray-200"
+          >
+            <h3 class="text-xl font-semibold mb-2">Next Task:</h3>
+            <p id="nextTaskName" class="text-lg"></p>
+          </div>
         </div>
 
-        <div id="workoutScreen" class="screen hidden">
-            <h1>Workout Session</h1>
-            <p class="subtitle">Stay focused and push your limits!</p>
-
-            <div class="workout-card">
-                <div class="task-info">
-                    <i data-lucide="dumbbell"></i>
-                    <h2 id="taskName"></h2>
-                </div>
-                <div class="task-description">
-                    <i data-lucide="clipboard-list"></i>
-                    <p id="taskDescription"></p>
-                </div>
-                <div class="task-sets">
-                    <i data-lucide="check-circle"></i>
-                    <p id="taskSets"></p>
-                </div>
-                <div class="task-timer">
-                    <i data-lucide="clock"></i>
-                    <p id="taskTimer"></p>
-                </div>
-                <div id="nextTaskInfo" class="hidden bg-indigo-100 dark:bg-indigo-900 rounded-lg p-4 text-gray-800 dark:text-gray-200">
-                    <h3 class="text-xl font-semibold mb-2">Next Task:</h3>
-                    <p id="nextTaskName" class="text-lg"></p>
-                </div>
-            </div>
-
-            <div class="workout-controls grid grid-cols-2 gap-4 mb-8">
-                <button id="pauseTimer" class="btn bg-indigo-600 text-white px-4 py-2 rounded-lg text-lg font-semibold hover:bg-indigo-700 transition duration-300">
-                    <i data-lucide="pause" class="w-5 h-5 inline-block mr-2"></i> Pause Timer
-                </button>
-                <button id="skipSet" class="btn bg-indigo-600 text-white px-4 py-2 rounded-lg text-lg font-semibold hover:bg-indigo-700 transition duration-300">
-                    <i data-lucide="fast-forward" class="w-5 h-5 inline-block mr-2"></i> Skip Set
-                </button>
-                <button id="skipTask" class="btn bg-indigo-600 text-white px-4 py-2 rounded-lg text-lg font-semibold hover:bg-indigo-700 transition duration-300">
-                    <i data-lucide="skip-forward" class="w-5 h-5 inline-block mr-2"></i> Skip Task
-                </button>
-                <button id="finishWorkout" class="btn bg-green-600 text-white px-4 py-2 rounded-lg text-lg font-semibold hover:bg-green-700 transition duration-300">
-                    <i data-lucide="check-circle" class="w-5 h-5 inline-block mr-2"></i> Finish Workout
-                </button>
-            </div>
+        <div class="workout-controls grid grid-cols-2 gap-4 mb-8">
+          <button
+            id="pauseTimer"
+            class="btn bg-indigo-600 text-white px-4 py-2 rounded-lg text-lg font-semibold hover:bg-indigo-700 transition duration-300"
+          >
+            <i data-lucide="pause" class="w-5 h-5 inline-block mr-2"></i> Pause
+            Timer
+          </button>
+          <button
+            id="skipSet"
+            class="btn bg-indigo-600 text-white px-4 py-2 rounded-lg text-lg font-semibold hover:bg-indigo-700 transition duration-300"
+          >
+            <i data-lucide="fast-forward" class="w-5 h-5 inline-block mr-2"></i>
+            Skip Set
+          </button>
+          <button
+            id="skipTask"
+            class="btn bg-indigo-600 text-white px-4 py-2 rounded-lg text-lg font-semibold hover:bg-indigo-700 transition duration-300"
+          >
+            <i data-lucide="skip-forward" class="w-5 h-5 inline-block mr-2"></i>
+            Skip Task
+          </button>
+          <button
+            id="finishWorkout"
+            class="btn bg-green-600 text-white px-4 py-2 rounded-lg text-lg font-semibold hover:bg-green-700 transition duration-300"
+          >
+            <i data-lucide="check-circle" class="w-5 h-5 inline-block mr-2"></i>
+            Finish Workout
+          </button>
         </div>
+      </div>
 
-        <div id="breakScreen" class="screen hidden flex flex-col items-center justify-center h-full">
-            <h2 class="text-3xl font-bold mb-4">Relax Time</h2>
-            <p class="text-xl mb-4">Next set starts in: <span id="breakTimer" class="font-bold"></span> seconds</p>
-        </div>
+      <div
+        id="breakScreen"
+        class="screen hidden flex flex-col items-center justify-center h-full"
+      >
+        <h2 class="text-3xl font-bold mb-4">Relax Time</h2>
+        <p class="text-xl mb-4">
+          Next set starts in:
+          <span id="breakTimer" class="font-bold"></span> seconds
+        </p>
+      </div>
     </main>
 
     <div class="music-player">
-        <div class="music-info">
-            <i data-lucide="music"></i>
-            <h3>Now Playing</h3>
-        </div>
-        <div class="music-controls">
-            <button id="playPause"><i data-lucide="play"></i></button>
-        </div>
-        <div class="volume-control">
-            <i data-lucide="volume-2"></i>
-            <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="0.5">
-        </div>
+      <div class="music-info">
+        <i data-lucide="music"></i>
+        <h3>Now Playing</h3>
+      </div>
+      <div class="music-controls">
+        <button id="playPause"><i data-lucide="play"></i></button>
+      </div>
+      <div class="volume-control">
+        <i data-lucide="volume-2"></i>
+        <input
+          type="range"
+          id="volumeSlider"
+          min="0"
+          max="1"
+          step="0.1"
+          value="0.5"
+        />
+      </div>
     </div>
 
     <audio id="audioPlayer" src="/assets/audio/music.mp3"></audio>
-    
-    <script>
 
-const workoutPlans = [
-    {
-        name: "Beginner's Bodyweight Blast",
-        description: "A gentle introduction to fitness using only your body weight.",
-        ageRating: "All ages",
-        difficulty: "Easy",
-        keywords: ["Strength", "Flexibility", "Balance", "Core Stability"],
-        totalDuration: "30 minutes",
-        caloriesBurnt: 200,
-        benefits: [
+    <script>
+      const workoutPlans = [
+        {
+          name: "Beginner's Bodyweight Blast",
+          description:
+            "A gentle introduction to fitness using only your body weight.",
+          ageRating: "All ages",
+          difficulty: "Easy",
+          keywords: ["Strength", "Flexibility", "Balance", "Core Stability"],
+          totalDuration: "30 minutes",
+          caloriesBurnt: 200,
+          benefits: [
             "Improves overall body strength",
             "Enhances flexibility and balance",
             "Strengthens core muscles",
-            "Supports joint stability"
-        ],
-        exercises: [
-            { name: "Bodyweight Squats", duration: "3 sets of 15 reps", caloriesBurnt: 30, description: "Basic squats using only body weight." },
-            { name: "Push-ups", duration: "3 sets of 10-12 reps", caloriesBurnt: 25, description: "Standard push-ups to build upper body strength." },
-            { name: "Plank", duration: "3 sets of 30-60 seconds", caloriesBurnt: 20, description: "Hold a plank position to strengthen the core." },
-            { name: "Lunges", duration: "3 sets of 12 reps per leg", caloriesBurnt: 25, description: "Forward lunges to work on leg strength and balance." },
-            { name: "Glute Bridge", duration: "3 sets of 15 reps", caloriesBurnt: 20, description: "Lying on your back, lift your hips to engage the glutes." }
-        ]
-    },
-    {
-        name: "30-Day Strength Builder",
-        description: "Progressive strength training program for intermediate fitness enthusiasts.",
-        ageRating: "16+",
-        difficulty: "Medium",
-        keywords: ["Strength", "Muscle Gain", "Power", "Endurance"],
-        totalDuration: "45 minutes",
-        caloriesBurnt: 350,
-        benefits: [
+            "Supports joint stability",
+          ],
+          exercises: [
+            {
+              name: "Bodyweight Squats",
+              duration: "3 sets of 15 reps",
+              caloriesBurnt: 30,
+              description: "Basic squats using only body weight.",
+            },
+            {
+              name: "Push-ups",
+              duration: "3 sets of 10-12 reps",
+              caloriesBurnt: 25,
+              description: "Standard push-ups to build upper body strength.",
+            },
+            {
+              name: "Plank",
+              duration: "3 sets of 30-60 seconds",
+              caloriesBurnt: 20,
+              description: "Hold a plank position to strengthen the core.",
+            },
+            {
+              name: "Lunges",
+              duration: "3 sets of 12 reps per leg",
+              caloriesBurnt: 25,
+              description:
+                "Forward lunges to work on leg strength and balance.",
+            },
+            {
+              name: "Glute Bridge",
+              duration: "3 sets of 15 reps",
+              caloriesBurnt: 20,
+              description:
+                "Lying on your back, lift your hips to engage the glutes.",
+            },
+          ],
+        },
+        {
+          name: "30-Day Strength Builder",
+          description:
+            "Progressive strength training program for intermediate fitness enthusiasts.",
+          ageRating: "16+",
+          difficulty: "Medium",
+          keywords: ["Strength", "Muscle Gain", "Power", "Endurance"],
+          totalDuration: "45 minutes",
+          caloriesBurnt: 350,
+          benefits: [
             "Builds muscle strength and size",
             "Increases overall power",
             "Improves endurance",
-            "Enhances functional strength for daily activities"
-        ],
-        exercises: [
-            { name: "Barbell Squats", duration: "4 sets of 8-10 reps", caloriesBurnt: 50, description: "Squats with a barbell to build leg strength." },
-            { name: "Deadlifts", duration: "4 sets of 6-8 reps", caloriesBurnt: 60, description: "Lift the barbell from the ground to hip level." },
-            { name: "Bench Press", duration: "4 sets of 8-10 reps", caloriesBurnt: 50, description: "Press the barbell away from the chest while lying on a bench." },
-            { name: "Overhead Press", duration: "4 sets of 8-10 reps", caloriesBurnt: 40, description: "Press the barbell overhead to strengthen shoulders." },
-            { name: "Pull-ups", duration: "3 sets of 6-10 reps", caloriesBurnt: 40, description: "Pull your body up towards a bar to engage the back and arms." }
-        ]
-    },
-    {
-        name: "High-Intensity Interval Madness",
-        description: "Intense cardio workouts to maximize calorie burn and improve endurance.",
-        ageRating: "18+",
-        difficulty: "Hard",
-        keywords: ["Cardio Health", "Weight Loss", "Endurance", "Speed"],
-        totalDuration: "40 minutes",
-        caloriesBurnt: 500,
-        benefits: [
+            "Enhances functional strength for daily activities",
+          ],
+          exercises: [
+            {
+              name: "Barbell Squats",
+              duration: "4 sets of 8-10 reps",
+              caloriesBurnt: 50,
+              description: "Squats with a barbell to build leg strength.",
+            },
+            {
+              name: "Deadlifts",
+              duration: "4 sets of 6-8 reps",
+              caloriesBurnt: 60,
+              description: "Lift the barbell from the ground to hip level.",
+            },
+            {
+              name: "Bench Press",
+              duration: "4 sets of 8-10 reps",
+              caloriesBurnt: 50,
+              description:
+                "Press the barbell away from the chest while lying on a bench.",
+            },
+            {
+              name: "Overhead Press",
+              duration: "4 sets of 8-10 reps",
+              caloriesBurnt: 40,
+              description:
+                "Press the barbell overhead to strengthen shoulders.",
+            },
+            {
+              name: "Pull-ups",
+              duration: "3 sets of 6-10 reps",
+              caloriesBurnt: 40,
+              description:
+                "Pull your body up towards a bar to engage the back and arms.",
+            },
+          ],
+        },
+        {
+          name: "High-Intensity Interval Madness",
+          description:
+            "Intense cardio workouts to maximize calorie burn and improve endurance.",
+          ageRating: "18+",
+          difficulty: "Hard",
+          keywords: ["Cardio Health", "Weight Loss", "Endurance", "Speed"],
+          totalDuration: "40 minutes",
+          caloriesBurnt: 500,
+          benefits: [
             "Burns a high number of calories",
             "Improves cardiovascular fitness",
             "Enhances endurance and stamina",
-            "Boosts metabolism"
-        ],
-        exercises: [
-            { name: "Burpees", duration: "4 sets of 15 reps", caloriesBurnt: 60, description: "A full-body exercise involving a squat, jump, and push-up." },
-            { name: "Mountain Climbers", duration: "4 sets of 30 seconds", caloriesBurnt: 50, description: "Alternate bringing knees towards the chest in a plank position." },
-            { name: "Jump Squats", duration: "4 sets of 15 reps", caloriesBurnt: 50, description: "Perform squats with an explosive jump at the end." },
-            { name: "High Knees", duration: "4 sets of 30 seconds", caloriesBurnt: 40, description: "Run in place while lifting knees as high as possible." },
-            { name: "Sprints", duration: "4 sets of 30 seconds", caloriesBurnt: 60, description: "Short bursts of running at full speed." }
-        ]
-    },
-    {
-        name: "Yoga Flow for Flexibility",
-        description: "Improve flexibility and mindfulness with this yoga-focused plan.",
-        ageRating: "All ages",
-        difficulty: "Easy",
-        keywords: ["Flexibility", "Mobility", "Balance", "Recovery"],
-        totalDuration: "35 minutes",
-        caloriesBurnt: 150,
-        benefits: [
+            "Boosts metabolism",
+          ],
+          exercises: [
+            {
+              name: "Burpees",
+              duration: "4 sets of 15 reps",
+              caloriesBurnt: 60,
+              description:
+                "A full-body exercise involving a squat, jump, and push-up.",
+            },
+            {
+              name: "Mountain Climbers",
+              duration: "4 sets of 30 seconds",
+              caloriesBurnt: 50,
+              description:
+                "Alternate bringing knees towards the chest in a plank position.",
+            },
+            {
+              name: "Jump Squats",
+              duration: "4 sets of 15 reps",
+              caloriesBurnt: 50,
+              description: "Perform squats with an explosive jump at the end.",
+            },
+            {
+              name: "High Knees",
+              duration: "4 sets of 30 seconds",
+              caloriesBurnt: 40,
+              description:
+                "Run in place while lifting knees as high as possible.",
+            },
+            {
+              name: "Sprints",
+              duration: "4 sets of 30 seconds",
+              caloriesBurnt: 60,
+              description: "Short bursts of running at full speed.",
+            },
+          ],
+        },
+        {
+          name: "Yoga Flow for Flexibility",
+          description:
+            "Improve flexibility and mindfulness with this yoga-focused plan.",
+          ageRating: "All ages",
+          difficulty: "Easy",
+          keywords: ["Flexibility", "Mobility", "Balance", "Recovery"],
+          totalDuration: "35 minutes",
+          caloriesBurnt: 150,
+          benefits: [
             "Enhances flexibility and range of motion",
             "Promotes relaxation and mindfulness",
             "Supports joint health",
-            "Improves overall balance"
-        ],
-        exercises: [
-            { name: "Downward Dog", duration: "3 sets of 30 seconds", caloriesBurnt: 20, description: "A yoga pose that stretches the back and legs." },
-            { name: "Child's Pose", duration: "3 sets of 30 seconds", caloriesBurnt: 15, description: "A resting pose that stretches the hips and back." },
-            { name: "Cat-Cow", duration: "3 sets of 30 seconds", caloriesBurnt: 15, description: "A dynamic stretch for the spine." },
-            { name: "Warrior II", duration: "3 sets of 30 seconds per side", caloriesBurnt: 25, description: "A standing pose that strengthens the legs and opens the hips." },
-            { name: "Cobra Pose", duration: "3 sets of 30 seconds", caloriesBurnt: 20, description: "A pose that stretches the chest and strengthens the lower back." }
-        ]
-    },
-    {
-        name: "Powerlifting Fundamentals",
-        description: "Master the basics of powerlifting with this structured program.",
-        ageRating: "16+",
-        difficulty: "Medium",
-        keywords: ["Strength", "Power", "Performance"],
-        totalDuration: "50 minutes",
-        caloriesBurnt: 400,
-        benefits: [
+            "Improves overall balance",
+          ],
+          exercises: [
+            {
+              name: "Downward Dog",
+              duration: "3 sets of 30 seconds",
+              caloriesBurnt: 20,
+              description: "A yoga pose that stretches the back and legs.",
+            },
+            {
+              name: "Child's Pose",
+              duration: "3 sets of 30 seconds",
+              caloriesBurnt: 15,
+              description: "A resting pose that stretches the hips and back.",
+            },
+            {
+              name: "Cat-Cow",
+              duration: "3 sets of 30 seconds",
+              caloriesBurnt: 15,
+              description: "A dynamic stretch for the spine.",
+            },
+            {
+              name: "Warrior II",
+              duration: "3 sets of 30 seconds per side",
+              caloriesBurnt: 25,
+              description:
+                "A standing pose that strengthens the legs and opens the hips.",
+            },
+            {
+              name: "Cobra Pose",
+              duration: "3 sets of 30 seconds",
+              caloriesBurnt: 20,
+              description:
+                "A pose that stretches the chest and strengthens the lower back.",
+            },
+          ],
+        },
+        {
+          name: "Powerlifting Fundamentals",
+          description:
+            "Master the basics of powerlifting with this structured program.",
+          ageRating: "16+",
+          difficulty: "Medium",
+          keywords: ["Strength", "Power", "Performance"],
+          totalDuration: "50 minutes",
+          caloriesBurnt: 400,
+          benefits: [
             "Builds foundational strength",
             "Enhances power and explosiveness",
             "Improves performance in strength-based sports",
-            "Supports muscle growth and endurance"
-        ],
-        exercises: [
-            { name: "Deadlifts", duration: "4 sets of 6-8 reps", caloriesBurnt: 60, description: "Lift the barbell from the ground to hip level, focusing on form." },
-            { name: "Squats", duration: "4 sets of 8-10 reps", caloriesBurnt: 50, description: "Barbell squats to build leg and core strength." },
-            { name: "Bench Press", duration: "4 sets of 8-10 reps", caloriesBurnt: 50, description: "Press the barbell away from the chest while lying on a bench." },
-            { name: "Overhead Press", duration: "4 sets of 8-10 reps", caloriesBurnt: 40, description: "Press the barbell overhead to strengthen the shoulders." },
-            { name: "Barbell Row", duration: "4 sets of 8-10 reps", caloriesBurnt: 40, description: "Row the barbell towards the torso to engage the back muscles." }
-        ]
-    },
-    {
-        name: "Extreme Endurance Challenge",
-        description: "Push your limits with this advanced endurance-focused plan.",
-        ageRating: "18+",
-        difficulty: "Hard",
-        keywords: ["Endurance", "Performance", "Mental Toughness"],
-        totalDuration: "60 minutes",
-        caloriesBurnt: 600,
-        benefits: [
+            "Supports muscle growth and endurance",
+          ],
+          exercises: [
+            {
+              name: "Deadlifts",
+              duration: "4 sets of 6-8 reps",
+              caloriesBurnt: 60,
+              description:
+                "Lift the barbell from the ground to hip level, focusing on form.",
+            },
+            {
+              name: "Squats",
+              duration: "4 sets of 8-10 reps",
+              caloriesBurnt: 50,
+              description: "Barbell squats to build leg and core strength.",
+            },
+            {
+              name: "Bench Press",
+              duration: "4 sets of 8-10 reps",
+              caloriesBurnt: 50,
+              description:
+                "Press the barbell away from the chest while lying on a bench.",
+            },
+            {
+              name: "Overhead Press",
+              duration: "4 sets of 8-10 reps",
+              caloriesBurnt: 40,
+              description:
+                "Press the barbell overhead to strengthen the shoulders.",
+            },
+            {
+              name: "Barbell Row",
+              duration: "4 sets of 8-10 reps",
+              caloriesBurnt: 40,
+              description:
+                "Row the barbell towards the torso to engage the back muscles.",
+            },
+          ],
+        },
+        {
+          name: "Extreme Endurance Challenge",
+          description:
+            "Push your limits with this advanced endurance-focused plan.",
+          ageRating: "18+",
+          difficulty: "Hard",
+          keywords: ["Endurance", "Performance", "Mental Toughness"],
+          totalDuration: "60 minutes",
+          caloriesBurnt: 600,
+          benefits: [
             "Increases cardiovascular endurance",
             "Enhances mental toughness",
             "Boosts overall stamina",
-            "Supports long-term fitness goals"
-        ],
-        exercises: [
-            { name: "Long-Distance Running", duration: "60 minutes", caloriesBurnt: 500, description: "Run at a steady pace to build endurance." },
-            { name: "Cycling", duration: "45 minutes", caloriesBurnt: 400, description: "Ride at a moderate to high intensity to enhance cardio fitness." },
-            { name: "Rowing", duration: "30 minutes", caloriesBurnt: 300, description: "Row at a high intensity to work the full body." },
-            { name: "Jump Rope", duration: "15 minutes", caloriesBurnt: 200, description: "Skip rope continuously to improve cardiovascular health." },
-            { name: "Plyometrics", duration: "20 minutes", caloriesBurnt: 250, description: "Perform explosive movements to increase power and endurance." }
-        ]
-    },
-    {
-        name: "Core Strength and Stability",
-        description: "Build a strong and stable core to enhance your performance in all exercises.",
-        ageRating: "All ages",
-        difficulty: "Medium",
-        keywords: ["Core Stability", "Strength", "Balance", "Mobility"],
-        totalDuration: "30 minutes",
-        caloriesBurnt: 200,
-        benefits: [
+            "Supports long-term fitness goals",
+          ],
+          exercises: [
+            {
+              name: "Long-Distance Running",
+              duration: "60 minutes",
+              caloriesBurnt: 500,
+              description: "Run at a steady pace to build endurance.",
+            },
+            {
+              name: "Cycling",
+              duration: "45 minutes",
+              caloriesBurnt: 400,
+              description:
+                "Ride at a moderate to high intensity to enhance cardio fitness.",
+            },
+            {
+              name: "Rowing",
+              duration: "30 minutes",
+              caloriesBurnt: 300,
+              description: "Row at a high intensity to work the full body.",
+            },
+            {
+              name: "Jump Rope",
+              duration: "15 minutes",
+              caloriesBurnt: 200,
+              description:
+                "Skip rope continuously to improve cardiovascular health.",
+            },
+            {
+              name: "Plyometrics",
+              duration: "20 minutes",
+              caloriesBurnt: 250,
+              description:
+                "Perform explosive movements to increase power and endurance.",
+            },
+          ],
+        },
+        {
+          name: "Core Strength and Stability",
+          description:
+            "Build a strong and stable core to enhance your performance in all exercises.",
+          ageRating: "All ages",
+          difficulty: "Medium",
+          keywords: ["Core Stability", "Strength", "Balance", "Mobility"],
+          totalDuration: "30 minutes",
+          caloriesBurnt: 200,
+          benefits: [
             "Strengthens the abdominal and lower back muscles",
             "Improves balance and stability",
             "Enhances overall athletic performance",
-            "Supports injury prevention"
-        ],
-        exercises: [
-            { name: "Plank Variations", duration: "4 sets of 30-60 seconds", caloriesBurnt: 30, description: "Different plank positions to target various core muscles." },
-            { name: "Russian Twists", duration: "4 sets of 15 reps per side", caloriesBurnt: 25, description: "Twist the torso to engage the obliques." },
-            { name: "Bird-Dog", duration: "4 sets of 15 reps per side", caloriesBurnt: 20, description: "Extend opposite arm and leg while on all fours." },
-            { name: "Side Plank", duration: "4 sets of 30 seconds per side", caloriesBurnt: 25, description: "Hold a side plank position to target the obliques." },
-            { name: "Leg Raises", duration: "4 sets of 15 reps", caloriesBurnt: 20, description: "Lift legs while lying on your back to work the lower abs." }
-        ]
-    },
-    {
-        name: "Metabolism Booster",
-        description: "High-energy workouts designed to speed up metabolism and enhance fat burning.",
-        ageRating: "16+",
-        difficulty: "Medium",
-        keywords: ["Metabolism", "Weight Loss", "Energy", "Performance"],
-        totalDuration: "35 minutes",
-        caloriesBurnt: 350,
-        benefits: [
+            "Supports injury prevention",
+          ],
+          exercises: [
+            {
+              name: "Plank Variations",
+              duration: "4 sets of 30-60 seconds",
+              caloriesBurnt: 30,
+              description:
+                "Different plank positions to target various core muscles.",
+            },
+            {
+              name: "Russian Twists",
+              duration: "4 sets of 15 reps per side",
+              caloriesBurnt: 25,
+              description: "Twist the torso to engage the obliques.",
+            },
+            {
+              name: "Bird-Dog",
+              duration: "4 sets of 15 reps per side",
+              caloriesBurnt: 20,
+              description: "Extend opposite arm and leg while on all fours.",
+            },
+            {
+              name: "Side Plank",
+              duration: "4 sets of 30 seconds per side",
+              caloriesBurnt: 25,
+              description: "Hold a side plank position to target the obliques.",
+            },
+            {
+              name: "Leg Raises",
+              duration: "4 sets of 15 reps",
+              caloriesBurnt: 20,
+              description:
+                "Lift legs while lying on your back to work the lower abs.",
+            },
+          ],
+        },
+        {
+          name: "Metabolism Booster",
+          description:
+            "High-energy workouts designed to speed up metabolism and enhance fat burning.",
+          ageRating: "16+",
+          difficulty: "Medium",
+          keywords: ["Metabolism", "Weight Loss", "Energy", "Performance"],
+          totalDuration: "35 minutes",
+          caloriesBurnt: 350,
+          benefits: [
             "Increases metabolic rate",
             "Enhances fat burning",
             "Boosts overall energy levels",
-            "Supports weight loss goals"
-        ],
-        exercises: [
-            { name: "Burpees", duration: "4 sets of 15 reps", caloriesBurnt: 60, description: "High-intensity exercise combining squat, jump, and push-up." },
-            { name: "Jumping Jacks", duration: "4 sets of 1 minute", caloriesBurnt: 50, description: "Full-body cardio exercise to increase heart rate." },
-            { name: "Mountain Climbers", duration: "4 sets of 30 seconds", caloriesBurnt: 50, description: "Rapid knee lifts to boost metabolism." },
-            { name: "HIIT Circuits", duration: "4 sets of 1 minute", caloriesBurnt: 60, description: "High-intensity interval training to maximize calorie burn." },
-            { name: "Sprints", duration: "4 sets of 30 seconds", caloriesBurnt: 50, description: "Short, high-speed running intervals to enhance metabolism." }
-        ]
-    }
-];
+            "Supports weight loss goals",
+          ],
+          exercises: [
+            {
+              name: "Burpees",
+              duration: "4 sets of 15 reps",
+              caloriesBurnt: 60,
+              description:
+                "High-intensity exercise combining squat, jump, and push-up.",
+            },
+            {
+              name: "Jumping Jacks",
+              duration: "4 sets of 1 minute",
+              caloriesBurnt: 50,
+              description: "Full-body cardio exercise to increase heart rate.",
+            },
+            {
+              name: "Mountain Climbers",
+              duration: "4 sets of 30 seconds",
+              caloriesBurnt: 50,
+              description: "Rapid knee lifts to boost metabolism.",
+            },
+            {
+              name: "HIIT Circuits",
+              duration: "4 sets of 1 minute",
+              caloriesBurnt: 60,
+              description:
+                "High-intensity interval training to maximize calorie burn.",
+            },
+            {
+              name: "Sprints",
+              duration: "4 sets of 30 seconds",
+              caloriesBurnt: 50,
+              description:
+                "Short, high-speed running intervals to enhance metabolism.",
+            },
+          ],
+        },
+      ];
 
-document.addEventListener('DOMContentLoaded', () => {
-    const darkModeToggle = document.getElementById('darkModeToggle');
-        const pauseTimerBtn = document.getElementById('pauseTimer');
-        const skipTaskBtn = document.getElementById('skipTask');
-        const skipSetBtn = document.getElementById('skipSet');
-        const finishWorkoutBtn = document.getElementById('finishWorkout');
-        const playPauseBtn = document.getElementById('playPause');
-        const volumeSlider = document.getElementById('volumeSlider');
-        const taskName = document.getElementById('taskName');
-        const taskDescription = document.getElementById('taskDescription');
-        const taskSets = document.getElementById('taskSets');
-        const taskTimer = document.getElementById('taskTimer');
-        const startScreen = document.getElementById('startScreen');
-        const workoutScreen = document.getElementById('workoutScreen');
-        const breakScreen = document.getElementById('breakScreen');
-        const startSessionBtn = document.getElementById('startSession');
-        const backToExerciseBtn = document.getElementById('backToExercise');
-        const nextTaskInfo = document.getElementById('nextTaskInfo');
-        const nextTaskName = document.getElementById('nextTaskName');
-        const breakTimer = document.getElementById('breakTimer');
-        const audioPlayer = document.getElementById('audioPlayer');
+      document.addEventListener("DOMContentLoaded", () => {
+        const darkModeToggle = document.getElementById("darkModeToggle");
+        const pauseTimerBtn = document.getElementById("pauseTimer");
+        const skipTaskBtn = document.getElementById("skipTask");
+        const skipSetBtn = document.getElementById("skipSet");
+        const finishWorkoutBtn = document.getElementById("finishWorkout");
+        const playPauseBtn = document.getElementById("playPause");
+        const volumeSlider = document.getElementById("volumeSlider");
+        const taskName = document.getElementById("taskName");
+        const taskDescription = document.getElementById("taskDescription");
+        const taskSets = document.getElementById("taskSets");
+        const taskTimer = document.getElementById("taskTimer");
+        const startScreen = document.getElementById("startScreen");
+        const workoutScreen = document.getElementById("workoutScreen");
+        const breakScreen = document.getElementById("breakScreen");
+        const startSessionBtn = document.getElementById("startSession");
+        const backToExerciseBtn = document.getElementById("backToExercise");
+        const nextTaskInfo = document.getElementById("nextTaskInfo");
+        const nextTaskName = document.getElementById("nextTaskName");
+        const breakTimer = document.getElementById("breakTimer");
+        const audioPlayer = document.getElementById("audioPlayer");
 
+        let darkMode = localStorage.getItem("darkMode") === "true";
+        let currentTask = 0;
+        let currentSet = 1;
+        let totalSets = 1;
+        let isPlaying = false;
+        let timerInterval;
+        let remainingTime;
+        let isPaused = false;
+        let isBreak = false;
+        let breakTime = 20;
+        let workoutTasks;
+        let planIndex;
 
-    let darkMode = localStorage.getItem('darkMode') === 'true';
-    let currentTask = 0;
-    let currentSet = 1;
-    let totalSets = 1;
-    let isPlaying = false;
-    let timerInterval;
-    let remainingTime;
-    let isPaused = false;
-    let isBreak = false;
-    let breakTime = 20;
-    let workoutTasks;
-    let planIndex;
-
-    firebase.auth().onAuthStateChanged(user => {
-        if (user) {
+        firebase.auth().onAuthStateChanged((user) => {
+          if (user) {
             fetchWorkoutPlan(user.uid);
-        }
-    });
-
-    function fetchWorkoutPlan() {
-        firebase.auth().onAuthStateChanged(user => {
-            if (user) {
-                const userId = user.uid;
-                const exercisesRef = firebase.firestore().collection('exercises');
-                exercisesRef.where('uid', '==', userId).get()
-                    .then((querySnapshot) => {
-                        if (querySnapshot.empty) {
-                            console.log("No exercises found for this user");
-                            window.location.href = "Eplan.html";
-                        } else {
-                            querySnapshot.forEach((doc) => {
-                                planIndex = Number(doc.data().Plan);
-                                workoutTasks = workoutPlans[planIndex].exercises;
-                                console.log("Fetched exercises:", workoutTasks);
-                                startSessionBtn.disabled = false;
-                                startSessionBtn.textContent = "Start Session";
-                            });
-                        }
-                    })
-                    .catch((error) => {
-                        console.error("Error fetching exercises:", error);
-                        startSessionBtn.disabled = true;
-                        startSessionBtn.textContent = "Error Loading Workout";
-                    });
-            }
+          }
         });
-    }
 
-    function toggleDarkMode() {
-        darkMode = !darkMode;
-        document.body.classList.toggle('dark', darkMode);
-        localStorage.setItem('darkMode', darkMode);
-        darkModeToggle.innerHTML = `<i data-lucide="${darkMode ? 'sun' : 'moon'}" class="w-6 h-6"></i>`;
-        lucide.createIcons();
-    }
+        function fetchWorkoutPlan() {
+          firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+              const userId = user.uid;
+              const exercisesRef = firebase.firestore().collection("exercises");
+              exercisesRef
+                .where("uid", "==", userId)
+                .get()
+                .then((querySnapshot) => {
+                  if (querySnapshot.empty) {
+                    console.log("No exercises found for this user");
+                    window.location.href = "EPlan.html";
+                  } else {
+                    querySnapshot.forEach((doc) => {
+                      planIndex = Number(doc.data().Plan);
+                      workoutTasks = workoutPlans[planIndex].exercises;
+                      console.log("Fetched exercises:", workoutTasks);
+                      startSessionBtn.disabled = false;
+                      startSessionBtn.textContent = "Start Session";
+                    });
+                  }
+                })
+                .catch((error) => {
+                  console.error("Error fetching exercises:", error);
+                  startSessionBtn.disabled = true;
+                  startSessionBtn.textContent = "Error Loading Workout";
+                });
+            }
+          });
+        }
 
-    function toggleDarkMode() {
-            darkMode = !darkMode;
-            document.body.classList.toggle('dark', darkMode);
-            localStorage.setItem('darkMode', darkMode);
-            darkModeToggle.innerHTML = `<i data-lucide="${darkMode ? 'sun' : 'moon'}"></i>`;
-            lucide.createIcons();
+        function toggleDarkMode() {
+          darkMode = !darkMode;
+          document.body.classList.toggle("dark", darkMode);
+          localStorage.setItem("darkMode", darkMode);
+          darkModeToggle.innerHTML = `<i data-lucide="${
+            darkMode ? "sun" : "moon"
+          }" class="w-6 h-6"></i>`;
+          lucide.createIcons();
+        }
+
+        function toggleDarkMode() {
+          darkMode = !darkMode;
+          document.body.classList.toggle("dark", darkMode);
+          localStorage.setItem("darkMode", darkMode);
+          darkModeToggle.innerHTML = `<i data-lucide="${
+            darkMode ? "sun" : "moon"
+          }"></i>`;
+          lucide.createIcons();
         }
 
         function startSession() {
-            if (workoutTasks && workoutTasks.length > 0) {
-                startScreen.classList.add('hidden');
-                workoutScreen.classList.remove('hidden');
-                updateTaskDisplay();
-            } else {
-                alert("Workout data is not ready. Please try again.");
-            }
+          if (workoutTasks && workoutTasks.length > 0) {
+            startScreen.classList.add("hidden");
+            workoutScreen.classList.remove("hidden");
+            updateTaskDisplay();
+          } else {
+            alert("Workout data is not ready. Please try again.");
+          }
         }
 
         function backToExercise(event) {
-            event.preventDefault();
-            window.location.href = 'EPlanDetails.html';
+          event.preventDefault();
+          window.location.href = "EPlanDetails.html";
         }
-        
-    function updateTaskDisplay() {
-        if (workoutTasks && workoutTasks.length > 0) {
+
+        function updateTaskDisplay() {
+          if (workoutTasks && workoutTasks.length > 0) {
             const task = workoutTasks[currentTask];
             taskName.textContent = task.name;
             taskDescription.textContent = task.description;
-            totalSets = parseInt(task.duration.split(' ')[0]) || 1;
+            totalSets = parseInt(task.duration.split(" ")[0]) || 1;
             updateSetsDisplay();
             remainingTime = parseTime(task.duration);
             updateTimerDisplay();
             startTimer();
 
             if (currentTask < workoutTasks.length - 1) {
-                nextTaskInfo.classList.remove('hidden');
-                nextTaskName.textContent = workoutTasks[currentTask + 1].name;
+              nextTaskInfo.classList.remove("hidden");
+              nextTaskName.textContent = workoutTasks[currentTask + 1].name;
             } else {
-                nextTaskInfo.classList.add('hidden');
+              nextTaskInfo.classList.add("hidden");
             }
 
-            breakScreen.classList.add('hidden');
-            workoutScreen.classList.remove('hidden');
-        } else {
+            breakScreen.classList.add("hidden");
+            workoutScreen.classList.remove("hidden");
+          } else {
             console.log("No workout tasks available");
             alert("Error: No workout tasks available. Please try again.");
+          }
         }
-    }
 
-    function updateSetsDisplay() {
-        taskSets.textContent = `Sets: ${currentSet}/${totalSets}`;
-    }
+        function updateSetsDisplay() {
+          taskSets.textContent = `Sets: ${currentSet}/${totalSets}`;
+        }
 
-    function parseTime(time) {
-        if (typeof time === 'string') {
-            const parts = time.split(' ');
+        function parseTime(time) {
+          if (typeof time === "string") {
+            const parts = time.split(" ");
             if (parts.length === 2) {
-                const [count, unit] = parts;
-                if (unit.toLowerCase().includes('sec')) {
-                    return parseInt(count);
-                } else if (unit.toLowerCase().includes('min')) {
-                    return parseInt(count) * 60;
-                }
+              const [count, unit] = parts;
+              if (unit.toLowerCase().includes("sec")) {
+                return parseInt(count);
+              } else if (unit.toLowerCase().includes("min")) {
+                return parseInt(count) * 60;
+              }
             }
+          }
+          return 60;
         }
-        return 60;
-    }
 
-    function updateTimerDisplay() {
-        const minutes = Math.floor(remainingTime / 60);
-        const seconds = remainingTime % 60;
-        taskTimer.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    }
+        function updateTimerDisplay() {
+          const minutes = Math.floor(remainingTime / 60);
+          const seconds = remainingTime % 60;
+          taskTimer.textContent = `${minutes
+            .toString()
+            .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+        }
 
-    function startTimer() {
-        clearInterval(timerInterval);
-        isPaused = false;
-        pauseTimerBtn.innerHTML = '<i data-lucide="pause"></i> Pause Timer';
-        lucide.createIcons();
+        function startTimer() {
+          clearInterval(timerInterval);
+          isPaused = false;
+          pauseTimerBtn.innerHTML = '<i data-lucide="pause"></i> Pause Timer';
+          lucide.createIcons();
 
-        timerInterval = setInterval(() => {
+          timerInterval = setInterval(() => {
             if (remainingTime > 0) {
-                remainingTime--;
-                if (isBreak) {
-                    updateBreakTimerDisplay();
-                } else {
-                    updateTimerDisplay();
-                }
+              remainingTime--;
+              if (isBreak) {
+                updateBreakTimerDisplay();
+              } else {
+                updateTimerDisplay();
+              }
             } else {
-                clearInterval(timerInterval);
-                if (isBreak) {
-                    endBreak();
-                } else if (currentSet < totalSets) {
-                    startBreak();
-                } else {
-                    nextTask();
-                }
+              clearInterval(timerInterval);
+              if (isBreak) {
+                endBreak();
+              } else if (currentSet < totalSets) {
+                startBreak();
+              } else {
+                nextTask();
+              }
             }
-        }, 1000);
-    }
+          }, 1000);
+        }
 
-    function pauseTimer() {
-        if (isPaused) {
+        function pauseTimer() {
+          if (isPaused) {
             startTimer();
-        } else {
+          } else {
             clearInterval(timerInterval);
             isPaused = true;
-            pauseTimerBtn.innerHTML = '<i data-lucide="play" class="w-5 h-5 inline-block mr-2"></i> Resume Timer';
+            pauseTimerBtn.innerHTML =
+              '<i data-lucide="play" class="w-5 h-5 inline-block mr-2"></i> Resume Timer';
             lucide.createIcons();
+          }
         }
-    }
 
-    function startBreak() {
-        isBreak = true;
-        workoutScreen.classList.add('hidden');
-        breakScreen.classList.remove('hidden');
-        remainingTime = breakTime;
-        updateBreakTimerDisplay();
-        startTimer();
-    }
+        function startBreak() {
+          isBreak = true;
+          workoutScreen.classList.add("hidden");
+          breakScreen.classList.remove("hidden");
+          remainingTime = breakTime;
+          updateBreakTimerDisplay();
+          startTimer();
+        }
 
-    function endBreak() {
-        isBreak = false;
-        breakScreen.classList.add('hidden');
-        workoutScreen.classList.remove('hidden');
-        currentSet++;
-        if (currentSet > totalSets) {
+        function endBreak() {
+          isBreak = false;
+          breakScreen.classList.add("hidden");
+          workoutScreen.classList.remove("hidden");
+          currentSet++;
+          if (currentSet > totalSets) {
             nextTask();
-        } else {
+          } else {
             updateSetsDisplay();
             const task = workoutTasks[currentTask];
             remainingTime = parseTime(task.duration);
             startTimer();
+          }
         }
-    }
 
-    function updateBreakTimerDisplay() {
-        breakTimer.textContent = remainingTime;
-    }
-    
-    function skipSet() {
-        clearInterval(timerInterval);
-        if (currentSet < totalSets) {
+        function updateBreakTimerDisplay() {
+          breakTimer.textContent = remainingTime;
+        }
+
+        function skipSet() {
+          clearInterval(timerInterval);
+          if (currentSet < totalSets) {
             startBreak();
-        } else {
+          } else {
             nextTask();
+          }
         }
-    }
 
-    function skipTask() {
-        clearInterval(timerInterval);
-        nextTask();
-    }
+        function skipTask() {
+          clearInterval(timerInterval);
+          nextTask();
+        }
 
-    function nextTask() {
-        currentTask++;
-        currentSet = 1;
-        if (currentTask >= workoutTasks.length) {
+        function nextTask() {
+          currentTask++;
+          currentSet = 1;
+          if (currentTask >= workoutTasks.length) {
             finishWorkout();
-        } else {
+          } else {
             startBreak();
+          }
         }
-    }
 
-    function finishWorkout() {
-        clearInterval(timerInterval);
-        alert("Great job! You've completed your workout session.");
-        startScreen.classList.remove('hidden');
-        workoutScreen.classList.add('hidden');
-        breakScreen.classList.add('hidden');
-    }
+        function finishWorkout() {
+          clearInterval(timerInterval);
+          alert("Great job! You've completed your workout session.");
+          startScreen.classList.remove("hidden");
+          workoutScreen.classList.add("hidden");
+          breakScreen.classList.add("hidden");
+        }
 
-    function togglePlayPause() {
-        if (audioPlayer.paused) {
+        function togglePlayPause() {
+          if (audioPlayer.paused) {
             audioPlayer.play();
             playPauseBtn.innerHTML = '<i data-lucide="pause"></i>';
-        } else {
+          } else {
             audioPlayer.pause();
             playPauseBtn.innerHTML = '<i data-lucide="play"></i>';
+          }
+          lucide.createIcons();
         }
-        lucide.createIcons();
-    }
 
-    function updateVolume() {
-        audioPlayer.volume = volumeSlider.value;
-    }
+        function updateVolume() {
+          audioPlayer.volume = volumeSlider.value;
+        }
 
-    darkModeToggle.addEventListener('click', toggleDarkMode);
-        pauseTimerBtn.addEventListener('click', pauseTimer);
-        skipSetBtn.addEventListener('click', skipSet);
-        skipTaskBtn.addEventListener('click', skipTask);
-        finishWorkoutBtn.addEventListener('click', finishWorkout);
-        playPauseBtn.addEventListener('click', togglePlayPause);
-        volumeSlider.addEventListener('input', updateVolume);
-        startSessionBtn.addEventListener('click', startSession);
-        backToExerciseBtn.addEventListener('click', backToExercise);
+        darkModeToggle.addEventListener("click", toggleDarkMode);
+        pauseTimerBtn.addEventListener("click", pauseTimer);
+        skipSetBtn.addEventListener("click", skipSet);
+        skipTaskBtn.addEventListener("click", skipTask);
+        finishWorkoutBtn.addEventListener("click", finishWorkout);
+        playPauseBtn.addEventListener("click", togglePlayPause);
+        volumeSlider.addEventListener("input", updateVolume);
+        startSessionBtn.addEventListener("click", startSession);
+        backToExerciseBtn.addEventListener("click", backToExercise);
 
         function updateButtonIcons() {
-            startSessionBtn.innerHTML = '<i data-lucide="play" class="w-6 h-6 inline-block mr-2"></i> <span>Start Session</span>';
-            backToExerciseBtn.innerHTML = '<i data-lucide="chevron-left" class="w-6 h-6 inline-block mr-2"></i> <span>Back to Exercise</span>';
-            lucide.createIcons();
+          startSessionBtn.innerHTML =
+            '<i data-lucide="play" class="w-6 h-6 inline-block mr-2"></i> <span>Start Session</span>';
+          backToExerciseBtn.innerHTML =
+            '<i data-lucide="chevron-left" class="w-6 h-6 inline-block mr-2"></i> <span>Back to Exercise</span>';
+          lucide.createIcons();
         }
 
         function init() {
-            document.body.classList.toggle('dark', darkMode);
-            darkModeToggle.innerHTML = `<i data-lucide="${darkMode ? 'sun' : 'moon'}" class="w-6 h-6"></i>`;
-            updateButtonIcons();
-            startSessionBtn.disabled = true;
-            audioPlayer.volume = volumeSlider.value;
+          document.body.classList.toggle("dark", darkMode);
+          darkModeToggle.innerHTML = `<i data-lucide="${
+            darkMode ? "sun" : "moon"
+          }" class="w-6 h-6"></i>`;
+          updateButtonIcons();
+          startSessionBtn.disabled = true;
+          audioPlayer.volume = volumeSlider.value;
 
-            fetchWorkoutPlan()
-                .then(() => {
-                    startSessionBtn.disabled = false;
-                    updateButtonIcons();
-                })
-                .catch((error) => {
-                    console.error("Error initializing workout:", error);
-                    startSessionBtn.disabled = true;
-                    startSessionBtn.querySelector('span').textContent = "Error Loading Workout";
-                });
+          fetchWorkoutPlan()
+            .then(() => {
+              startSessionBtn.disabled = false;
+              updateButtonIcons();
+            })
+            .catch((error) => {
+              console.error("Error initializing workout:", error);
+              startSessionBtn.disabled = true;
+              startSessionBtn.querySelector("span").textContent =
+                "Error Loading Workout";
+            });
         }
 
         init();
-    });
-
-</script>
-</body>
+      });
+    </script>
+  </body>
 </html>

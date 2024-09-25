@@ -153,7 +153,7 @@ function ExerciseFinder() {
         .where("uid", "==", user.uid)
         .onSnapshot((querySnapshot) => {
           window.location.href = querySnapshot.empty
-            ? "/pages/exercises/Eplan.html"
+            ? "/pages/exercises/EPlan.html"
             : "/pages/exercises/EPlanDetails.html";
         });
     }
@@ -176,7 +176,7 @@ function StartPlan(index) {
         .onSnapshot((querySnapshot) => {
           setTimeout(() => {
             window.location.href = querySnapshot.empty
-              ? "/pages/exercises/Eplan.html"
+              ? "/pages/exercises/EPlan.html"
               : "/pages/exercises/EPlanDetails.html";
           }, 2000);
         });
@@ -193,7 +193,7 @@ function sessionInitiated() {
         .where("uid", "==", user.uid)
         .onSnapshot((querySnapshot) => {
           if (querySnapshot.empty) {
-            window.location.href = "/pages/exercises/Eplan.html";
+            window.location.href = "/pages/exercises/EPlan.html";
           }
         });
     }
