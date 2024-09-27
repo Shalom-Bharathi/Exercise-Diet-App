@@ -322,7 +322,7 @@
         unsubscribe = thingsRef
         .onSnapshot(querySnapshot => {
             querySnapshot.docs.forEach(doc => {
-                console.log(doc.data().API);
+            
                 OPENAI_API_KEY = doc.data().API
             });
         });
@@ -356,7 +356,7 @@ document.getElementById('routineForm').addEventListener('submit', async function
 
     setTimeout(() => {
         window.location.href = "/pages/routine/RoutineList.html";
-    }, 5000);
+    }, 10000);
     
     try {
         const routine = await generateRoutine(data);

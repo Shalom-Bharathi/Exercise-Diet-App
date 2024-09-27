@@ -139,6 +139,7 @@
                 <div class="space-y-6">
                     <h2 class="text-2xl font-semibold text-center mb-6">Daily Schedule</h2>
                     <div class="space-y-4" id="routineItems">
+                        
                         <!-- Routine items will be inserted here by JavaScript -->
                     </div>
                 </div>
@@ -161,9 +162,18 @@
                     const thingsRef = firebase.firestore().collection('routines');
                     thingsRef.where('uid', '==', user.uid)
                         .onSnapshot(querySnapshot => {
+                            console.log("IN DB")
+                            if (querySnapshot.empty) {
+                                console.log("No Data")
+                                alert("Error, please retry...")
+                                window.location.href = "/index.html"
+                            }
+                            else {
+                                console.log("Data")
                             routineItems = querySnapshot.docs.map(doc => doc.data().routines)[0];
                             console.log(routineItems);
                             populateRoutineItems();
+                            }
                         });
                 }
             });

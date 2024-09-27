@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nutrifit360 - FAQ AI</title>
+    <title>Nutrifit360° - FAQ AI</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <link rel="icon" type="image/png" href="/assets/icons/icon.png" sizes="32x32" />
@@ -113,7 +113,7 @@
     </header>
 
     <main class="flex-grow container mx-auto px-4 py-8">
-        <h1 class="text-4xl font-bold mb-8 text-center">Nutrifit360 FAQ AI Assistant</h1>
+        <h1 class="text-4xl font-bold mb-8 text-center">Nutrifit360° FAQ AI Assistant</h1>
         <div class="chat-container bg-gray-100 dark:bg-gray-700 rounded-lg shadow-lg p-4">
             <div class="chat-messages space-y-4 mb-4"></div>
             <div class="flex">
@@ -126,7 +126,7 @@
     </main>
 
     <footer class="py-4 bg-gray-100 dark:bg-gray-800 text-center text-sm text-gray-600 dark:text-gray-300">
-        <p>&copy; 2024 Nutrifit360. All rights reserved.</p>
+        <p>&copy; 2024 Nutrifit360°. All rights reserved.</p>
     </footer>
 
     <script>
@@ -202,7 +202,7 @@ let OPENAI_API_KEY;
                         body: JSON.stringify({
                             model: 'gpt-3.5-turbo',
                             messages: [
-                                { role: 'system', content: 'You are a helpful assistant for Nutrifit360, a comprehensive wellness platform that provides personalized fitness routines, nutrition plans, and AI-powered guidance.' },
+                                { role: 'system', content: 'You are a helpful assistant for Nutrifit360°, a comprehensive wellness platform that provides personalized fitness routines, nutrition plans, and AI-powered guidance.' },
                                 { role: 'user', content: message }
                             ],
                             max_tokens: 150,
@@ -234,7 +234,7 @@ let OPENAI_API_KEY;
         });
 
         // Initial greeting
-        addMessage("Welcome to Nutrifit360 FAQ AI! How can I help you today?", false);
+        addMessage("Welcome to Nutrifit360° FAQ AI! How can I help you today?", false);
 
         lucide.createIcons();
     </script>
