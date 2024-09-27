@@ -373,7 +373,7 @@
                         // Add diet completion achievement
                         firebase.firestore().collection('achevements').add({
                             uid: user.uid,
-                            name: lifestyleData.name,
+                            achevement: lifestyleData.name,
                             date: currentDate,
                         }).then(() => {
                             const thingsRef = firebase.firestore().collection('dietPlans');
