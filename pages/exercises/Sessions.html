@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nutrifit360° - Workout Session</title>
+    <link rel="stylesheet" href="style5.css" />
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <link
       href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
@@ -488,7 +489,29 @@
       </div>
     </main>
 
-   
+    <div class="music-player">
+      <div class="music-info">
+        <i data-lucide="music"></i>
+        <h3>Now Playing</h3>
+      </div>
+      <div class="music-controls">
+        <button id="playPause"><i data-lucide="play"></i></button>
+      </div>
+      <div class="volume-control">
+        <i data-lucide="volume-2"></i>
+        <input
+          type="range"
+          id="volumeSlider"
+          min="0"
+          max="1"
+          step="0.1"
+          value="0.5"
+        />
+      </div>
+    </div>
+
+    <audio id="audioPlayer" src="/assets/audio/music.mp3"></audio>
+
     <script>
       const workoutPlans = [
         {
