@@ -162,11 +162,14 @@
                     const thingsRef = firebase.firestore().collection('routines');
                     thingsRef.where('uid', '==', user.uid)
                         .onSnapshot(querySnapshot => {
+                            console.log("IN DB")
                             if querySnapshot.empty {
+                                console.log("No Data")
                                 alert("Error, please retry...")
                                 window.location.href = "/index.html"
                             }
                             else {
+                                console.log("Data")
                             routineItems = querySnapshot.docs.map(doc => doc.data().routines)[0];
                             console.log(routineItems);
                             populateRoutineItems();
