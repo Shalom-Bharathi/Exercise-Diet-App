@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Reddit</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    
+    <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-firestore.js"></script>
+    <link rel="icon" type="image/png" href="/assets/icons/icon.png" sizes="32x32" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBvONbLQcR-XqSsJ9hi7xAsk8sTwej43aA",
+            authDomain: "ed-project-42419.firebaseapp.com", 
+            projectId: "ed-project-42419",
+            storageBucket: "ed-project-42419",
+            messagingSenderId: "909551078814",
+            appId: "1:909551078814:web:456608495b9655eef6da8f"
+        };
+        firebase.initializeApp(firebaseConfig);
+
+        // Set light mode by default
+        document.documentElement.classList.remove('dark');
+        localStorage.theme = 'light';
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #F0F4F8;
+            transition: background 0.3s ease;
+        }
+
+        .post-card {
+            opacity: 1 !important;
+            transform: translateY(0);
+            transition: all 0.3s ease;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .post-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .vote-button {
+            transition: all 0.2s ease;
+            color: #1E3A8A;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .vote-button i {
+            fill: transparent;
+            stroke: currentColor;
+            stroke-width: 2;
+        }
+
+        .vote-button.voted i {
+            fill: #1E3A8A;
+        }
+
+        .vote-count {
+            transition: all 0.2s ease;
+            font-weight: bold;
+        }
+
+        .vote-count.upvoted {
+            color: #1E3A8A;
+        }
+
+        .vote-count.downvoted {
+            color: #7193FF;
+        }
+
+        .modal-content {
+            position: relative;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 90%;
+            width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .subreddit-card {
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .subreddit-card:hover {
+            border-left-color: #1E3A8A; /* Changed to blue */
+            background: rgba(30, 58, 138, 0.1); /* Changed to blue */
+            transform: scale(1.02);
+        }
+
+        .karma-indicator {
+            font-size: 14px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            background: linear-gradient(45deg, #1E3A8A, #3B82F6); /* Changed to blue */
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        .award-button {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            transition: all 0.3s ease;
+            border-radius: 50%;
+            padding: 8px;
+        }
+
+        .award-button:hover {
+            transform: rotate(15deg) scale(1.1);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .comment-thread {
+            border-left: 2px solid #1E3A8A; /* Changed to blue */
+            margin-left: 20px;
+            padding-left: 20px;
+            margin-bottom: 16px;
+            transition: background 0.3s ease;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .comment-thread:hover {
+            background: rgba(30, 58, 138, 0.05); /* Changed to blue */
+        }
+
+        .comment-thread p {
+            white-space: normal;
+            word-break: break-word;
+        }
+
+        .rich-editor {
+            min-height: 200px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .rich-editor:focus {
+            border-color: #1E3A8A; /* Changed to blue */
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.2); /* Changed to blue */
+            outline: none;
+        }
+
+        .tag-pill {
+            background: linear-gradient(45deg, #1E3A8A, #3B82F6); /* Changed to blue */
+            color: white;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            animation: tagFloat 3s ease infinite;
+        }
+
+        @keyframes tagFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            opacity: 1;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .vote-count {
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .vote-count.upvoted {
+            color: #1E3A8A; /* Changed to blue */
+        }
+
+        .vote-count.downvoted {
+            color: #7193FF;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 2rem;
+            height: fit-content;
+        }
+
+        /* Add custom scrollbar for comments */
+        #comments-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #comments-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        #comments-container::-webkit-scrollbar-thumb {
+            background: #1E3A8A; /* Changed to blue */
+            border-radius: 4px;
+        }
+
+        #comments-container::-webkit-scrollbar-thumb:hover {
+            background: #3B82F6; /* Changed to blue */
+        }
+
+        /* For Firefox */
+        #comments-container {
+            scrollbar-width: thin;
+            scrollbar-color: #1E3A8A #f1f1f1; /* Changed to blue */
+        }
+    </style>
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="min-h-screen bg-[#F0F4F8]">
+    <!-- Navigation buttons -->
+    <div class="fixed top-4 right-4 flex gap-2 z-50">
+        <!-- Home button -->
+        <a href="/index.html" 
+           class="p-2 rounded-lg bg-white hover:bg-gray-100 transition-colors shadow-lg flex items-center gap-2"
+        >
+            <i data-lucide="home" class="w-6 h-6"></i>
+        </a>
+
+        <!-- Dark mode toggle -->
+        <button 
+            onclick="toggleDarkMode()"
+            class="p-2 rounded-lg bg-white hover:bg-gray-100 transition-colors shadow-lg"
+        >
+            <i data-lucide="moon" class="w-6 h-6"></i>
+        </button>
+    </div>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Sidebar -->
+            <div class="lg:col-span-3 space-y-6 sidebar">
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="bg-[#1E3A8A] p-4"> <!-- Changed to blue -->
+                        <h2 class="text-xl font-bold text-white">r/FitnessHub</h2>
+                    </div>
+                    <div class="p-4">
+                        <nav class="space-y-2">
+                            <button onclick="setActiveTab('all')" 
+                                    class="subreddit-card w-full text-left flex items-center gap-2">
+                                <i data-lucide="trending-up" class="w-4 h-4"></i>
+                                Popular
+                            </button>
+                            <button onclick="setActiveTab('workout')"
+                                    class="subreddit-card w-full text-left flex items-center gap-2">
+                                <i data-lucide="dumbbell" class="w-4 h-4"></i>
+                                r/workout
+                            </button>
+                            <button onclick="setActiveTab('nutrition')"
+                                    class="subreddit-card w-full text-left flex items-center gap-2">
+                                <i data-lucide="apple" class="w-4 h-4"></i>
+                                r/nutrition
+                            </button>
+                            <button onclick="setActiveTab('motivation')"
+                                    class="subreddit-card w-full text-left flex items-center gap-2">
+                                <i data-lucide="zap" class="w-4 h-4"></i>
+                                r/motivation
+                            </button>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- Community Stats -->
+                <div class="bg-white rounded-lg p-6 shadow-lg">
+                    <h2 class="text-lg font-bold mb-4">Community Stats</h2>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-600">Total Likes</span>
+                            <span id="total-likes" class="font-bold text-blue-900">0</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-600">Total Comments</span>
+                            <span id="total-comments" class="font-bold text-blue-900">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="lg:col-span-9">
+                <!-- Create Post Button -->
+                <div class="bg-white rounded-lg shadow-lg p-4 mb-6">
+                    <button onclick="openModal('create-post-modal')"
+                            class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-3 rounded-lg transition-all flex items-center gap-2">
+                        <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                        Create Post
+                    </button>
+                </div>
+
+                <!-- Posts Container -->
+                <div id="posts-container" class="space-y-4"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Post Modal -->
+    <div id="create-post-modal" class="modal">
+        <div class="modal-content bg-white rounded-lg p-8 m-auto max-w-2xl w-full">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-gray-900">Create Post</h2>
+                <button onclick="closeModal('create-post-modal')" class="text-gray-500 hover:text-gray-700">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <form onsubmit="event.preventDefault(); handleCreatePost();" class="space-y-6">
+                <div class="space-y-2">
+                    <label class="text-sm font-medium text-gray-700">Choose Community</label>
+                    <select id="post-category" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 transition-all"> <!-- Changed to blue -->
+                        <option value="workout">r/workout</option>
+                        <option value="nutrition">r/nutrition</option>
+                        <option value="motivation">r/motivation</option>
+                    </select>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-sm font-medium text-gray-700">Title</label>
+                    <input type="text" id="post-title" 
+                           class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 transition-all" <!-- Changed to blue -->
+                           placeholder="An interesting title" required>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-sm font-medium text-gray-700">Content</label>
+                    <textarea id="post-content" 
+                              class="rich-editor w-full"
+                              placeholder="What's on your mind?" required></textarea>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-sm font-medium text-gray-700">Image URL (optional)</label>
+                    <input type="url" id="post-image" 
+                           class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 transition-all" <!-- Changed to blue -->
+                           placeholder="https://example.com/image.jpg">
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <button type="submit" 
+                            class="flex-1 bg-[#1E3A8A] text-white py-3 rounded-full font-medium hover:bg-[#3B82F6] transition-all transform hover:scale-105"> <!-- Changed to blue -->
+                        Post
+                    </button>
+                    <button type="button" 
+                            class="px-6 py-3 border rounded-full text-gray-700 hover:bg-gray-100 transition-all"
+                            onclick="closeModal('create-post-modal')">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Post Detail Modal -->
+    <div id="post-detail-modal" class="modal">
+        <div class="modal-content bg-white rounded-lg p-8 m-auto max-w-2xl w-full">
+            <!-- Post content will go here -->
+            <div id="post-detail-content"></div>
+            
+            <div class="mt-8">
+                <h3 class="font-bold text-lg mb-4">Comments</h3>
+                <!-- Scrollable comments container -->
+                <div id="comments-container" class="space-y-4 mb-4 max-h-[300px] overflow-y-auto pr-2"></div>
+                
+                <!-- Comment input section -->
+                <div class="mt-4 border-t pt-4">
+                    <textarea id="comment-input" 
+                              class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 transition-all"
+                              rows="2" 
+                              placeholder="What are your thoughts?"></textarea>
+                    <button onclick="handleAddComment()" 
+                            class="mt-2 w-full bg-blue-900 text-white py-2 rounded-full hover:bg-blue-700 transition-all">
+                        Comment
+                    </button>
+                </div>
+            </div>
+            
+            <button onclick="closeModal('post-detail-modal')" 
+                    class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Initialize GSAP ScrollTrigger
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Get Firebase instances
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // State management
+        let currentUser = null;
+        let posts = [];
+        let activeTab = 'all';
+        let selectedPostId = null;
+        
+        // Auth state observer
+        auth.onAuthStateChanged((user) => {
+            currentUser = user;
+            if (user) {
+                console.log('User is signed in:', user.uid);
+                fetchPosts();
+            }
+        });
+
+        function setActiveTab(tab) {
+            activeTab = tab;
+            renderPosts();
+            
+            // Animate tab change
+            gsap.from(`button[onclick="setActiveTab('${tab}')"]`, {
+                backgroundColor: "rgba(30,58,138,0.2)", // Changed to blue
+                duration: 0.3
+            });
+        }
+        
+        async function handleCreatePost() {
+            const title = document.getElementById('post-title').value;
+            const content = document.getElementById('post-content').value;
+            const category = document.getElementById('post-category').value;
+            const image = document.getElementById('post-image').value;
+            
+            await createPost({ title, content, category, image });
+            
+            // Reset form
+            document.getElementById('post-title').value = '';
+            document.getElementById('post-content').value = '';
+            document.getElementById('post-image').value = '';
+            document.getElementById('post-category').value = 'workout';
+            
+            // Animate success
+            gsap.to('.modal-content', {
+                scale: 1.02,
+                duration: 0.2,
+                yoyo: true,
+                repeat: 1
+            });
+        }
+
+        async function createPost(postData) {
+            try {
+                if (!currentUser) throw new Error('Must be logged in to post');
+                
+                const post = {
+                    ...postData,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    likes: [],
+                    comments: [],
+                    userId: currentUser.uid,
+                    username: currentUser.displayName || 'Anonymous',
+                    karma: 0
+                };
+                
+                await db.collection('posts').add(post);
+                closeModal('create-post-modal');
+                
+                // Show success animation
+                const toast = document.createElement('div');
+                toast.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg';
+                toast.textContent = 'Post created successfully!';
+                document.body.appendChild(toast);
+                
+                gsap.from(toast, {
+                    y: 50,
+                    opacity: 0,
+                    duration: 0.3
+                });
+                
+                setTimeout(() => {
+                    gsap.to(toast, {
+                        y: 50,
+                        opacity: 0,
+                        duration: 0.3,
+                        onComplete: () => toast.remove()
+                    });
+                }, 3000);
+            } catch (error) {
+                console.error('Error creating post:', error);
+                alert(error.message);
+            }
+        }
+        
+        async function toggleLike(postId, event) {
+            try {
+                if (!currentUser) throw new Error('Must be logged in to like posts');
+                
+                event.stopPropagation();
+                const likeBtn = document.querySelector(`[data-like-btn="${postId}"]`);
+                const voteCount = likeBtn.nextElementSibling;
+                
+                // Immediately update UI
+                const isCurrentlyLiked = likeBtn.classList.contains('voted');
+                if (isCurrentlyLiked) {
+                    likeBtn.classList.remove('voted');
+                    voteCount.classList.remove('upvoted');
+                } else {
+                    likeBtn.classList.add('voted');
+                    voteCount.classList.add('upvoted');
+                    
+                    // Add pop animation
+                    gsap.from(likeBtn, {
+                        scale: 1.2,
+                        duration: 0.2,
+                        ease: "back.out(1.7)"
+                    });
+                }
+                
+                // Update database in background
+                const postRef = db.collection('posts').doc(postId);
+                const post = await postRef.get();
+                const likes = post.data().likes || [];
+                
+                if (likes.includes(currentUser.uid)) {
+                    await postRef.update({
+                        likes: firebase.firestore.FieldValue.arrayRemove(currentUser.uid)
+                    });
+                } else {
+                    await postRef.update({
+                        likes: firebase.firestore.FieldValue.arrayUnion(currentUser.uid)
+                    });
+                }
+            } catch (error) {
+                console.error('Error toggling like:', error);
+                alert(error.message);
+            }
+        }
+        
+        function renderPosts() {
+            const container = document.getElementById('posts-container');
+            container.innerHTML = '';
+            
+            const filteredPosts = activeTab === 'all' 
+                ? posts 
+                : posts.filter(post => post.category === activeTab);
+            
+            if (filteredPosts.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-gray-500 py-8">
+                        No posts found. Be the first to create one!
+                    </div>
+                `;
+                return;
+            }
+
+            filteredPosts.forEach((post, index) => {
+                const postElement = createPostElement(post);
+                container.appendChild(postElement);
+                
+                // Add scroll trigger animation
+                gsap.from(postElement, {
+                    scrollTrigger: {
+                        trigger: postElement,
+                        start: "top bottom-=100",
+                        end: "top center",
+                        toggleActions: "play none none reverse"
+                    },
+                    y: 50,
+                    duration: 0.6,
+                    ease: "power2.out"
+                });
+            });
+
+            // Calculate total likes and comments
+            const totalLikes = posts.reduce((sum, post) => sum + (post.likes?.length || 0), 0);
+            const totalComments = posts.reduce((sum, post) => sum + (post.comments?.length || 0), 0);
+
+            // Update stats with animation
+            gsap.to('#total-likes', {
+                textContent: totalLikes,
+                duration: 1,
+                snap: { textContent: 1 }
+            });
+            
+            gsap.to('#total-comments', {
+                textContent: totalComments,
+                duration: 1,
+                snap: { textContent: 1 }
+            });
+
+            lucide.createIcons();
+        }
+        
+        function createPostElement(post) {
+            const div = document.createElement('div');
+            div.className = 'post-card bg-white rounded-lg shadow-lg p-6 cursor-pointer';
+            div.onclick = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                showPostDetail(post);
+            };
+            
+            const isLiked = currentUser && post.likes.includes(currentUser.uid);
+            
+            div.innerHTML = `
+                <div class="flex gap-4">
+                    <div class="flex flex-col items-center gap-1">
+                        <button onclick="toggleLike('${post.id}', event)" 
+                                data-like-btn="${post.id}"
+                                class="vote-button ${isLiked ? 'voted' : ''}">
+                            <i data-lucide="thumbs-up" class="w-6 h-6"></i>
+                        </button>
+                        <span class="vote-count ${isLiked ? 'upvoted' : ''}">${post.likes.length}</span>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 text-sm text-gray-500 mb-2">
+                            <span class="tag-pill">${post.category}</span>
+                            <span>Posted by ${post.username}</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">${post.title}</h3>
+                        <p class="text-gray-600 mb-4">${post.content.length > 150 ? post.content.substring(0, 150) + '...' : post.content}</p>
+                        ${post.image ? `
+                            <img src="${post.image}" alt="Post image" class="w-full h-48 object-cover rounded-lg mb-4">
+                        ` : ''}
+                        <div class="flex items-center gap-4 text-gray-500">
+                            <span class="flex items-center gap-1">
+                                <i data-lucide="message-circle" class="w-4 h-4"></i>
+                                ${post.comments.length} comments
+                            </span>
+                            <button class="award-button p-1 rounded-full">
+                                <i data-lucide="award" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            return div;
+        }
+
+        function showPostDetail(post) {
+            selectedPostId = post.id;
+            const modal = document.getElementById('post-detail-modal');
+            const detailContent = document.getElementById('post-detail-content');
+            const commentsContainer = document.getElementById('comments-container');
+            const isLiked = currentUser && post.likes.includes(currentUser.uid);
+            
+            // Make sure modal is active
+            modal.classList.add('active');
+            
+            // Update post content
+            detailContent.innerHTML = `
+                <div class="flex gap-4">
+                    <div class="flex flex-col items-center gap-1">
+                        <button onclick="toggleLike('${post.id}', event)" 
+                                data-like-btn="${post.id}"
+                                class="vote-button ${isLiked ? 'voted' : ''}">
+                            <i data-lucide="thumbs-up" class="w-6 h-6"></i>
+                        </button>
+                        <span class="vote-count ${isLiked ? 'upvoted' : ''}">${post.likes.length}</span>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 text-sm text-gray-500 mb-2">
+                            <span class="tag-pill">${post.category}</span>
+                            <span>Posted by ${post.username}</span>
+                        </div>
+                        <h2 class="text-2xl font-bold mb-4">${post.title}</h2>
+                        ${post.image ? `
+                            <img src="${post.image}" alt="Post image" class="w-full h-64 object-cover rounded-lg mb-4">
+                        ` : ''}
+                        <p class="text-gray-600">${post.content}</p>
+                    </div>
+                </div>
+            `;
+            
+            // Update comments
+            commentsContainer.innerHTML = [...post.comments].reverse().map(comment => `
+                <div class="comment-thread">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-semibold">${comment.username}</span>
+                    </div>
+                    <p class="text-gray-600">${comment.content}</p>
+                </div>
+            `).join('');
+            
+            // Scroll to the latest comment if there are any
+            if (post.comments.length > 0) {
+                commentsContainer.scrollTop = 0;
+            }
+            
+            // Initialize icons
+            lucide.createIcons();
+            
+            // Add click handler for modal background
+            modal.onclick = (e) => {
+                if (e.target === modal) {
+                    closeModal('post-detail-modal');
+                }
+            };
+            
+            // Prevent click propagation on modal content
+            const modalContent = modal.querySelector('.modal-content');
+            modalContent.onclick = (e) => {
+                e.stopPropagation();
+            };
+        }
+        
+        async function handleAddComment() {
+            const commentText = document.getElementById('comment-input').value.trim();
+            if (!commentText) return;
+            
+            try {
+                await addComment(selectedPostId, commentText);
+                document.getElementById('comment-input').value = '';
+                
+                // Refresh post detail view without closing the modal
+                const post = posts.find(p => p.id === selectedPostId);
+                if (post) {
+                    // Update only the comments section
+                    const commentsContainer = document.getElementById('comments-container');
+                    commentsContainer.innerHTML = post.comments.map(comment => `
+                        <div class="comment-thread">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-semibold">${comment.username}</span>
+                            </div>
+                            <p class="text-gray-600">${comment.content}</p>
+                        </div>
+                    `).join('');
+
+                    // Animate new comment
+                    gsap.from('.comment-thread:last-child', {
+                        opacity: 0,
+                        y: 20,
+                        duration: 0.5
+                    });
+                }
+            } catch (error) {
+                console.error('Error adding comment:', error);
+                alert(error.message);
+            }
+        }
+        
+        async function addComment(postId, commentText) {
+            try {
+                if (!currentUser) throw new Error('Must be logged in to comment');
+                
+                const comment = {
+                    content: commentText,
+                    userId: currentUser.uid,
+                    username: currentUser.displayName || 'Anonymous'
+                };
+                
+                // Update Firestore
+                await db.collection('posts').doc(postId).update({
+                    comments: firebase.firestore.FieldValue.arrayUnion(comment)
+                });
+                
+                // Get the updated post data
+                const postRef = await db.collection('posts').doc(postId).get();
+                const updatedPost = { id: postRef.id, ...postRef.data() };
+                
+                // Update local posts array
+                const postIndex = posts.findIndex(p => p.id === postId);
+                if (postIndex !== -1) {
+                    posts[postIndex] = updatedPost;
+                }
+                
+                // Refresh the post detail view with the updated post
+                showPostDetail(updatedPost);
+                
+                // Clear comment input
+                document.getElementById('comment-input').value = '';
+                
+            } catch (error) {
+                console.error('Error adding comment:', error);
+                throw error;
+            }
+        }
+        
+        // Real-time posts listener
+        function fetchPosts() {
+            db.collection('posts')
+                .orderBy('timestamp', 'desc')
+                .onSnapshot(snapshot => {
+                    posts = snapshot.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }));
+                    renderPosts();
+                    
+                    // Update post detail if open
+                    if (selectedPostId) {
+                        const post = posts.find(p => p.id === selectedPostId);
+                        if (post) {
+                            showPostDetail(post);
+                        }
+                    }
+                }, error => {
+                    console.error("Error fetching posts:", error);
+                });
+        }
+        
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            gsap.to(modal, {
+                opacity: 0,
+                duration: 0.3,
+                onComplete: () => {
+                    modal.classList.remove('active');
+                    modal.style.opacity = 1;
+                    if (modalId === 'post-detail-modal') {
+                        selectedPostId = null;
+                    }
+                }
+            });
+        }
+        
+        function openModal(modalId) {
+            if (!currentUser && modalId === 'create-post-modal') {
+                alert('Please sign in to create a post');
+                return;
+            }
+            const modal = document.getElementById(modalId);
+            
+            // Clear any existing event listeners
+            modal.replaceWith(modal.cloneNode(true));
+            
+            // Get the fresh modal element
+            const freshModal = document.getElementById(modalId);
+            freshModal.classList.add('active');
+            
+            // Add click handler for modal background
+            freshModal.addEventListener('click', (e) => {
+                if (e.target === freshModal) {
+                    closeModal(modalId);
+                }
+            });
+            
+            // Prevent click propagation on modal content
+            const modalContent = freshModal.querySelector('.modal-content');
+            modalContent.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+            
+            // Animate modal opening
+            gsap.from(modalContent, {
+                scale: 0.8,
+                opacity: 0,
+                duration: 0.4,
+                ease: "back.out(1.7)"
+            });
+        }
+
+        // Utility functions
+        function getCategoryIcon(category) {
+            const icons = {
+                workout: 'dumbbell',
+                nutrition: 'apple',
+                motivation: 'zap'
+            };
+            return icons[category] || 'circle';
+        }
+
+        // Initialize scroll animations
+        function handleScroll() {
+            document.querySelectorAll('.scroll-animation').forEach(el => {
+                const rect = el.getBoundingClientRect();
+                const isVisible = rect.top <= window.innerHeight * 0.8;
+                if (isVisible) {
+                    el.classList.add('visible');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', handleScroll);
+        handleScroll(); // Initial check
+
+        // Initialize GSAP ScrollTrigger
+        gsap.registerPlugin(ScrollTrigger);
+        
+        // Animate post cards on scroll
+        gsap.utils.toArray('.post-card').forEach(card => {
+            gsap.from(card, {
+                scrollTrigger: {
+                    trigger: card,
+                    start: "top bottom-=100",
+                    toggleActions: "play none none reverse"
+                },
+                y: 50,
+                opacity: 0,
+                duration: 0.6,
+                ease: "power2.out"
+            });
+        });
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchPosts(); // Removed initializeAuth() as it was undefined
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Community Hub</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+    
+    <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-firestore.js"></script>
+    <link rel="icon" type="image/png" href="/assets/icons/icon.png" sizes="32x32" />
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBvONbLQcR-XqSsJ9hi7xAsk8sTwej43aA",
+            authDomain: "ed-project-42419.firebaseapp.com",
+            projectId: "ed-project-42419",
+            storageBucket: "ed-project-42419.appspot.com",
+            messagingSenderId: "909551078814",
+            appId: "1:909551078814:web:456608495b9655eef6da8f"
+        };
+        firebase.initializeApp(firebaseConfig);
+
+        // Set light mode by default
+        document.documentElement.classList.remove('dark');
+        localStorage.theme = 'light';
+    </script>
+    <style>
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .hover-scale {
+            transition: transform 0.3s ease;
+        }
+        
+        .hover-scale:hover {
+            transform: scale(1.05);
+        }
+        
+        .scroll-animation {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+        
+        .scroll-animation.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        
+        .modal.active {
+            display: flex;
+            animation: modalFadeIn 0.3s ease;
+        }
+        
+        .like-button {
+            color: #1f2937;
+            transition: all 0.3s ease;
+        }
+
+        .like-button.liked {
+            color: #ef4444;
+            transform: scale(1);
+            animation: likeAnimation 0.5s cubic-bezier(0.17, 0.89, 0.32, 1.49);
+        }
+        
+        @keyframes likeAnimation {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.2); }
+            50% { transform: scale(0.95); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .truncate-text {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* Animated gradient buttons and headers */
+        .animated-gradient {
+            background: linear-gradient(
+                270deg,
+                #60a5fa,
+                #3b82f6,
+                #2563eb,
+                #1d4ed8,
+                #2563eb,
+                #3b82f6
+            );
+            background-size: 200% auto;
+            animation: gradientFlow 3s ease infinite;
+            transition: all 0.3s ease;
+        }
+
+        .animated-gradient:hover {
+            background-size: 220% auto;
+            animation-play-state: paused;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        }
+
+        @keyframes gradientFlow {
+            0% { background-position: 0% center; }
+            50% { background-position: 100% center; }
+            100% { background-position: 0% center; }
+        }
+
+        .card-header-gradient {
+            background: linear-gradient(
+                45deg,
+                #60a5fa,
+                #3b82f6,
+                #2563eb,
+                #60a5fa
+            );
+            background-size: 200% 200%;
+            animation: shimmerEffect 3s ease infinite;
+        }
+
+        @keyframes shimmerEffect {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+    </style>
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="min-h-screen">
+    <!-- Dark mode toggle button -->
+    <button 
+        onclick="toggleDarkMode()"
+        class="fixed top-4 right-4 p-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition-colors"
+    >
+        <i data-lucide="moon" class="w-6 h-6 block"></i>
+    </button>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+            <!-- Sidebar -->
+            <div class="lg:col-span-3 space-y-6">
+                <!-- Categories Card -->
+                <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+                    <div class="card-header-gradient p-4">
+                        <h2 class="text-2xl font-bold text-white">Fitness Hub</h2>
+                    </div>
+                    <div class="p-4">
+                        <nav class="space-y-2">
+                            <button onclick="setActiveTab('all')" 
+                                    class="w-full text-left px-4 py-2 rounded hover:bg-blue-100 transition-colors flex items-center gap-2">
+                                <i data-lucide="trending-up" class="w-4 h-4"></i>
+                                All Posts
+                            </button>
+                            <button onclick="setActiveTab('workout')"
+                                    class="w-full text-left px-4 py-2 rounded hover:bg-blue-100 transition-colors flex items-center gap-2">
+                                <i data-lucide="dumbbell" class="w-4 h-4"></i>
+                                Workouts
+                            </button>
+                            <button onclick="setActiveTab('nutrition')"
+                                    class="w-full text-left px-4 py-2 rounded hover:bg-blue-100 transition-colors flex items-center gap-2">
+                                <i data-lucide="apple" class="w-4 h-4"></i>
+                                Nutrition
+                            </button>
+                            <button onclick="setActiveTab('motivation')"
+                                    class="w-full text-left px-4 py-2 rounded hover:bg-blue-100 transition-colors flex items-center gap-2">
+                                <i data-lucide="zap" class="w-4 h-4"></i>
+                                Motivation
+                            </button>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- Stats Card -->
+                <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+                    <div class="card-header-gradient p-4">
+                        <h2 class="text-xl font-bold text-white">Community Stats</h2>
+                    </div>
+                    <div class="p-4">
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600">Total Posts</span>
+                                <span class="font-bold text-blue-600" id="total-posts">0</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600">Active Users</span>
+                                <span class="font-bold text-green-600">1,234</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600">Total Likes</span>
+                                <span class="font-bold text-purple-600" id="total-likes">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="lg:col-span-9">
+                <!-- Create Post Button -->
+                <div class="mb-6 bg-white shadow-lg rounded-lg overflow-hidden">
+                    <div class="p-4">
+                        <button onclick="openModal('create-post-modal')"
+                                class="w-full animated-gradient text-white px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                            Create New Post
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Posts Container -->
+                <div id="posts-container" class="space-y-4 overflow-y-auto max-h-[calc(100vh-250px)]"></div>
+            </div>
+        </div>
+
+        <!-- Create Post Modal -->
+        <div id="create-post-modal" class="modal">
+            <div class="bg-white rounded-lg p-8 m-auto max-w-lg w-full">
+                <h2 class="text-2xl font-bold text-blue-600 mb-4">Create New Post</h2>
+                <form onsubmit="event.preventDefault(); handleCreatePost();">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2">Title</label>
+                        <input type="text" id="post-title" class="w-full p-2 border rounded" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2">Content</label>
+                        <textarea id="post-content" class="w-full p-2 border rounded" rows="4" required></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2">Category</label>
+                        <select id="post-category" class="w-full p-2 border rounded" required>
+                            <option value="workout">Workout</option>
+                            <option value="nutrition">Nutrition</option>
+                            <option value="motivation">Motivation</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2">Image URL (optional)</label>
+                        <input type="url" id="post-image" class="w-full p-2 border rounded">
+                    </div>
+                    <div class="flex justify-end gap-4">
+                        <button type="button" onclick="closeModal('create-post-modal')"
+                                class="px-4 py-2 text-gray-600 hover:text-gray-800">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 animated-gradient text-white rounded">
+                            Post
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Post Detail Modal -->
+        <div id="post-detail-modal" class="modal">
+            <div class="bg-white rounded-lg p-8 m-auto max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                <div id="post-detail-content"></div>
+                <div class="mt-8">
+                    <h3 class="font-bold text-lg mb-4 text-blue-600">Comments</h3>
+                    <div id="comments-container" class="space-y-4"></div>
+                    <div class="mt-4">
+                        <textarea id="comment-input" class="w-full p-2 border rounded" rows="2" placeholder="Add a comment..."></textarea>
+                        <button onclick="handleAddComment()" class="mt-2 px-4 py-2 animated-gradient text-white rounded w-full transition-all duration-300">
+                            Post Comment
+                        </button>
+                    </div>
+                </div>
+                <button onclick="closeModal('post-detail-modal')" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add dark mode toggle function
+        function toggleDarkMode() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark')
+                localStorage.theme = 'light'
+            } else {
+                document.documentElement.classList.add('dark')
+                localStorage.theme = 'dark'
+            }
+        }
+
+        // Get Firebase instances
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // State management
+        let currentUser = null;
+        let posts = [];
+        let activeTab = 'all';
+        let selectedPostId = null;
+        
+        // Auth state observer
+        auth.onAuthStateChanged((user) => {
+            currentUser = user;
+            if (user) {
+                console.log('User is signed in:', user.uid);
+                // Fetch posts when user is authenticated
+                fetchPosts();
+            }
+        });
+
+        function setActiveTab(tab) {
+            activeTab = tab;
+            renderPosts();
+        }
+        
+        // Firebase functions
+        async function handleCreatePost() {
+            const title = document.getElementById('post-title').value;
+            const content = document.getElementById('post-content').value;
+            const category = document.getElementById('post-category').value;
+            const image = document.getElementById('post-image').value;
+            
+            await createPost({ title, content, category, image });
+            document.getElementById('post-title').value = '';
+            document.getElementById('post-content').value = '';
+            document.getElementById('post-image').value = '';
+            document.getElementById('post-category').value = 'workout';
+        }
+
+        async function createPost(postData) {
+            try {
+                if (!currentUser) throw new Error('Must be logged in to post');
+                
+                const post = {
+                    ...postData,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    likes: [],
+                    comments: [],
+                    userId: currentUser.uid,
+                    username: currentUser.displayName || 'Anonymous'
+                };
+                
+                await db.collection('posts').add(post);
+                closeModal('create-post-modal');
+            } catch (error) {
+                console.error('Error creating post:', error);
+                alert(error.message);
+            }
+        }
+        
+        async function toggleLike(postId, event) {
+            try {
+                if (!currentUser) throw new Error('Must be logged in to like posts');
+                
+                event.stopPropagation();
+                const likeBtn = document.querySelector(`[data-like-btn="${postId}"]`);
+                const postRef = db.collection('posts').doc(postId);
+                const post = await postRef.get();
+                const likes = post.data().likes || [];
+                
+                if (likes.includes(currentUser.uid)) {
+                    await postRef.update({
+                        likes: firebase.firestore.FieldValue.arrayRemove(currentUser.uid)
+                    });
+                    likeBtn.classList.remove('liked');
+                } else {
+                    await postRef.update({
+                        likes: firebase.firestore.FieldValue.arrayUnion(currentUser.uid)
+                    });
+                    likeBtn.classList.add('liked');
+                }
+            } catch (error) {
+                console.error('Error toggling like:', error);
+                alert(error.message);
+            }
+        }
+        
+        async function handleAddComment() {
+            const commentText = document.getElementById('comment-input').value.trim();
+            if (!commentText) return;
+            
+            await addComment(selectedPostId, commentText);
+            document.getElementById('comment-input').value = '';
+            
+            // Refresh post detail view
+            const post = posts.find(p => p.id === selectedPostId);
+            if (post) {
+                showPostDetail(post);
+            }
+        }
+        
+        async function addComment(postId, commentText) {
+            try {
+                if (!currentUser) throw new Error('Must be logged in to comment');
+                
+                const comment = {
+                    content: commentText,
+                    userId: currentUser.uid,
+                    username: currentUser.displayName || 'Anonymous',
+                    timestamp: new Date()
+                };
+                
+                await db.collection('posts').doc(postId).update({
+                    comments: firebase.firestore.FieldValue.arrayUnion(comment)
+                });
+            } catch (error) {
+                console.error('Error adding comment:', error);
+                alert(error.message);
+            }
+        }
+        
+        // UI Functions
+        function renderPosts() {
+            const container = document.getElementById('posts-container');
+            if (!container) {
+                console.error('Posts container element not found');
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            const filteredPosts = activeTab === 'all' 
+                ? posts 
+                : posts.filter(post => post.category === activeTab);
+            
+            if (filteredPosts.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-gray-500 py-8">
+                        No posts found. Be the first to create one!
+                    </div>
+                `;
+                return;
+            }
+
+            filteredPosts.forEach(post => {
+                const postElement = createPostElement(post);
+                container.appendChild(postElement);
+            });
+
+            // Update stats
+            document.getElementById('total-posts').textContent = posts.length;
+            document.getElementById('total-likes').textContent = posts.reduce((sum, post) => sum + post.likes.length, 0);
+
+            // Make scroll animations visible
+            document.querySelectorAll('.scroll-animation').forEach(el => {
+                el.classList.add('visible');
+            });
+            
+            lucide.createIcons();
+        }
+        
+        function createPostElement(post) {
+            const div = document.createElement('div');
+            div.className = 'bg-white rounded-lg shadow-lg p-6 mb-4 hover-scale scroll-animation cursor-pointer transform transition-all duration-300';
+            div.onclick = () => showPostDetail(post);
+            
+            const isLiked = currentUser && post.likes.includes(currentUser.uid);
+            const truncatedContent = post.content.length > 150 ? 
+                post.content.substring(0, 150) + '...' : post.content;
+            
+            div.innerHTML = `
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-xl text-blue-600 flex items-center">
+                        <i data-lucide="${getCategoryIcon(post.category)}" class="mr-2"></i>
+                        ${post.title}
+                    </h3>
+                    <span class="text-sm text-gray-500">
+                        ${post.username}
+                    </span>
+                </div>
+                <p class="text-gray-600 mb-4 truncate-text">${truncatedContent}</p>
+                ${post.image ? `<img src="${post.image}" alt="Post image" class="w-full h-48 object-cover rounded-lg mb-4">` : ''}
+                <div class="flex justify-between items-center">
+                    <button onclick="toggleLike('${post.id}', event)" 
+                            data-like-btn="${post.id}"
+                            class="like-button flex items-center gap-1 ${isLiked ? 'liked' : ''}">
+                        <i data-lucide="heart" class="w-5 h-5"></i>
+                        <span>${post.likes.length} likes</span>
+                    </button>
+                    <div class="flex items-center gap-4">
+                        <span class="text-gray-500">
+                            <i data-lucide="message-circle" class="w-4 h-4 inline mr-1"></i>
+                            ${post.comments.length}
+                        </span>
+                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">
+                            ${post.category}
+                        </span>
+                    </div>
+                </div>
+            `;
+            
+            return div;
+        }
+
+        function showPostDetail(post) {
+            selectedPostId = post.id;
+            const detailContent = document.getElementById('post-detail-content');
+            const isLiked = currentUser && post.likes.includes(currentUser.uid);
+            
+            detailContent.innerHTML = `
+                <div class="mb-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="font-bold text-2xl text-blue-600 flex items-center">
+                            <i data-lucide="${getCategoryIcon(post.category)}" class="mr-2"></i>
+                            ${post.title}
+                        </h2>
+                        <span class="text-gray-500">${post.username}</span>
+                    </div>
+                    ${post.image ? `<img src="${post.image}" alt="Post image" class="w-full h-64 object-cover rounded-lg mb-4">` : ''}
+                    <p class="text-gray-600 mb-4">${post.content}</p>
+                    <div class="flex items-center gap-4">
+                        <button onclick="toggleLike('${post.id}', event)"
+                                data-like-btn="${post.id}"
+                                class="like-button flex items-center gap-1 ${isLiked ? 'liked' : ''}">
+                            <i data-lucide="heart" class="w-5 h-5"></i>
+                            <span>${post.likes.length} likes</span>
+                        </button>
+                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">
+                            ${post.category}
+                        </span>
+                    </div>
+                </div>
+            `;
+            
+            const commentsContainer = document.getElementById('comments-container');
+            commentsContainer.innerHTML = post.comments.map(comment => `
+                <div class="bg-gray-50 p-4 rounded">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-semibold text-gray-700">${comment.username}</span>
+                        <span class="text-sm text-gray-500">
+                            ${comment.timestamp ? new Date(comment.timestamp.toDate()).toLocaleDateString() : 'Just now'}
+                        </span>
+                    </div>
+                    <p class="text-gray-600">${comment.content}</p>
+                </div>
+            `).join('');
+            
+            openModal('post-detail-modal');
+            lucide.createIcons();
+        }
+        
+        // Real-time posts listener
+        function fetchPosts() {
+            db.collection('posts')
+                .orderBy('timestamp', 'desc')
+                .onSnapshot(snapshot => {
+                    posts = snapshot.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }));
+                    renderPosts();
+                    
+                    // Update post detail if open
+                    if (selectedPostId) {
+                        const post = posts.find(p => p.id === selectedPostId);
+                        if (post) {
+                            showPostDetail(post);
+                        }
+                    }
+                }, error => {
+                    console.error("Error fetching posts:", error);
+                });
+        }
+        
+        // Utility functions
+        function getCategoryIcon(category) {
+            const icons = {
+                workout: 'dumbbell',
+                nutrition: 'apple',
+                motivation: 'zap'
+            };
+            return icons[category] || 'circle';
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            if (modalId === 'post-detail-modal') {
+                selectedPostId = null;
+            }
+        }
+        
+        function openModal(modalId) {
+            if (!currentUser && modalId === 'create-post-modal') {
+                alert('Please sign in to create a post');
+                return;
+            }
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        // Initialize scroll animations
+        function handleScroll() {
+            document.querySelectorAll('.scroll-animation').forEach(el => {
+                const rect = el.getBoundingClientRect();
+                const isVisible = rect.top <= window.innerHeight * 0.8;
+                if (isVisible) {
+                    el.classList.add('visible');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', handleScroll);
+        handleScroll(); // Initial check
+    </script>
+</body>
+</html>
